@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# خريطة الموقع
+Sitemap: https://duplex.studio/sitemap.xml
