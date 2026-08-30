@@ -31,6 +31,8 @@ export const T = {
   heroAvailable: { ar: "متاحون لمشروعات جديدة", en: "Available for new projects" },
   heroRollLead: { ar: "بنصنع", en: "We craft" },
   heroRollTail: { ar: "بتفرق.", en: "that land." },
+  heroA1: { ar: "فكرتك بتبقى", en: "Your idea becomes" },
+  heroA3: { ar: "بتفرق.", en: "that lands." },
   heroPanelsHint: { ar: "مرّر على قسم لاستكشافه", en: "Hover a department to explore" },
   heroDepartments: { ar: "أقسامنا الأربعة", en: "Our four crafts" },
 
@@ -116,6 +118,12 @@ export const T = {
 export const HERO_ROLL: { ar: string[]; en: string[] } = {
   ar: ["مواقع", "هويات", "أفلام", "حملات"],
   en: ["websites", "brands", "films", "campaigns"],
+};
+
+/** كلمات العنوان المقلوب — مفردات بحسب القسم النشط */
+export const HERO_FLIP: { ar: string[]; en: string[] } = {
+  ar: ["موقع", "هوية", "فيلم", "حملة"],
+  en: ["a website", "an identity", "a film", "a campaign"],
 };
 
 export const MARQUEE: { ar: string[]; en: string[] } = {

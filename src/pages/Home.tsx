@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useLang } from "../i18n";
-import { HERO_ROLL, MARQUEE, PROCESS, STATS_LABELS, T } from "../data/translations";
+import { HERO_FLIP, MARQUEE, PROCESS, STATS_LABELS, T } from "../data/translations";
 import {
   CATEGORIES,
   STATS,
@@ -27,29 +27,29 @@ function scrollToId(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-/** عجلة كلمات رأسية داخل العنوان — كل كلمة بلون قسمها */
-function WordRoller({ words }: { words: string[] }) {
-  const [idx, setIdx] = useState(0);
-
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const id = setInterval(() => setIdx((i) => (i + 1) % words.length), 2200);
-    return () => clearInterval(id);
-  }, [words.length]);
-
+/** شريحة داكنة تنقلب كلماتها رأسيًا — كل كلمة بلون قسمها */
+function FlipWord({ words, active }: { words: string[]; active: number }) {
+  const n = words.length;
   return (
-    <span className="relative inline-block overflow-hidden align-bottom" style={{ height: "1.06em" }}>
+    <span
+      className="relative inline-block overflow-hidden rounded-[12px] bg-ink px-[0.4em] shadow-[0_14px_34px_rgba(13,31,51,0.28)]"
+      style={{ height: "1.24em" }}
+    >
       <span
-        className="block transition-transform duration-[560ms] ease-[cubic-bezier(0.77,0,0.18,1)]"
-        style={{ transform: `translateY(-${idx * (100 / words.length)}%)` }}
+        className="block transition-transform duration-[620ms] ease-[cubic-bezier(0.77,0,0.18,1)]"
+        style={{ transform: `translateY(-${active * (100 / n)}%)` }}
       >
         {words.map((w, i) => (
           <span
             key={w}
-            className="block leading-[1.06]"
-            style={{ color: CATEGORIES[i % CATEGORIES.length].color, height: "1.06em" }}
+            className="flex items-center gap-[0.35em] leading-[1.24]"
+            style={{ height: "1.24em" }}
           >
-            {w}
+            <span
+              className="inline-block h-[0.32em] w-[0.32em] shrink-0 rounded-full"
+              style={{ background: CATEGORIES[i % CATEGORIES.length].color }}
+            />
+            <span style={{ color: CATEGORIES[i % CATEGORIES.length].color }}>{w}</span>
           </span>
         ))}
       </span>
@@ -60,121 +60,219 @@ function WordRoller({ words }: { words: string[] }) {
 /* ============================ Statement Hero ============================ */
 function CraftHero() {
   const { lang, t } = useLang();
-  const rollWords = HERO_ROLL[lang];
+  const flipWords = HERO_FLIP[lang];
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const total = CATEGORIES.length;
+
+  useEffect(() => {
+    if (paused) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const id = setInterval(() => setActive((a) => (a + 1) % total), 3800);
+    return () => clearInterval(id);
+  }, [paused, total]);
 
   return (
     <section className="relative overflow-hidden">
-      <div className="blueprint absolute inset-0" aria-hidden />
-      <div
-        className="absolute -top-24 end-[-8%] h-[420px] w-[420px] rounded-full bg-teal/10 blur-3xl"
-        aria-hidden
-      />
-      <div
-        className="absolute top-72 start-[-10%] h-[360px] w-[360px] rounded-full bg-flame/10 blur-3xl"
-        aria-hidden
-      />
+      {/* ---------- Duplex split hero ---------- */}
+      <div className="grid lg:grid-cols-12">
+        {/* ===== الناحية الفاتحة ===== */}
+        <div className="relative lg:col-span-7">
+          <div className="blueprint absolute inset-0" aria-hidden />
+          <div
+            className="absolute -top-24 start-[-10%] h-[380px] w-[380px] rounded-full bg-teal/10 blur-3xl"
+            aria-hidden
+          />
+          <div
+            className="absolute bottom-0 end-[-6%] h-[300px] w-[300px] rounded-full bg-flame/10 blur-3xl"
+            aria-hidden
+          />
 
-      {/* ---------- Statement — عرض الشاشة كامل ---------- */}
-      <div className="relative px-5 pt-14 pb-10 sm:px-8 md:px-12 md:pt-20 lg:px-16">
-        <div className="flex flex-wrap items-center gap-4">
-          <span className="inline-flex items-center gap-2.5 rounded-full border border-line bg-surface px-4 py-2 text-xs font-bold text-ink-soft shadow-sm">
-            <span className="pulse-dot h-2 w-2 rounded-full bg-jade" />
-            {t(T.heroAvailable)}
-          </span>
-          <p className="flex items-center gap-3 text-xs font-bold tracking-[0.24em] text-teal uppercase">
-            <span className="h-px w-10 bg-flame" />
-            {t(T.heroKicker)}
-          </p>
-        </div>
-
-        <h1 className="font-display mt-8 w-full text-ink">
-          <span
-            className="mask-line text-[clamp(2.2rem,5.2vw,4.2rem)] leading-[1.1] font-black"
-            style={{ "--line-delay": "60ms" } as React.CSSProperties}
-          >
-            <span>{t(T.heroRollLead)}</span>
-          </span>
-          <span
-            className="mask-line text-[clamp(3.6rem,11vw,9.5rem)] leading-[1.04] font-black"
-            style={{ "--line-delay": "180ms" } as React.CSSProperties}
-          >
-            <span>
-              <WordRoller words={rollWords} />
-            </span>
-          </span>
-          <span
-            className="mask-line text-[clamp(2.2rem,5.2vw,4.2rem)] leading-[1.1] font-black"
-            style={{ "--line-delay": "300ms" } as React.CSSProperties}
-          >
-            <span className="flex items-center gap-3 md:gap-5">
-              <span className="relative inline-block">
-                {t(T.heroRollTail)}
-                <svg
-                  className="absolute -bottom-2 start-0 h-3 w-full text-flame md:-bottom-3 md:h-4"
-                  viewBox="0 0 220 12"
-                  preserveAspectRatio="none"
-                  aria-hidden
-                >
-                  <path
-                    d="M3 9c42-6 82-6.5 110-3.5 30 3.2 68 2.5 104-3.5"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="5"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </span>
-              <Spark className="h-8 w-8 shrink-0 text-flame md:h-14 md:w-14" />
-            </span>
-          </span>
-        </h1>
-
-        <p className="mt-7 max-w-2xl text-base leading-relaxed text-muted md:text-lg">
-          {t(T.heroP)}
-        </p>
-
-        {/* شريط سفلي بعرض كامل: أزرار + أرقام */}
-        <div className="mt-10 flex flex-col gap-8 border-t-2 border-ink/10 pt-7 md:mt-14 md:flex-row md:items-end md:justify-between lg:gap-6">
-          <div className="flex flex-wrap items-center gap-4">
-            <button
-              onClick={() => scrollToId("work")}
-              className="group flex items-center gap-2.5 rounded-full bg-flame px-7 py-3.5 text-sm font-bold text-white shadow-[0_10px_30px_rgba(232,89,12,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-flame-deep"
-            >
-              {t(T.heroCta1)}
-              <ArrowIcon className="rtl-flip h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-            </button>
-            <button
-              onClick={() => scrollToId("departments")}
-              className="rounded-full border-2 border-ink/15 px-7 py-3.5 text-sm font-bold text-ink transition-all duration-200 hover:border-teal hover:text-teal"
-            >
-              {t(T.heroCta2)}
-            </button>
-          </div>
-
-          <div className="flex flex-wrap items-stretch">
-            {STATS.slice(0, 3).map((v, i) => (
-              <div
-                key={i}
-                className={`py-1 pe-7 md:pe-9 ${i > 0 ? "border-s-2 border-line ps-7 md:ps-9" : ""}`}
-              >
-                <p className="font-display text-4xl font-black text-ink md:text-5xl">
-                  <CountUp value={v} suffix={i === 0 ? "+" : ""} />
-                </p>
-                <p className="mt-1.5 text-xs font-bold text-muted">
-                  {STATS_LABELS[lang][i]}
+          <div className="relative flex min-h-full items-center px-5 py-14 sm:px-8 md:px-12 md:py-20 lg:pe-4">
+            <div className="w-full max-w-2xl lg:ms-auto lg:me-12">
+              <div className="flex flex-wrap items-center gap-4">
+                <span className="inline-flex items-center gap-2.5 rounded-full border border-line bg-surface px-4 py-2 text-xs font-bold text-ink-soft shadow-sm">
+                  <span className="pulse-dot h-2 w-2 rounded-full bg-jade" />
+                  {t(T.heroAvailable)}
+                </span>
+                <p className="flex items-center gap-3 text-xs font-bold tracking-[0.24em] text-teal uppercase">
+                  <span className="h-px w-10 bg-flame" />
+                  {t(T.heroKicker)}
                 </p>
               </div>
-            ))}
+
+              <h1 className="font-display mt-8 text-ink">
+                <span
+                  className="mask-line text-[clamp(1.9rem,4.2vw,3.3rem)] leading-[1.15] font-black"
+                  style={{ "--line-delay": "60ms" } as React.CSSProperties}
+                >
+                  <span>{t(T.heroA1)}</span>
+                </span>
+                <span
+                  className="mask-line text-[clamp(2.5rem,6.2vw,4.6rem)] leading-[1.14] font-black"
+                  style={{ "--line-delay": "180ms" } as React.CSSProperties}
+                >
+                  <span className="flex items-center gap-3 md:gap-4">
+                    <FlipWord words={flipWords} active={active} />
+                    <Spark className="h-7 w-7 shrink-0 text-flame md:h-10 md:w-10" />
+                  </span>
+                </span>
+                <span
+                  className="mask-line text-[clamp(1.9rem,4.2vw,3.3rem)] leading-[1.15] font-black"
+                  style={{ "--line-delay": "300ms" } as React.CSSProperties}
+                >
+                  <span className="relative inline-block">
+                    {t(T.heroA3)}
+                    <svg
+                      className="absolute -bottom-2 start-0 h-3 w-full text-flame"
+                      viewBox="0 0 220 12"
+                      preserveAspectRatio="none"
+                      aria-hidden
+                    >
+                      <path
+                        d="M3 9c42-6 82-6.5 110-3.5 30 3.2 68 2.5 104-3.5"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="5"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                  </span>
+                </span>
+              </h1>
+
+              <p className="mt-6 max-w-xl text-base leading-relaxed text-muted md:text-lg">
+                {t(T.heroP)}
+              </p>
+
+              <div className="mt-8 flex flex-wrap items-center gap-4">
+                <button
+                  onClick={() => scrollToId("work")}
+                  className="group flex items-center gap-2.5 rounded-full bg-flame px-7 py-3.5 text-sm font-bold text-white shadow-[0_10px_30px_rgba(232,89,12,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-flame-deep"
+                >
+                  {t(T.heroCta1)}
+                  <ArrowIcon className="rtl-flip h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+                </button>
+                <button
+                  onClick={() => scrollToId("departments")}
+                  className="rounded-full border-2 border-ink/15 px-7 py-3.5 text-sm font-bold text-ink transition-all duration-200 hover:border-teal hover:text-teal"
+                >
+                  {t(T.heroCta2)}
+                </button>
+              </div>
+
+              <div className="mt-9 flex flex-wrap items-stretch border-t-2 border-ink/10 pt-6">
+                {STATS.slice(0, 3).map((v, i) => (
+                  <div
+                    key={i}
+                    className={`py-1 pe-7 md:pe-8 ${i > 0 ? "border-s-2 border-line ps-7 md:ps-8" : ""}`}
+                  >
+                    <p className="font-display text-3xl font-black text-ink md:text-4xl">
+                      <CountUp value={v} suffix={i === 0 ? "+" : ""} />
+                    </p>
+                    <p className="mt-1 text-[11px] font-bold text-muted">
+                      {STATS_LABELS[lang][i]}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ===== الناحية الداكنة — لوحة أقسام حية ===== */}
+        <div
+          className="relative overflow-hidden bg-ink lg:col-span-5"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+        >
+          <div className="blueprint-dark absolute inset-0" aria-hidden />
+          {CATEGORIES.map((c, i) => (
+            <div
+              key={c.id}
+              className={`absolute inset-0 transition-opacity duration-700 ${
+                i === active ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              <img
+                src={c.image}
+                alt={t(c.name)}
+                loading={i === 0 ? "eager" : "lazy"}
+                className={`h-full w-full object-cover ${i === active ? "kenburns" : ""}`}
+              />
+            </div>
+          ))}
+          <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/45 to-ink/15" />
+
+          <span
+            key={`num-${active}`}
+            className="font-display pop-in pointer-events-none absolute top-3 end-4 select-none text-[6.5rem] leading-none font-black text-ghost-light md:text-[8.5rem]"
+            dir="ltr"
+            aria-hidden
+          >
+            {CATEGORIES[active].num}
+          </span>
+
+          <RotatingBadge
+            text="DUPLEX STUDIO • WEB • DESIGN • FILM • GROWTH •"
+            className="absolute top-6 -start-9 z-20 hidden h-24 w-24 drop-shadow-2xl lg:block"
+          />
+
+          <div className="relative flex h-full min-h-[430px] flex-col justify-end p-6 md:p-9 lg:min-h-[560px]">
+            <div key={`info-${active}`} className="pop-in">
+              <p
+                className="text-[10px] font-black tracking-[0.32em] uppercase md:text-[11px]"
+                style={{ color: CATEGORIES[active].color }}
+                dir="ltr"
+              >
+                {CATEGORIES[active].latin}
+              </p>
+              <h3 className="font-display mt-2 text-3xl font-extrabold text-paper md:text-4xl">
+                {t(CATEGORIES[active].name)}
+              </h3>
+              <p className="mt-2.5 max-w-sm text-sm leading-relaxed text-paper/70 md:text-[15px]">
+                {t(CATEGORIES[active].blurb)}
+              </p>
+            </div>
+
+            <div className="mt-6 flex items-center justify-between gap-4 border-t border-paper/15 pt-5">
+              <Link
+                to={`/work/${CATEGORIES[active].id}`}
+                className="group inline-flex items-center gap-2 text-sm font-extrabold text-flame transition-colors hover:text-paper"
+              >
+                {t(T.exploreCat)}
+                <ArrowIcon className="rtl-flip h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+              </Link>
+              <span className="text-xs font-bold text-paper/50">
+                {projectsByCategory(CATEGORIES[active].id).length} {t(T.depsProjects)}
+              </span>
+            </div>
+
+            <div className="mt-5 flex items-center gap-2">
+              {CATEGORIES.map((c, i) => (
+                <button
+                  key={c.id}
+                  onClick={() => setActive(i)}
+                  aria-label={t(c.name)}
+                  className={`h-2.5 rounded-full transition-all duration-300 ${
+                    i === active ? "w-9" : "w-2.5 bg-paper/30 hover:bg-paper/60"
+                  }`}
+                  style={i === active ? { background: c.color } : undefined}
+                />
+              ))}
+              <span
+                className="ms-auto text-[11px] font-bold text-paper/40 tabular-nums"
+                dir="ltr"
+              >
+                0{active + 1} / 0{total}
+              </span>
+            </div>
           </div>
         </div>
       </div>
 
       {/* ------------- Departments strip ------------- */}
       <div className="relative mt-14 md:mt-20">
-        <RotatingBadge
-          text="DUPLEX STUDIO • WEB • DESIGN • FILM • GROWTH •"
-          className="absolute -top-16 end-8 z-10 hidden h-28 w-28 drop-shadow-2xl lg:block"
-        />
         <div className="container-x mb-5 flex items-end justify-between gap-4">
           <p className="font-display text-lg font-extrabold text-ink md:text-xl">
             {t(T.heroDepartments)}
