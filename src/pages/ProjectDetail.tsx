@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { useLang } from "../i18n";
 import { T } from "../data/translations";
 import { CONTACT, getCategory, getProject, nextInCategory } from "../data/projects";
@@ -86,6 +87,15 @@ export default function ProjectDetail() {
 
   return (
     <>
+      <Helmet>
+        <title>{`${t(project.title)} — ${t(T.brand)}`}</title>
+        <meta name="description" content={t(project.tagline)} />
+        <meta property="og:type" content="article" />
+        <meta property="og:title" content={t(project.title)} />
+        <meta property="og:description" content={t(project.tagline)} />
+        <meta property="og:image" content={project.image} />
+      </Helmet>
+
       {/* ================= Header ================= */}
       <section className="relative overflow-hidden border-b border-line bg-surface">
         <div className="blueprint absolute inset-0" aria-hidden />

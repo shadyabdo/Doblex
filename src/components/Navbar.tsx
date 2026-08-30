@@ -23,6 +23,7 @@ export default function Navbar() {
   const links = [
     { to: "/", label: t(T.navHome), end: true },
     ...CATEGORIES.map((c) => ({ to: `/work/${c.id}`, label: t(c.name), end: false })),
+    { to: "/blog", label: lang === "ar" ? "المدونة" : "Blog", end: false },
   ];
 
   const isActive = (to: string, end: boolean) =>

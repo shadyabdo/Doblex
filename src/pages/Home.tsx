@@ -1,85 +1,258 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { useLang } from "../i18n";
 import { MARQUEE, PROCESS, STATS_LABELS, T } from "../data/translations";
 import {
   CATEGORIES,
-  PROJECTS,
   STATS,
   featuredProjects,
   projectsByCategory,
 } from "../data/projects";
-import { CountUp, Marquee, Reveal, RotatingBadge, SectionHead, Spark } from "../lib/ui";
+import { BLOG_POSTS } from "../data/blog";
+import {
+  CountUp,
+  Marquee,
+  Reveal,
+  RotatingBadge,
+  SectionHead,
+  Spark,
+} from "../lib/ui";
 import { ArrowIcon } from "../components/icons";
 import ProjectCard from "../components/ProjectCard";
+import BlogCard from "../components/BlogCard";
 
-const CHARS = "DUPLEX#/<>*+";
+/** عبارات تتبدل في العنوان الرئيسي حسب القسم النشط */
+const CRAFT_PHRASES: { ar: string; en: string }[] = [
+  { ar: "مواقع تبهر عملاءك", en: "websites that wow" },
+  { ar: "هويات لا تُنسى", en: "identities that stick" },
+  { ar: "فيديوهات تخطف الأنظار", en: "films that captivate" },
+  { ar: "حملات تنمّي أعمالك", en: "campaigns that grow" },
+];
 
 /** تمرير ناعم لعنصر داخل الصفحة — متوافق مع HashRouter */
 function scrollToId(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-/** شريط مقياس متحرك داخل كونسول الهيرو */
-function Meter({ value, color, delay }: { value: number; color: string; delay: number }) {
-  return (
-    <span className="block h-1.5 w-full overflow-hidden rounded-full bg-paper/15">
-      <span
-        className="block h-full rounded-full"
-        style={{
-          width: `${value}%`,
-          background: color,
-          animation: `meter-grow 1.2s cubic-bezier(0.22,1,0.36,1) ${delay}ms both`,
-        }}
-      />
-    </span>
-  );
-}
-
-const METERS = [92, 88, 84, 90];
-
-/** تأثير فكّ التشفير للعنوان اللاتيني */
-function ScrambleText({ text, className = "" }: { text: string; className?: string }) {
-  const [out, setOut] = useState(text);
+/* ============================ Craft-Switcher Hero ============================ */
+function CraftHero() {
+  const { lang, t } = useLang();
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const total = CATEGORIES.length;
+  const phrase = CRAFT_PHRASES[active][lang];
+  const cat = CATEGORIES[active];
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setOut(text);
-      return;
-    }
-    let frame = 0;
-    let raf = 0;
-    const total = 44;
-    const tick = () => {
-      frame += 1;
-      const revealed = Math.floor((frame / total) * text.length);
-      let s = "";
-      for (let i = 0; i < text.length; i++) {
-        const ch = text[i];
-        if (ch === " ") {
-          s += " ";
-          continue;
-        }
-        s += i < revealed ? ch : CHARS[Math.floor(Math.random() * CHARS.length)];
-      }
-      setOut(s);
-      if (frame < total) raf = requestAnimationFrame(tick);
-      else setOut(text);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [text]);
+    if (paused) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const id = setInterval(() => setActive((a) => (a + 1) % total), 4500);
+    return () => clearInterval(id);
+  }, [paused, total]);
 
   return (
-    <span className={className} dir="ltr">
-      {out}
-    </span>
+    <section className="relative overflow-hidden">
+      <div className="blueprint absolute inset-0" aria-hidden />
+      <div
+        className="absolute -top-24 end-[-8%] h-[420px] w-[420px] rounded-full bg-teal/10 blur-3xl"
+        aria-hidden
+      />
+      <div
+        className="absolute top-72 start-[-10%] h-[360px] w-[360px] rounded-full bg-flame/10 blur-3xl"
+        aria-hidden
+      />
+
+      <div className="container-x relative grid items-center gap-14 py-16 lg:grid-cols-12 lg:gap-12 lg:py-24">
+        {/* ------------- Copy ------------- */}
+        <div className="lg:col-span-6">
+          <div className="flex flex-wrap items-center gap-4">
+            <span className="inline-flex items-center gap-2.5 rounded-full border border-line bg-surface px-4 py-2 text-xs font-bold text-ink-soft shadow-sm">
+              <span className="pulse-dot h-2 w-2 rounded-full bg-jade" />
+              {t(T.heroAvailable)}
+            </span>
+            <p className="flex items-center gap-3 text-xs font-bold tracking-[0.24em] text-teal uppercase">
+              <span className="h-px w-10 bg-flame" />
+              {t(T.heroKicker)}
+            </p>
+          </div>
+
+          <h1 className="font-display mt-7 text-[2.7rem] leading-[1.08] font-black text-ink sm:text-6xl xl:text-[4.5rem]">
+            <span className="mask-line" style={{ "--line-delay": "80ms" } as React.CSSProperties}>
+              <span>{t(T.heroL1)}</span>
+            </span>
+            <span className="mask-line" style={{ "--line-delay": "210ms" } as React.CSSProperties}>
+              <span key={active} className="inline-flex items-end gap-3">
+                <span className="relative inline-block" style={{ color: cat.color }}>
+                  {phrase}
+                  <svg
+                    className="absolute -bottom-2.5 start-0 h-3 w-full opacity-80"
+                    viewBox="0 0 220 12"
+                    preserveAspectRatio="none"
+                    aria-hidden
+                  >
+                    <path
+                      d="M3 9c42-6 82-6.5 110-3.5 30 3.2 68 2.5 104-3.5"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="5"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </span>
+                <Spark className="mb-2 inline h-7 w-7 shrink-0 text-flame sm:h-9 sm:w-9" />
+              </span>
+            </span>
+          </h1>
+
+          <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted">
+            {t(T.heroP)}
+          </p>
+
+          <div className="mt-9 flex flex-wrap items-center gap-4">
+            <button
+              onClick={() => scrollToId("work")}
+              className="group flex items-center gap-2.5 rounded-full bg-flame px-7 py-3.5 text-sm font-bold text-white shadow-[0_10px_30px_rgba(232,89,12,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-flame-deep"
+            >
+              {t(T.heroCta1)}
+              <ArrowIcon className="rtl-flip h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+            </button>
+            <button
+              onClick={() => scrollToId("departments")}
+              className="rounded-full border-2 border-ink/15 px-7 py-3.5 text-sm font-bold text-ink transition-all duration-200 hover:border-teal hover:text-teal"
+            >
+              {t(T.heroCta2)}
+            </button>
+          </div>
+
+          {/* Typographic stats */}
+          <div className="mt-12 flex flex-wrap items-stretch">
+            {STATS.slice(0, 3).map((v, i) => (
+              <div
+                key={i}
+                className={`py-1 pe-7 md:pe-9 ${i > 0 ? "border-s-2 border-line ps-7 md:ps-9" : ""}`}
+              >
+                <p className="font-display text-4xl font-black text-ink md:text-5xl">
+                  <CountUp value={v} suffix={i === 0 ? "+" : ""} />
+                </p>
+                <p className="mt-1.5 text-xs font-bold text-muted">
+                  {STATS_LABELS[lang][i]}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ------------- Showcase ------------- */}
+        <div
+          className="lg:col-span-6"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+        >
+          <Reveal delay={150}>
+            <div className="relative">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-line bg-ink shadow-[0_44px_90px_rgba(13,31,51,0.3)] sm:aspect-[16/11]">
+                {CATEGORIES.map((c, i) => (
+                  <img
+                    key={c.id}
+                    src={c.image}
+                    alt={t(c.name)}
+                    loading={i === 0 ? "eager" : "lazy"}
+                    className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
+                      i === active ? "kenburns opacity-100" : "opacity-0"
+                    }`}
+                  />
+                ))}
+
+                <div className="absolute inset-0 bg-gradient-to-t from-ink/75 via-transparent to-ink/10" />
+
+                {/* Overlay label */}
+                <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-6 md:p-7">
+                  <div key={active} className="pop-in">
+                    <p
+                      className="text-[10px] font-black tracking-[0.3em] uppercase"
+                      style={{ color: cat.color }}
+                      dir="ltr"
+                    >
+                      {cat.latin}
+                    </p>
+                    <p className="font-display mt-1 text-2xl font-extrabold text-paper md:text-3xl">
+                      {t(cat.name)}
+                    </p>
+                    <p className="mt-1 max-w-xs text-sm text-paper/70">{t(cat.blurb)}</p>
+                  </div>
+                  <Link
+                    to={`/work/${cat.id}`}
+                    className="group flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-paper text-ink transition-all duration-300 hover:bg-flame hover:text-white"
+                    aria-label={t(T.exploreCat)}
+                  >
+                    <ArrowIcon className="rtl-flip h-5 w-5 transition-transform duration-200 group-hover:translate-x-0.5" />
+                  </Link>
+                </div>
+              </div>
+
+              {/* Tabs */}
+              <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+                {CATEGORIES.map((c, i) => (
+                  <button
+                    key={c.id}
+                    onClick={() => setActive(i)}
+                    className={`group relative overflow-hidden rounded-lg border px-3 py-2.5 text-start transition-all duration-200 ${
+                      i === active
+                        ? "border-transparent text-white shadow-md"
+                        : "border-line bg-surface text-ink-soft hover:-translate-y-0.5"
+                    }`}
+                    style={i === active ? { background: c.color } : undefined}
+                    onMouseEnter={(e) => {
+                      if (i !== active) e.currentTarget.style.borderColor = c.color;
+                    }}
+                    onMouseLeave={(e) => {
+                      if (i !== active) e.currentTarget.style.borderColor = "";
+                    }}
+                    aria-pressed={i === active}
+                  >
+                    <span className="flex items-center gap-2">
+                      <span
+                        className="font-display text-xs font-black"
+                        style={{ color: i === active ? "#fff" : c.color }}
+                        dir="ltr"
+                      >
+                        {c.num}
+                      </span>
+                      <span className="truncate text-xs font-extrabold">{t(c.name)}</span>
+                    </span>
+                    {i === active && (
+                      <span
+                        key={`bar-${active}-${paused ? "p" : "r"}`}
+                        className="absolute bottom-0 start-0 h-0.5 bg-white/70"
+                        style={
+                          paused
+                            ? { width: "100%" }
+                            : { animation: "tab-progress 4.5s linear forwards" }
+                        }
+                      />
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              <RotatingBadge
+                text="DUPLEX STUDIO • WEB • DESIGN • FILM • GROWTH •"
+                className="absolute -top-8 -start-5 hidden h-28 w-28 drop-shadow-2xl md:block lg:-start-9"
+              />
+            </div>
+          </Reveal>
+        </div>
+      </div>
+    </section>
   );
 }
 
+/* ============================ Home Page ============================ */
 export default function Home() {
   const { lang, t } = useLang();
   const featured = featuredProjects();
+  const latestPosts = BLOG_POSTS.slice(0, 4);
 
   useEffect(() => {
     document.title =
@@ -90,221 +263,23 @@ export default function Home() {
 
   return (
     <>
-      {/* ============================ Opening ============================ */}
-      <section className="relative flex overflow-hidden">
-        <div className="blueprint absolute inset-0" aria-hidden />
-        <div
-          className="absolute -top-24 end-[-8%] h-[420px] w-[420px] rounded-full bg-teal/10 blur-3xl"
-          aria-hidden
+      <Helmet>
+        <title>
+          {lang === "ar"
+            ? "دوبليكس | Duplex — استوديو تقني متكامل"
+            : "Duplex — Full-stack Tech Studio"}
+        </title>
+        <meta
+          name="description"
+          content={
+            lang === "ar"
+              ? "دوبليكس استوديو تقني متكامل: تطوير مواقع، جرافيك ديزاين، فيديو إديتينج، وديجيتال ماركتينج تحت سقف واحد."
+              : "Duplex is a full-stack tech studio: web development, graphic design, video editing and digital marketing under one roof."
+          }
         />
-        <div
-          className="absolute top-72 start-[-10%] h-[360px] w-[360px] rounded-full bg-flame/10 blur-3xl"
-          aria-hidden
-        />
-        <p
-          className="font-display pointer-events-none absolute -bottom-10 start-0 translate-y-6 text-[24vw] leading-none font-black text-ghost select-none lg:text-[17rem]"
-          aria-hidden
-        >
-          DUPLEX
-        </p>
+      </Helmet>
 
-        <div className="container-x relative grid flex-1 items-center gap-16 py-16 lg:grid-cols-12 lg:gap-12 lg:py-24">
-          {/* ------------- Copy ------------- */}
-          <div className="lg:col-span-7">
-            <div className="flex flex-wrap items-center gap-4">
-              <span className="inline-flex items-center gap-2.5 rounded-full border border-line bg-surface px-4 py-2 text-xs font-bold text-ink-soft shadow-sm">
-                <span className="pulse-dot h-2 w-2 rounded-full bg-jade" />
-                {t(T.heroAvailable)}
-              </span>
-              <p className="flex items-center gap-3 text-xs font-bold tracking-[0.24em] text-teal uppercase">
-                <span className="h-px w-10 bg-flame" />
-                {t(T.heroKicker)}
-              </p>
-            </div>
-
-            <h1 className="font-display mt-7 text-[2.7rem] leading-[1.08] font-black text-ink sm:text-6xl xl:text-[4.7rem]">
-              <span className="mask-line" style={{ "--line-delay": "80ms" } as React.CSSProperties}>
-                <span>{t(T.heroL1)}</span>
-              </span>
-              <span className="mask-line" style={{ "--line-delay": "210ms" } as React.CSSProperties}>
-                <span className="text-teal">{t(T.heroL2)}</span>
-              </span>
-              <span className="mask-line" style={{ "--line-delay": "340ms" } as React.CSSProperties}>
-                <span className="flex items-end gap-3">
-                  <span className="relative inline-block">
-                    {t(T.heroL3)}
-                    <svg
-                      className="absolute -bottom-2.5 start-0 h-3 w-full text-flame"
-                      viewBox="0 0 220 12"
-                      preserveAspectRatio="none"
-                      aria-hidden
-                    >
-                      <path
-                        d="M3 9c42-6 82-6.5 110-3.5 30 3.2 68 2.5 104-3.5"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="5"
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                  </span>
-                  <Spark className="mb-2 inline h-7 w-7 shrink-0 text-flame sm:h-9 sm:w-9" />
-                </span>
-              </span>
-            </h1>
-
-            <p className="mt-5 overflow-hidden">
-              <ScrambleText
-                text="DUPLEX® DIGITAL STUDIO"
-                className="font-display inline-block text-lg font-black tracking-[0.3em] text-ink/25 md:text-xl"
-              />
-            </p>
-
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted">
-              {t(T.heroP)}
-            </p>
-
-            <div className="mt-9 flex flex-wrap items-center gap-4">
-              <button
-                onClick={() => scrollToId("work")}
-                className="group flex items-center gap-2.5 rounded-full bg-flame px-7 py-3.5 text-sm font-bold text-white shadow-[0_10px_30px_rgba(232,89,12,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-flame-deep"
-              >
-                {t(T.heroCta1)}
-                <ArrowIcon className="rtl-flip h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-              </button>
-              <button
-                onClick={() => scrollToId("departments")}
-                className="rounded-full border-2 border-ink/15 px-7 py-3.5 text-sm font-bold text-ink transition-all duration-200 hover:border-teal hover:text-teal"
-              >
-                {t(T.heroCta2)}
-              </button>
-            </div>
-
-            {/* Typographic stats */}
-            <div className="mt-12 flex flex-wrap items-stretch">
-              {STATS.slice(0, 3).map((v, i) => (
-                <div
-                  key={i}
-                  className={`py-1 pe-7 md:pe-9 ${i > 0 ? "border-s-2 border-line ps-7 md:ps-9" : ""}`}
-                >
-                  <p className="font-display text-4xl font-black text-ink md:text-5xl">
-                    <CountUp value={v} suffix={i === 0 ? "+" : ""} />
-                  </p>
-                  <p className="mt-1.5 text-xs font-bold text-muted">
-                    {STATS_LABELS[lang][i]}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* ------------- Studio console ------------- */}
-          <div className="relative lg:col-span-5">
-            <Reveal delay={150}>
-              <div className="relative">
-                <div className="relative overflow-hidden rounded-xl border border-ink/25 bg-ink text-paper shadow-[0_44px_90px_rgba(13,31,51,0.4)]">
-                  <div className="blueprint-dark absolute inset-0" aria-hidden />
-                  <div
-                    className="absolute -top-16 -end-16 h-48 w-48 rounded-full bg-teal/25 blur-3xl"
-                    aria-hidden
-                  />
-
-                  <div className="relative p-6 md:p-7">
-                    {/* Console header */}
-                    <div className="flex items-center justify-between border-b border-paper/10 pb-4">
-                      <p
-                        className="font-display text-xs font-black tracking-[0.32em] text-paper/85"
-                        dir="ltr"
-                      >
-                        DUPLEX<span className="text-flame">®</span> CONSOLE
-                      </p>
-                      <p className="flex items-center gap-2 text-[11px] font-extrabold tracking-widest text-jade">
-                        <span className="pulse-dot h-2 w-2 rounded-full bg-jade" />
-                        LIVE
-                      </p>
-                    </div>
-
-                    {/* Channels */}
-                    <div className="py-2">
-                      {CATEGORIES.map((c, i) => {
-                        const count = projectsByCategory(c.id).length;
-                        return (
-                          <Link
-                            key={c.id}
-                            to={`/work/${c.id}`}
-                            className="group grid grid-cols-[28px_64px_1fr_auto] items-center gap-3 border-b border-paper/10 py-4 transition-all duration-300 last:border-b-0 hover:bg-paper/[0.06] md:gap-4"
-                          >
-                            <span
-                              className="font-display text-sm font-black"
-                              style={{ color: c.color }}
-                              dir="ltr"
-                            >
-                              {c.num}
-                            </span>
-                            <span className="block h-12 w-16 overflow-hidden rounded-lg border border-paper/15">
-                              <img
-                                src={c.image}
-                                alt={t(c.name)}
-                                loading={i > 1 ? "lazy" : "eager"}
-                                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                              />
-                            </span>
-                            <span className="min-w-0">
-                              <span className="flex items-baseline gap-2">
-                                <span className="font-display truncate text-base font-extrabold text-paper md:text-lg">
-                                  {t(c.name)}
-                                </span>
-                                <span
-                                  className="hidden text-[9px] font-black tracking-[0.25em] text-paper/35 sm:block"
-                                  dir="ltr"
-                                >
-                                  {c.latin}
-                                </span>
-                              </span>
-                              <span className="mt-2.5 block max-w-[150px]">
-                                <Meter
-                                  value={METERS[i]}
-                                  color={c.color}
-                                  delay={400 + i * 170}
-                                />
-                              </span>
-                            </span>
-                            <span className="flex items-center gap-3">
-                              <span className="whitespace-nowrap text-[11px] font-bold text-paper/55">
-                                {count} {t(T.depsProjects)}
-                              </span>
-                              <ArrowIcon className="rtl-flip h-4 w-4 text-paper/25 transition-all duration-300 group-hover:translate-x-1 group-hover:text-flame" />
-                            </span>
-                          </Link>
-                        );
-                      })}
-                    </div>
-
-                    {/* Console footer */}
-                    <div className="flex items-center justify-between border-t border-paper/10 pt-4 text-[11px] font-bold text-paper/60">
-                      <span>
-                        {PROJECTS.length} {t(T.catCount)} — 2019+
-                      </span>
-                      <button
-                        onClick={() => scrollToId("work")}
-                        className="group/f flex items-center gap-1.5 font-extrabold text-flame transition-colors hover:text-paper"
-                      >
-                        {t(T.heroCta1)}
-                        <ArrowIcon className="rtl-flip h-3.5 w-3.5 transition-transform duration-200 group-hover/f:translate-x-1" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <RotatingBadge
-                  text="DUPLEX STUDIO • WEB • DESIGN • FILM • GROWTH •"
-                  className="absolute -bottom-9 -start-5 h-28 w-28 drop-shadow-2xl md:-start-9"
-                />
-              </div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
+      <CraftHero />
 
       {/* ============================ Marquee ============================ */}
       <Marquee items={lang === "ar" ? MARQUEE.ar : MARQUEE.en} />
@@ -359,7 +334,6 @@ export default function Home() {
                     <ArrowIcon className="rtl-flip -rotate-45 h-5 w-5 transition-transform duration-300 group-hover:rotate-0" />
                   </span>
 
-                  {/* Hover floating preview */}
                   <img
                     src={c.image}
                     alt=""
@@ -388,13 +362,8 @@ export default function Home() {
                       key={c.id}
                       to={`/work/${c.id}`}
                       className="rounded-full border border-line bg-surface px-4 py-2 text-xs font-bold text-ink-soft transition-all duration-200 hover:-translate-y-0.5 hover:border-transparent hover:text-white"
-                      style={{ ["--hov" as string]: c.color }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.background = c.color)
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.background = "")
-                      }
+                      onMouseEnter={(e) => (e.currentTarget.style.background = c.color)}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = "")}
                     >
                       {t(c.name)} · {projectsByCategory(c.id).length}
                     </Link>
@@ -461,6 +430,40 @@ export default function Home() {
               </div>
             </Reveal>
           ))}
+        </div>
+      </section>
+
+      {/* ============================ Blog ============================ */}
+      <section id="blog" className="scroll-mt-24 border-t border-line bg-surface/60">
+        <div className="container-x py-20 md:py-28">
+          <SectionHead
+            kicker={lang === "ar" ? "04 — من المدونة" : "04 — From the blog"}
+            title={lang === "ar" ? "آخر ما كتبناه" : "Latest from our blog"}
+            sub={
+              lang === "ar"
+                ? "رؤى وقصص وخبرة فريق دوبليكس في التصميم والتطوير والفيديو والتسويق."
+                : "Insights, stories and expertise from the Duplex team on design, development, video and marketing."
+            }
+            end={
+              <Reveal delay={150}>
+                <Link
+                  to="/blog"
+                  className="group flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-bold text-paper transition-all duration-200 hover:-translate-y-0.5 hover:bg-teal"
+                >
+                  {lang === "ar" ? "عرض المزيد" : "View more"}
+                  <ArrowIcon className="rtl-flip h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+                </Link>
+              </Reveal>
+            }
+          />
+
+          <div className="grid gap-7 sm:grid-cols-2 xl:grid-cols-4">
+            {latestPosts.map((p, i) => (
+              <Reveal key={p.id} delay={(i % 4) * 90}>
+                <BlogCard post={p} />
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
     </>

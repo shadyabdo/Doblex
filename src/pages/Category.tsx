@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { useLang } from "../i18n";
 import { T } from "../data/translations";
 import { CATEGORIES, getCategory, projectsByCategory } from "../data/projects";
@@ -24,6 +25,11 @@ export default function Category() {
 
   return (
     <>
+      <Helmet>
+        <title>{`${t(cat.name)} — ${t(T.brand)}`}</title>
+        <meta name="description" content={t(cat.blurb)} />
+      </Helmet>
+
       {/* ---------- Department header ---------- */}
       <section className="relative overflow-hidden border-b border-line bg-surface">
         <div className="blueprint absolute inset-0" aria-hidden />

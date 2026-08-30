@@ -14,7 +14,7 @@ import {
 import { CountUp, Reveal, Spark } from "../lib/ui";
 
 export default function Footer() {
-  const { t } = useLang();
+  const { lang, t } = useLang();
   const [copied, setCopied] = useState(false);
 
   const copyEmail = async () => {
@@ -143,6 +143,15 @@ export default function Footer() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <Link
+                  to="/blog"
+                  className="group flex items-center gap-2.5 text-paper/75 transition-colors hover:text-flame"
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-flame transition-transform duration-200 group-hover:scale-150" />
+                  {lang === "ar" ? "المدونة" : "Blog"}
+                </Link>
+              </li>
             </ul>
           </div>
 
