@@ -74,57 +74,68 @@ function CraftHero() {
         aria-hidden
       />
 
-      <div className="container-x relative py-16 md:py-20">
-        <div className="max-w-3xl">
-          <div className="flex flex-wrap items-center gap-4">
-            <span className="inline-flex items-center gap-2.5 rounded-full border border-line bg-surface px-4 py-2 text-xs font-bold text-ink-soft shadow-sm">
-              <span className="pulse-dot h-2 w-2 rounded-full bg-jade" />
-              {t(T.heroAvailable)}
-            </span>
-            <p className="flex items-center gap-3 text-xs font-bold tracking-[0.24em] text-teal uppercase">
-              <span className="h-px w-10 bg-flame" />
-              {t(T.heroKicker)}
-            </p>
-          </div>
-
-          <h1 className="font-display mt-8 text-ink">
-            <span className="mask-line text-[2.4rem] leading-[1.12] font-black sm:text-5xl xl:text-6xl" style={{ "--line-delay": "60ms" } as React.CSSProperties}>
-              <span>{t(T.heroRollLead)}</span>
-            </span>
-            <span className="mask-line text-[3.6rem] leading-[1.06] font-black sm:text-7xl xl:text-[6.2rem]" style={{ "--line-delay": "180ms" } as React.CSSProperties}>
-              <span>
-                <WordRoller words={rollWords} />
-              </span>
-            </span>
-            <span className="mask-line text-[2.4rem] leading-[1.12] font-black sm:text-5xl xl:text-6xl" style={{ "--line-delay": "300ms" } as React.CSSProperties}>
-              <span className="flex items-center gap-3">
-                <span className="relative inline-block">
-                  {t(T.heroRollTail)}
-                  <svg
-                    className="absolute -bottom-2 start-0 h-3 w-full text-flame"
-                    viewBox="0 0 220 12"
-                    preserveAspectRatio="none"
-                    aria-hidden
-                  >
-                    <path
-                      d="M3 9c42-6 82-6.5 110-3.5 30 3.2 68 2.5 104-3.5"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="5"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                </span>
-                <Spark className="h-7 w-7 shrink-0 text-flame sm:h-9 sm:w-9" />
-              </span>
-            </span>
-          </h1>
-
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted">
-            {t(T.heroP)}
+      {/* ---------- Statement — عرض الشاشة كامل ---------- */}
+      <div className="relative px-5 pt-14 pb-10 sm:px-8 md:px-12 md:pt-20 lg:px-16">
+        <div className="flex flex-wrap items-center gap-4">
+          <span className="inline-flex items-center gap-2.5 rounded-full border border-line bg-surface px-4 py-2 text-xs font-bold text-ink-soft shadow-sm">
+            <span className="pulse-dot h-2 w-2 rounded-full bg-jade" />
+            {t(T.heroAvailable)}
+          </span>
+          <p className="flex items-center gap-3 text-xs font-bold tracking-[0.24em] text-teal uppercase">
+            <span className="h-px w-10 bg-flame" />
+            {t(T.heroKicker)}
           </p>
+        </div>
 
-          <div className="mt-9 flex flex-wrap items-center gap-4">
+        <h1 className="font-display mt-8 w-full text-ink">
+          <span
+            className="mask-line text-[clamp(2.2rem,5.2vw,4.2rem)] leading-[1.1] font-black"
+            style={{ "--line-delay": "60ms" } as React.CSSProperties}
+          >
+            <span>{t(T.heroRollLead)}</span>
+          </span>
+          <span
+            className="mask-line text-[clamp(3.6rem,11vw,9.5rem)] leading-[1.04] font-black"
+            style={{ "--line-delay": "180ms" } as React.CSSProperties}
+          >
+            <span>
+              <WordRoller words={rollWords} />
+            </span>
+          </span>
+          <span
+            className="mask-line text-[clamp(2.2rem,5.2vw,4.2rem)] leading-[1.1] font-black"
+            style={{ "--line-delay": "300ms" } as React.CSSProperties}
+          >
+            <span className="flex items-center gap-3 md:gap-5">
+              <span className="relative inline-block">
+                {t(T.heroRollTail)}
+                <svg
+                  className="absolute -bottom-2 start-0 h-3 w-full text-flame md:-bottom-3 md:h-4"
+                  viewBox="0 0 220 12"
+                  preserveAspectRatio="none"
+                  aria-hidden
+                >
+                  <path
+                    d="M3 9c42-6 82-6.5 110-3.5 30 3.2 68 2.5 104-3.5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="5"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </span>
+              <Spark className="h-8 w-8 shrink-0 text-flame md:h-14 md:w-14" />
+            </span>
+          </span>
+        </h1>
+
+        <p className="mt-7 max-w-2xl text-base leading-relaxed text-muted md:text-lg">
+          {t(T.heroP)}
+        </p>
+
+        {/* شريط سفلي بعرض كامل: أزرار + أرقام */}
+        <div className="mt-10 flex flex-col gap-8 border-t-2 border-ink/10 pt-7 md:mt-14 md:flex-row md:items-end md:justify-between lg:gap-6">
+          <div className="flex flex-wrap items-center gap-4">
             <button
               onClick={() => scrollToId("work")}
               className="group flex items-center gap-2.5 rounded-full bg-flame px-7 py-3.5 text-sm font-bold text-white shadow-[0_10px_30px_rgba(232,89,12,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-flame-deep"
@@ -140,8 +151,7 @@ function CraftHero() {
             </button>
           </div>
 
-          {/* Typographic stats */}
-          <div className="mt-12 flex flex-wrap items-stretch">
+          <div className="flex flex-wrap items-stretch">
             {STATS.slice(0, 3).map((v, i) => (
               <div
                 key={i}
