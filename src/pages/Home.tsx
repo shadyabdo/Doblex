@@ -1,8 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useLang } from "../i18n";
-import { MARQUEE, PROCESS, STATS_LABELS, T } from "../data/translations";
+import { HERO_ROLL, MARQUEE, PROCESS, STATS_LABELS, T } from "../data/translations";
 import {
   CATEGORIES,
   STATS,
@@ -27,51 +27,70 @@ function scrollToId(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-/* ============================ Poster Hero ============================ */
+/* ============================ Roller Hero ============================ */
+function WordRoller({ words }: { words: string[] }) {
+  const [idx, setIdx] = useState(0);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const id = setInterval(() => setIdx((i) => (i + 1) % words.length), 2400);
+    return () => clearInterval(id);
+  }, [words.length]);
+
+  const cat = CATEGORIES[idx % CATEGORIES.length];
+
+  return (
+    <span className="relative inline-block" style={{ height: "1.14em" }}>
+      <span className="block overflow-hidden" style={{ height: "1.14em" }}>
+        <span
+          className="block transition-transform duration-[560ms] ease-[cubic-bezier(0.77,0,0.18,1)]"
+          style={{ transform: `translateY(-${idx * (100 / words.length)}%)` }}
+        >
+          {words.map((w, i) => (
+            <span
+              key={w}
+              className="block"
+              style={{
+                color: CATEGORIES[i % CATEGORIES.length].color,
+                height: "1.14em",
+                lineHeight: 1.14,
+              }}
+            >
+              {w}
+            </span>
+          ))}
+        </span>
+      </span>
+      {/* خط سفلي يتجدد بلون القسم النشط */}
+      <span
+        key={`u-${idx}`}
+        className="origin-inline-start absolute -bottom-[0.05em] start-0 block h-[0.075em] w-full rounded-full"
+        style={{
+          background: cat.color,
+          animation: "underline-grow 0.55s cubic-bezier(0.22,1,0.36,1) both",
+        }}
+      />
+    </span>
+  );
+}
+
 function CraftHero() {
   const { lang, t } = useLang();
-  const clipImg = CATEGORIES[2].image;
+  const rollWords = HERO_ROLL[lang];
 
   return (
     <section className="relative -mt-20 overflow-hidden md:-mt-24">
-      {/* ---------- Poster opener ---------- */}
       <div className="blueprint absolute inset-0" aria-hidden />
       <div
         className="absolute -top-28 end-[-8%] h-[420px] w-[420px] rounded-full bg-teal/10 blur-3xl"
         aria-hidden
       />
       <div
-        className="absolute top-80 start-[-10%] h-[340px] w-[340px] rounded-full bg-flame/10 blur-3xl"
+        className="absolute top-72 start-[-10%] h-[340px] w-[340px] rounded-full bg-flame/10 blur-3xl"
         aria-hidden
       />
 
-      {/* كلمة شبحية تنحرف ببطء */}
-      <p
-        className="font-display drift-slow pointer-events-none absolute -top-8 end-0 hidden leading-none font-black text-ghost select-none lg:block"
-        style={{ fontSize: "clamp(8rem,16vw,15rem)" }}
-        dir="ltr"
-        aria-hidden
-      >
-        DUPLEX
-      </p>
-
-      {/* علامات زوايا البوستر */}
-      <div className="pointer-events-none absolute inset-4 z-10 hidden sm:block md:inset-6" aria-hidden>
-        <span className="absolute top-0 start-0 h-5 w-5 border-t-2 border-s-2 border-ink/25" />
-        <span className="absolute top-0 end-0 h-5 w-5 border-t-2 border-e-2 border-ink/25" />
-        <span className="absolute bottom-0 start-0 h-5 w-5 border-b-2 border-s-2 border-ink/25" />
-        <span className="absolute bottom-0 end-0 h-5 w-5 border-b-2 border-e-2 border-ink/25" />
-      </div>
-
-      {/* نص جانبي عمودي */}
-      <p
-        className="absolute top-1/2 end-7 z-10 hidden -translate-y-1/2 rotate-90 text-[10px] font-black tracking-[0.42em] whitespace-nowrap text-muted/70 uppercase xl:block"
-        dir="ltr"
-      >
-        Est. 2019 — Cairo, Egypt
-      </p>
-
-      <div className="relative px-5 pt-32 pb-16 sm:px-8 md:px-12 md:pt-40 md:pb-20 lg:px-16">
+      <div className="relative px-5 pt-32 pb-14 sm:px-8 md:px-12 md:pt-40 md:pb-16 lg:px-16">
         {/* سطر الميتا */}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <p className="flex items-center gap-3 text-xs font-bold tracking-[0.24em] text-teal uppercase">
@@ -84,34 +103,50 @@ function CraftHero() {
           </span>
         </div>
 
-        {/* الووردمارك */}
-        <h1 className="font-display mt-10 text-ink md:mt-14">
+        {/* العنوان */}
+        <h1 className="font-display mt-12 max-w-5xl text-ink md:mt-16">
           <span
-            className="mask-line block text-[clamp(3.4rem,13vw,10.5rem)] leading-[0.98] font-black"
-            style={{ "--line-delay": "80ms" } as React.CSSProperties}
+            className="mask-line block text-[clamp(1.9rem,4.5vw,3.3rem)] leading-[1.15] font-black"
+            style={{ "--line-delay": "60ms" } as React.CSSProperties}
+          >
+            <span>{t(T.heroRollLead)}</span>
+          </span>
+          <span
+            className="mask-line block text-[clamp(3.4rem,10vw,8rem)] leading-[1.08] font-black"
+            style={{ "--line-delay": "180ms" } as React.CSSProperties}
           >
             <span>
-              {t(T.brand)}
-              <span className="text-flame">.</span>
+              <WordRoller words={rollWords} />
+            </span>
+          </span>
+          <span
+            className="mask-line block text-[clamp(1.9rem,4.5vw,3.3rem)] leading-[1.15] font-black"
+            style={{ "--line-delay": "300ms" } as React.CSSProperties}
+          >
+            <span className="flex items-center gap-3 md:gap-4">
+              <span className="relative inline-block">
+                {t(T.heroRollTail)}
+                <svg
+                  className="absolute -bottom-2 start-0 h-3 w-full text-flame"
+                  viewBox="0 0 220 12"
+                  preserveAspectRatio="none"
+                  aria-hidden
+                >
+                  <path
+                    d="M3 9c42-6 82-6.5 110-3.5 30 3.2 68 2.5 104-3.5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="5"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </span>
+              <Spark className="h-7 w-7 shrink-0 text-flame md:h-10 md:w-10" />
             </span>
           </span>
         </h1>
-        <p className="mask-line -mt-1 md:-mt-3">
-          <span
-            className="text-img-clip font-display block w-fit text-[clamp(2rem,8vw,6.6rem)] leading-[1.04] font-black"
-            style={
-              {
-                "--line-delay": "220ms",
-                backgroundImage: `url(${clipImg})`,
-              } as React.CSSProperties
-            }
-            dir="ltr"
-          >
-            DUPLEX® STUDIO
-          </span>
-        </p>
 
-        {/* السطر السفلي: وصف + أزرار | أرقام */}
+        {/* وصف + أزرار | أرقام */}
         <div className="mt-12 grid items-end gap-10 md:mt-16 lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-7">
             <p className="max-w-xl text-base leading-relaxed text-muted md:text-lg">
@@ -149,19 +184,6 @@ function CraftHero() {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* مؤشر السكرول */}
-      <div
-        className="absolute bottom-5 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2.5 md:flex"
-        aria-hidden
-      >
-        <span className="text-[9px] font-black tracking-[0.4em] text-muted uppercase" dir="ltr">
-          Scroll
-        </span>
-        <span className="relative block h-10 w-px overflow-hidden bg-ink/15">
-          <span className="scrolldot absolute top-0 left-0 block h-3 w-px bg-flame" />
-        </span>
       </div>
 
       {/* ------------- Departments strip ------------- */}
