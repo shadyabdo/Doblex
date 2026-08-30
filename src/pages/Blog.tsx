@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { useLang } from "../i18n";
 import { T } from "../data/translations";
 import {
@@ -40,6 +41,20 @@ export default function Blog() {
 
   return (
     <>
+      <Helmet>
+        <title>
+          {lang === "ar" ? "مدونة دوبليكس — مقالات ورؤى" : "Duplex Blog — Articles & Insights"}
+        </title>
+        <meta
+          name="description"
+          content={
+            lang === "ar"
+              ? "مقالات فريق دوبليكس حول تطوير المواقع، التصميم، الفيديو، والتسويق الرقمي."
+              : "Articles from the Duplex team on web development, design, video and digital marketing."
+          }
+        />
+      </Helmet>
+
       {/* ---------- Header ---------- */}
       <section className="relative overflow-hidden border-b border-line bg-surface">
         <div className="blueprint absolute inset-0" aria-hidden />

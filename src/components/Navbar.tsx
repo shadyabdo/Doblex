@@ -6,7 +6,7 @@ import { CATEGORIES, CONTACT, LOGO_URL } from "../data/projects";
 import { CloseIcon, MailIcon, MenuIcon } from "./icons";
 
 export default function Navbar() {
-  const { lang, setLang, t } = useLang();
+  const { lang, dir, setLang, t } = useLang();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const location = useLocation();
@@ -37,6 +37,12 @@ export default function Navbar() {
           : "border-transparent bg-paper/60 backdrop-blur-sm"
       }`}
     >
+      {/* شريط التوقيع — ألوان البراند */}
+      <div className="flex h-[3px] w-full" aria-hidden>
+        <span className="h-full w-[62%] bg-teal" />
+        <span className="h-full flex-1 bg-flame" />
+      </div>
+
       <div className="container-x flex h-[72px] items-center justify-between gap-4">
         {/* Logo */}
         <Link to="/" className="group flex items-center gap-3">
@@ -76,24 +82,37 @@ export default function Navbar() {
         </nav>
 
         <div className="flex items-center gap-3">
-          {/* Language toggle */}
+          {/* Language toggle — مؤشر منزلق */}
           <div
-            className="flex items-center rounded-full border border-line bg-surface p-1 text-xs font-bold"
+            className="relative flex items-center rounded-full border border-line bg-surface p-1 text-xs font-bold shadow-sm"
             role="group"
             aria-label="Language"
           >
+            <span
+              aria-hidden
+              className="absolute top-1 bottom-1 w-[calc(50%-0.25rem)] rounded-full bg-teal shadow transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+              style={{
+                insetInlineStart: "0.25rem",
+                transform:
+                  lang === "en"
+                    ? dir === "rtl"
+                      ? "translateX(-100%)"
+                      : "translateX(100%)"
+                    : "translateX(0)",
+              }}
+            />
             <button
               onClick={() => setLang("ar")}
-              className={`rounded-full px-2.5 py-1 transition-all duration-200 ${
-                lang === "ar" ? "bg-teal text-white shadow" : "text-muted hover:text-ink"
+              className={`relative z-10 w-9 rounded-full py-1 text-center transition-colors duration-300 ${
+                lang === "ar" ? "text-white" : "text-muted hover:text-ink"
               }`}
             >
               ع
             </button>
             <button
               onClick={() => setLang("en")}
-              className={`rounded-full px-2.5 py-1 transition-all duration-200 ${
-                lang === "en" ? "bg-teal text-white shadow" : "text-muted hover:text-ink"
+              className={`relative z-10 w-9 rounded-full py-1 text-center transition-colors duration-300 ${
+                lang === "en" ? "text-white" : "text-muted hover:text-ink"
               }`}
             >
               EN

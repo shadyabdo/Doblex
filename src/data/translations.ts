@@ -29,6 +29,10 @@ export const T = {
   heroStatTitle: { ar: "متوسط نمو الحملات", en: "Average campaign growth" },
   heroStatNote: { ar: "عبر عملائنا في 2025", en: "Across our clients in 2025" },
   heroAvailable: { ar: "متاحون لمشروعات جديدة", en: "Available for new projects" },
+  heroRollLead: { ar: "بنصنع", en: "We craft" },
+  heroRollTail: { ar: "بتفرق.", en: "that land." },
+  heroPanelsHint: { ar: "مرّر على قسم لاستكشافه", en: "Hover a department to explore" },
+  heroDepartments: { ar: "أقسامنا الأربعة", en: "Our four crafts" },
 
   depsKicker: { ar: "01 — الأقسام", en: "01 — Departments" },
   depsTitle: { ar: "أربعة أقسام.. سقف واحد", en: "Four crafts, one roof" },
@@ -107,6 +111,12 @@ export const T = {
   exploreCat: { ar: "استكشف القسم", en: "Explore department" },
   addressLabel: { ar: "رابط الديمو", en: "Demo URL" },
 } satisfies Record<string, LText>;
+
+/** كلمات العنوان الرئيسي — تتبدل رأسيًا بلون كل قسم */
+export const HERO_ROLL: { ar: string[]; en: string[] } = {
+  ar: ["مواقع", "هويات", "أفلام", "حملات"],
+  en: ["websites", "brands", "films", "campaigns"],
+};
 
 export const MARQUEE: { ar: string[]; en: string[] } = {
   ar: [

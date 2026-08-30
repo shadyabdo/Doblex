@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useLang } from "../i18n";
-import { MARQUEE, PROCESS, STATS_LABELS, T } from "../data/translations";
+import { HERO_ROLL, MARQUEE, PROCESS, STATS_LABELS, T } from "../data/translations";
 import {
   CATEGORIES,
   STATS,
@@ -22,34 +22,45 @@ import { ArrowIcon } from "../components/icons";
 import ProjectCard from "../components/ProjectCard";
 import BlogCard from "../components/BlogCard";
 
-/** عبارات تتبدل في العنوان الرئيسي حسب القسم النشط */
-const CRAFT_PHRASES: { ar: string; en: string }[] = [
-  { ar: "مواقع تبهر عملاءك", en: "websites that wow" },
-  { ar: "هويات لا تُنسى", en: "identities that stick" },
-  { ar: "فيديوهات تخطف الأنظار", en: "films that captivate" },
-  { ar: "حملات تنمّي أعمالك", en: "campaigns that grow" },
-];
-
 /** تمرير ناعم لعنصر داخل الصفحة — متوافق مع HashRouter */
 function scrollToId(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-/* ============================ Craft-Switcher Hero ============================ */
-function CraftHero() {
-  const { lang, t } = useLang();
-  const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const total = CATEGORIES.length;
-  const phrase = CRAFT_PHRASES[active][lang];
-  const cat = CATEGORIES[active];
+/** عجلة كلمات رأسية داخل العنوان — كل كلمة بلون قسمها */
+function WordRoller({ words }: { words: string[] }) {
+  const [idx, setIdx] = useState(0);
 
   useEffect(() => {
-    if (paused) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const id = setInterval(() => setActive((a) => (a + 1) % total), 4500);
+    const id = setInterval(() => setIdx((i) => (i + 1) % words.length), 2200);
     return () => clearInterval(id);
-  }, [paused, total]);
+  }, [words.length]);
+
+  return (
+    <span className="relative inline-block overflow-hidden align-bottom" style={{ height: "1.06em" }}>
+      <span
+        className="block transition-transform duration-[560ms] ease-[cubic-bezier(0.77,0,0.18,1)]"
+        style={{ transform: `translateY(-${idx * (100 / words.length)}%)` }}
+      >
+        {words.map((w, i) => (
+          <span
+            key={w}
+            className="block leading-[1.06]"
+            style={{ color: CATEGORIES[i % CATEGORIES.length].color, height: "1.06em" }}
+          >
+            {w}
+          </span>
+        ))}
+      </span>
+    </span>
+  );
+}
+
+/* ============================ Statement Hero ============================ */
+function CraftHero() {
+  const { lang, t } = useLang();
+  const rollWords = HERO_ROLL[lang];
 
   return (
     <section className="relative overflow-hidden">
@@ -63,9 +74,8 @@ function CraftHero() {
         aria-hidden
       />
 
-      <div className="container-x relative grid items-center gap-14 py-16 lg:grid-cols-12 lg:gap-12 lg:py-24">
-        {/* ------------- Copy ------------- */}
-        <div className="lg:col-span-6">
+      <div className="container-x relative py-16 md:py-20">
+        <div className="max-w-3xl">
           <div className="flex flex-wrap items-center gap-4">
             <span className="inline-flex items-center gap-2.5 rounded-full border border-line bg-surface px-4 py-2 text-xs font-bold text-ink-soft shadow-sm">
               <span className="pulse-dot h-2 w-2 rounded-full bg-jade" />
@@ -77,16 +87,21 @@ function CraftHero() {
             </p>
           </div>
 
-          <h1 className="font-display mt-7 text-[2.7rem] leading-[1.08] font-black text-ink sm:text-6xl xl:text-[4.5rem]">
-            <span className="mask-line" style={{ "--line-delay": "80ms" } as React.CSSProperties}>
-              <span>{t(T.heroL1)}</span>
+          <h1 className="font-display mt-8 text-ink">
+            <span className="mask-line text-[2.4rem] leading-[1.12] font-black sm:text-5xl xl:text-6xl" style={{ "--line-delay": "60ms" } as React.CSSProperties}>
+              <span>{t(T.heroRollLead)}</span>
             </span>
-            <span className="mask-line" style={{ "--line-delay": "210ms" } as React.CSSProperties}>
-              <span key={active} className="inline-flex items-end gap-3">
-                <span className="relative inline-block" style={{ color: cat.color }}>
-                  {phrase}
+            <span className="mask-line text-[3.6rem] leading-[1.06] font-black sm:text-7xl xl:text-[6.2rem]" style={{ "--line-delay": "180ms" } as React.CSSProperties}>
+              <span>
+                <WordRoller words={rollWords} />
+              </span>
+            </span>
+            <span className="mask-line text-[2.4rem] leading-[1.12] font-black sm:text-5xl xl:text-6xl" style={{ "--line-delay": "300ms" } as React.CSSProperties}>
+              <span className="flex items-center gap-3">
+                <span className="relative inline-block">
+                  {t(T.heroRollTail)}
                   <svg
-                    className="absolute -bottom-2.5 start-0 h-3 w-full opacity-80"
+                    className="absolute -bottom-2 start-0 h-3 w-full text-flame"
                     viewBox="0 0 220 12"
                     preserveAspectRatio="none"
                     aria-hidden
@@ -100,7 +115,7 @@ function CraftHero() {
                     />
                   </svg>
                 </span>
-                <Spark className="mb-2 inline h-7 w-7 shrink-0 text-flame sm:h-9 sm:w-9" />
+                <Spark className="h-7 w-7 shrink-0 text-flame sm:h-9 sm:w-9" />
               </span>
             </span>
           </h1>
@@ -142,108 +157,83 @@ function CraftHero() {
             ))}
           </div>
         </div>
+      </div>
 
-        {/* ------------- Showcase ------------- */}
-        <div
-          className="lg:col-span-6"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-        >
-          <Reveal delay={150}>
-            <div className="relative">
-              <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-line bg-ink shadow-[0_44px_90px_rgba(13,31,51,0.3)] sm:aspect-[16/11]">
-                {CATEGORIES.map((c, i) => (
-                  <img
-                    key={c.id}
-                    src={c.image}
-                    alt={t(c.name)}
-                    loading={i === 0 ? "eager" : "lazy"}
-                    className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
-                      i === active ? "kenburns opacity-100" : "opacity-0"
-                    }`}
-                  />
-                ))}
+      {/* ------------- Departments strip ------------- */}
+      <div className="relative mt-14 md:mt-20">
+        <RotatingBadge
+          text="DUPLEX STUDIO • WEB • DESIGN • FILM • GROWTH •"
+          className="absolute -top-16 end-8 z-10 hidden h-28 w-28 drop-shadow-2xl lg:block"
+        />
+        <div className="container-x mb-5 flex items-end justify-between gap-4">
+          <p className="font-display text-lg font-extrabold text-ink md:text-xl">
+            {t(T.heroDepartments)}
+            <span className="ms-3 align-middle text-[10px] font-black tracking-[0.3em] text-muted" dir="ltr">
+              01 — 04
+            </span>
+          </p>
+          <p className="hidden items-center gap-2 text-xs font-bold text-muted sm:flex">
+            <Spark className="h-3.5 w-3.5 text-flame" />
+            {t(T.heroPanelsHint)}
+          </p>
+        </div>
 
-                <div className="absolute inset-0 bg-gradient-to-t from-ink/75 via-transparent to-ink/10" />
+        <div className="grid grid-cols-2 gap-px border-y border-line bg-line md:flex md:h-[360px] md:gap-0 md:bg-transparent lg:h-[400px]">
+          {CATEGORIES.map((c, i) => {
+            const count = projectsByCategory(c.id).length;
+            return (
+              <Link
+                key={c.id}
+                to={`/work/${c.id}`}
+                className="group relative flex h-48 items-end overflow-hidden bg-ink transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] md:h-full md:min-w-0 md:flex-1 md:hover:flex-[2.3]"
+                style={{ "--acc": c.color } as React.CSSProperties}
+              >
+                <img
+                  src={c.image}
+                  alt={t(c.name)}
+                  loading={i > 1 ? "lazy" : "eager"}
+                  className="absolute inset-0 h-full w-full object-cover opacity-80 transition-all duration-700 ease-out group-hover:scale-[1.07] md:opacity-65 md:group-hover:opacity-95"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-ink/5" />
+                <span className="origin-inline-start absolute inset-x-0 top-0 h-1 scale-x-0 bg-[var(--acc)] transition-transform duration-500 group-hover:scale-x-100" />
+                <span className="font-display absolute top-4 end-4 text-sm font-black text-paper/70" dir="ltr">
+                  {c.num}
+                </span>
 
-                {/* Overlay label */}
-                <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-6 md:p-7">
-                  <div key={active} className="pop-in">
-                    <p
-                      className="text-[10px] font-black tracking-[0.3em] uppercase"
-                      style={{ color: cat.color }}
-                      dir="ltr"
-                    >
-                      {cat.latin}
-                    </p>
-                    <p className="font-display mt-1 text-2xl font-extrabold text-paper md:text-3xl">
-                      {t(cat.name)}
-                    </p>
-                    <p className="mt-1 max-w-xs text-sm text-paper/70">{t(cat.blurb)}</p>
+                <div className="relative w-full p-4 md:p-6">
+                  <p
+                    className="text-[9px] font-black tracking-[0.28em] uppercase md:text-[10px]"
+                    style={{ color: c.color }}
+                    dir="ltr"
+                  >
+                    {c.latin}
+                  </p>
+                  <p className="font-display mt-1 text-lg font-extrabold text-paper md:text-2xl">
+                    {t(c.name)}
+                  </p>
+
+                  <div className="grid transition-all duration-500 ease-out md:grid-rows-[0fr] md:group-hover:grid-rows-[1fr]">
+                    <div className="overflow-hidden">
+                      <p className="pt-2 text-xs leading-relaxed text-paper/75 md:text-sm">
+                        {t(c.blurb)}
+                      </p>
+                      <p className="flex items-center gap-2 pt-2.5 text-xs font-extrabold text-flame">
+                        {t(T.exploreCat)}
+                        <ArrowIcon className="rtl-flip h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
+                      </p>
+                    </div>
                   </div>
-                  <Link
-                    to={`/work/${cat.id}`}
-                    className="group flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-paper text-ink transition-all duration-300 hover:bg-flame hover:text-white"
-                    aria-label={t(T.exploreCat)}
-                  >
-                    <ArrowIcon className="rtl-flip h-5 w-5 transition-transform duration-200 group-hover:translate-x-0.5" />
-                  </Link>
+
+                  <p className="mt-1.5 text-[10px] font-bold text-paper/50 md:mt-2 md:text-[11px]">
+                    {count} {t(T.depsProjects)}
+                  </p>
                 </div>
-              </div>
-
-              {/* Tabs */}
-              <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
-                {CATEGORIES.map((c, i) => (
-                  <button
-                    key={c.id}
-                    onClick={() => setActive(i)}
-                    className={`group relative overflow-hidden rounded-lg border px-3 py-2.5 text-start transition-all duration-200 ${
-                      i === active
-                        ? "border-transparent text-white shadow-md"
-                        : "border-line bg-surface text-ink-soft hover:-translate-y-0.5"
-                    }`}
-                    style={i === active ? { background: c.color } : undefined}
-                    onMouseEnter={(e) => {
-                      if (i !== active) e.currentTarget.style.borderColor = c.color;
-                    }}
-                    onMouseLeave={(e) => {
-                      if (i !== active) e.currentTarget.style.borderColor = "";
-                    }}
-                    aria-pressed={i === active}
-                  >
-                    <span className="flex items-center gap-2">
-                      <span
-                        className="font-display text-xs font-black"
-                        style={{ color: i === active ? "#fff" : c.color }}
-                        dir="ltr"
-                      >
-                        {c.num}
-                      </span>
-                      <span className="truncate text-xs font-extrabold">{t(c.name)}</span>
-                    </span>
-                    {i === active && (
-                      <span
-                        key={`bar-${active}-${paused ? "p" : "r"}`}
-                        className="absolute bottom-0 start-0 h-0.5 bg-white/70"
-                        style={
-                          paused
-                            ? { width: "100%" }
-                            : { animation: "tab-progress 4.5s linear forwards" }
-                        }
-                      />
-                    )}
-                  </button>
-                ))}
-              </div>
-
-              <RotatingBadge
-                text="DUPLEX STUDIO • WEB • DESIGN • FILM • GROWTH •"
-                className="absolute -top-8 -start-5 hidden h-28 w-28 drop-shadow-2xl md:block lg:-start-9"
-              />
-            </div>
-          </Reveal>
+              </Link>
+            );
+          })}
         </div>
       </div>
+
     </section>
   );
 }
