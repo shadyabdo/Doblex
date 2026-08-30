@@ -187,6 +187,64 @@ export function UserIcon({ className = "h-4 w-4" }: IconProps) {
   );
 }
 
+export function HomeIcon({ className = "h-4 w-4" }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M3.5 10.5 12 3.5l8.5 7" />
+      <path d="M5.5 9.5V20h13V9.5" />
+      <path d="M9.5 20v-5.5h5V20" />
+    </svg>
+  );
+}
+
+export function CodeIcon({ className = "h-4 w-4" }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="m8 8-4.5 4L8 16" />
+      <path d="m16 8 4.5 4L16 16" />
+      <path d="M13.5 5.5 10.5 18.5" />
+    </svg>
+  );
+}
+
+export function PenIcon({ className = "h-4 w-4" }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M4 20l4.5-1L20 7.5a2.1 2.1 0 0 0-3-3L5.5 16 4 20Z" />
+      <path d="m14.5 6 3.5 3.5" />
+    </svg>
+  );
+}
+
+export function FilmIcon({ className = "h-4 w-4" }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <rect x="3.5" y="5" width="17" height="14" rx="2.5" />
+      <path d="M7.5 5v14M16.5 5v14M3.5 9.5h4M3.5 14.5h4M16.5 9.5h4M16.5 14.5h4" />
+    </svg>
+  );
+}
+
+export function MegaphoneIcon({ className = "h-4 w-4" }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M3.5 10.5v3a1.5 1.5 0 0 0 1.5 1.5h2l4.5 3.5a.8.8 0 0 0 1.3-.6V6.1a.8.8 0 0 0-1.3-.6L7 9H5a1.5 1.5 0 0 0-1.5 1.5Z" />
+      <path d="M16.5 9a4.2 4.2 0 0 1 0 6" />
+      <path d="M19 6.5a8 8 0 0 1 0 11" />
+    </svg>
+  );
+}
+
+export function BlogIcon({ className = "h-4 w-4" }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M4.5 5.5h11v13h-11a1.5 1.5 0 0 1-1.5-1.5V7a1.5 1.5 0 0 1 1.5-1.5Z" />
+      <path d="M15.5 8.5h3a1.5 1.5 0 0 1 1.5 1.5v7a1.5 1.5 0 0 1-1.5 1.5h-14" />
+      <path d="M6.5 9.5h5M6.5 12.5h5M6.5 15.5h3" />
+    </svg>
+  );
+}
+
 export const SOCIAL_ICONS: Record<string, (p: IconProps) => ReactElement> = {
   instagram: InstagramIcon,
   behance: BehanceIcon,
