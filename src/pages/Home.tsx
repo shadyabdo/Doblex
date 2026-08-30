@@ -2,7 +2,13 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useLang } from "../i18n";
 import { MARQUEE, PROCESS, STATS_LABELS, T } from "../data/translations";
-import { CATEGORIES, STATS, featuredProjects, projectsByCategory } from "../data/projects";
+import {
+  CATEGORIES,
+  PROJECTS,
+  STATS,
+  featuredProjects,
+  projectsByCategory,
+} from "../data/projects";
 import { CountUp, Marquee, Reveal, RotatingBadge, SectionHead, Spark } from "../lib/ui";
 import { ArrowIcon } from "../components/icons";
 import ProjectCard from "../components/ProjectCard";
@@ -13,6 +19,24 @@ const CHARS = "DUPLEX#/<>*+";
 function scrollToId(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
+
+/** شريط مقياس متحرك داخل كونسول الهيرو */
+function Meter({ value, color, delay }: { value: number; color: string; delay: number }) {
+  return (
+    <span className="block h-1.5 w-full overflow-hidden rounded-full bg-paper/15">
+      <span
+        className="block h-full rounded-full"
+        style={{
+          width: `${value}%`,
+          background: color,
+          animation: `meter-grow 1.2s cubic-bezier(0.22,1,0.36,1) ${delay}ms both`,
+        }}
+      />
+    </span>
+  );
+}
+
+const METERS = [92, 88, 84, 90];
 
 /** تأثير فكّ التشفير للعنوان اللاتيني */
 function ScrambleText({ text, className = "" }: { text: string; className?: string }) {
@@ -67,46 +91,69 @@ export default function Home() {
   return (
     <>
       {/* ============================ Opening ============================ */}
-      <section className="relative overflow-hidden">
+      <section className="relative flex overflow-hidden">
         <div className="blueprint absolute inset-0" aria-hidden />
         <div
           className="absolute -top-24 end-[-8%] h-[420px] w-[420px] rounded-full bg-teal/10 blur-3xl"
           aria-hidden
         />
         <div
-          className="absolute top-64 start-[-10%] h-[360px] w-[360px] rounded-full bg-flame/10 blur-3xl"
+          className="absolute top-72 start-[-10%] h-[360px] w-[360px] rounded-full bg-flame/10 blur-3xl"
           aria-hidden
         />
+        <p
+          className="font-display pointer-events-none absolute -bottom-10 start-0 translate-y-6 text-[24vw] leading-none font-black text-ghost select-none lg:text-[17rem]"
+          aria-hidden
+        >
+          DUPLEX
+        </p>
 
-        <div className="container-x relative grid items-center gap-14 py-14 md:py-20 lg:grid-cols-12 lg:gap-10">
-          {/* Copy */}
+        <div className="container-x relative grid flex-1 items-center gap-16 py-16 lg:grid-cols-12 lg:gap-12 lg:py-24">
+          {/* ------------- Copy ------------- */}
           <div className="lg:col-span-7">
-            <span className="inline-flex items-center gap-2.5 rounded-full border border-line bg-surface px-4 py-2 text-xs font-bold text-ink-soft shadow-sm">
-              <span className="pulse-dot h-2 w-2 rounded-full bg-jade" />
-              {t(T.heroAvailable)}
-            </span>
+            <div className="flex flex-wrap items-center gap-4">
+              <span className="inline-flex items-center gap-2.5 rounded-full border border-line bg-surface px-4 py-2 text-xs font-bold text-ink-soft shadow-sm">
+                <span className="pulse-dot h-2 w-2 rounded-full bg-jade" />
+                {t(T.heroAvailable)}
+              </span>
+              <p className="flex items-center gap-3 text-xs font-bold tracking-[0.24em] text-teal uppercase">
+                <span className="h-px w-10 bg-flame" />
+                {t(T.heroKicker)}
+              </p>
+            </div>
 
-            <p className="mt-7 flex items-center gap-3 text-xs font-bold tracking-[0.24em] text-teal uppercase">
-              <span className="h-px w-10 bg-flame" />
-              {t(T.heroKicker)}
-            </p>
-
-            <h1 className="font-display mt-4 text-[2.6rem] leading-[1.1] font-black text-ink sm:text-6xl xl:text-[4.6rem]">
+            <h1 className="font-display mt-7 text-[2.7rem] leading-[1.08] font-black text-ink sm:text-6xl xl:text-[4.7rem]">
               <span className="mask-line" style={{ "--line-delay": "80ms" } as React.CSSProperties}>
                 <span>{t(T.heroL1)}</span>
               </span>
-              <span className="mask-line" style={{ "--line-delay": "200ms" } as React.CSSProperties}>
+              <span className="mask-line" style={{ "--line-delay": "210ms" } as React.CSSProperties}>
                 <span className="text-teal">{t(T.heroL2)}</span>
               </span>
-              <span className="mask-line" style={{ "--line-delay": "320ms" } as React.CSSProperties}>
-                <span>
-                  {t(T.heroL3)}{" "}
-                  <Spark className="mb-2 inline h-7 w-7 text-flame sm:h-9 sm:w-9" />
+              <span className="mask-line" style={{ "--line-delay": "340ms" } as React.CSSProperties}>
+                <span className="flex items-end gap-3">
+                  <span className="relative inline-block">
+                    {t(T.heroL3)}
+                    <svg
+                      className="absolute -bottom-2.5 start-0 h-3 w-full text-flame"
+                      viewBox="0 0 220 12"
+                      preserveAspectRatio="none"
+                      aria-hidden
+                    >
+                      <path
+                        d="M3 9c42-6 82-6.5 110-3.5 30 3.2 68 2.5 104-3.5"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="5"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                  </span>
+                  <Spark className="mb-2 inline h-7 w-7 shrink-0 text-flame sm:h-9 sm:w-9" />
                 </span>
               </span>
             </h1>
 
-            <p className="mt-3 overflow-hidden">
+            <p className="mt-5 overflow-hidden">
               <ScrambleText
                 text="DUPLEX® DIGITAL STUDIO"
                 className="font-display inline-block text-lg font-black tracking-[0.3em] text-ink/25 md:text-xl"
@@ -133,73 +180,128 @@ export default function Home() {
               </button>
             </div>
 
-            <div className="mt-11 flex flex-wrap items-center gap-x-7 gap-y-3 text-sm font-bold text-ink-soft">
-              {[T.heroMeta1, T.heroMeta2, T.heroMeta3].map((m, i) => (
-                <span key={i} className="flex items-center gap-2.5">
-                  <Spark className="h-3.5 w-3.5 text-teal" />
-                  {t(m)}
-                </span>
+            {/* Typographic stats */}
+            <div className="mt-12 flex flex-wrap items-stretch">
+              {STATS.slice(0, 3).map((v, i) => (
+                <div
+                  key={i}
+                  className={`py-1 pe-7 md:pe-9 ${i > 0 ? "border-s-2 border-line ps-7 md:ps-9" : ""}`}
+                >
+                  <p className="font-display text-4xl font-black text-ink md:text-5xl">
+                    <CountUp value={v} suffix={i === 0 ? "+" : ""} />
+                  </p>
+                  <p className="mt-1.5 text-xs font-bold text-muted">
+                    {STATS_LABELS[lang][i]}
+                  </p>
+                </div>
               ))}
             </div>
           </div>
 
-          {/* Postcard collage */}
+          {/* ------------- Studio console ------------- */}
           <div className="relative lg:col-span-5">
-            <div className="relative mx-auto h-[430px] max-w-md sm:h-[500px]">
-              <Reveal delay={150}>
-                <div className="group absolute top-2 end-0 w-[76%] rotate-3 rounded-xl border border-line bg-surface p-2 pb-4 shadow-[0_24px_50px_rgba(13,31,51,0.14)] transition-transform duration-500 hover:rotate-0 hover:scale-[1.03]">
-                  <img
-                    src={CATEGORIES[0].image}
-                    alt={t(CATEGORIES[0].name)}
-                    className="aspect-[16/11] w-full rounded-lg object-cover"
-                    loading="eager"
+            <Reveal delay={150}>
+              <div className="relative">
+                <div className="relative overflow-hidden rounded-xl border border-ink/25 bg-ink text-paper shadow-[0_44px_90px_rgba(13,31,51,0.4)]">
+                  <div className="blueprint-dark absolute inset-0" aria-hidden />
+                  <div
+                    className="absolute -top-16 -end-16 h-48 w-48 rounded-full bg-teal/25 blur-3xl"
+                    aria-hidden
                   />
-                  <p className="mt-2.5 px-1 text-[10px] font-extrabold tracking-[0.22em] text-teal uppercase">
-                    {CATEGORIES[0].latin}
-                  </p>
-                </div>
-              </Reveal>
-              <Reveal delay={300}>
-                <div className="float-y group absolute bottom-10 start-0 z-10 w-[60%] -rotate-6 rounded-xl border border-line bg-surface p-2 pb-4 shadow-[0_24px_50px_rgba(13,31,51,0.16)] transition-transform duration-500 hover:rotate-0 hover:scale-[1.03]">
-                  <img
-                    src={CATEGORIES[1].image}
-                    alt={t(CATEGORIES[1].name)}
-                    className="aspect-[16/12] w-full rounded-lg object-cover"
-                    loading="lazy"
-                  />
-                  <p className="mt-2.5 px-1 text-[10px] font-extrabold tracking-[0.22em] text-flame uppercase">
-                    {CATEGORIES[1].latin}
-                  </p>
-                </div>
-              </Reveal>
-              <Reveal delay={450}>
-                <div className="group absolute top-[41%] start-[16%] z-20 w-[52%] rotate-2 rounded-xl border border-line bg-surface p-2 pb-4 shadow-[0_28px_56px_rgba(13,31,51,0.2)] transition-transform duration-500 hover:rotate-0 hover:scale-[1.05]">
-                  <img
-                    src={CATEGORIES[2].image}
-                    alt={t(CATEGORIES[2].name)}
-                    className="aspect-[16/11] w-full rounded-lg object-cover"
-                    loading="lazy"
-                  />
-                  <p className="mt-2.5 px-1 text-[10px] font-extrabold tracking-[0.22em] text-cobalt uppercase">
-                    {CATEGORIES[2].latin}
-                  </p>
-                </div>
-              </Reveal>
 
-              <RotatingBadge
-                text="DUPLEX STUDIO • WEB • DESIGN • FILM • GROWTH •"
-                className="absolute -top-7 start-4 z-30 h-28 w-28 drop-shadow-xl"
-              />
+                  <div className="relative p-6 md:p-7">
+                    {/* Console header */}
+                    <div className="flex items-center justify-between border-b border-paper/10 pb-4">
+                      <p
+                        className="font-display text-xs font-black tracking-[0.32em] text-paper/85"
+                        dir="ltr"
+                      >
+                        DUPLEX<span className="text-flame">®</span> CONSOLE
+                      </p>
+                      <p className="flex items-center gap-2 text-[11px] font-extrabold tracking-widest text-jade">
+                        <span className="pulse-dot h-2 w-2 rounded-full bg-jade" />
+                        LIVE
+                      </p>
+                    </div>
 
-              <div className="absolute -bottom-3 end-2 z-30 rounded-xl bg-ink px-5 py-4 text-paper shadow-[0_20px_44px_rgba(13,31,51,0.35)]">
-                <p className="font-display text-3xl font-black text-flame">
-                  <CountUp value={38} suffix="%" />
-                </p>
-                <p className="mt-1 text-[11px] font-bold text-paper/70">
-                  {t(T.heroStatTitle)}
-                </p>
+                    {/* Channels */}
+                    <div className="py-2">
+                      {CATEGORIES.map((c, i) => {
+                        const count = projectsByCategory(c.id).length;
+                        return (
+                          <Link
+                            key={c.id}
+                            to={`/work/${c.id}`}
+                            className="group grid grid-cols-[28px_64px_1fr_auto] items-center gap-3 border-b border-paper/10 py-4 transition-all duration-300 last:border-b-0 hover:bg-paper/[0.06] md:gap-4"
+                          >
+                            <span
+                              className="font-display text-sm font-black"
+                              style={{ color: c.color }}
+                              dir="ltr"
+                            >
+                              {c.num}
+                            </span>
+                            <span className="block h-12 w-16 overflow-hidden rounded-lg border border-paper/15">
+                              <img
+                                src={c.image}
+                                alt={t(c.name)}
+                                loading={i > 1 ? "lazy" : "eager"}
+                                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                              />
+                            </span>
+                            <span className="min-w-0">
+                              <span className="flex items-baseline gap-2">
+                                <span className="font-display truncate text-base font-extrabold text-paper md:text-lg">
+                                  {t(c.name)}
+                                </span>
+                                <span
+                                  className="hidden text-[9px] font-black tracking-[0.25em] text-paper/35 sm:block"
+                                  dir="ltr"
+                                >
+                                  {c.latin}
+                                </span>
+                              </span>
+                              <span className="mt-2.5 block max-w-[150px]">
+                                <Meter
+                                  value={METERS[i]}
+                                  color={c.color}
+                                  delay={400 + i * 170}
+                                />
+                              </span>
+                            </span>
+                            <span className="flex items-center gap-3">
+                              <span className="whitespace-nowrap text-[11px] font-bold text-paper/55">
+                                {count} {t(T.depsProjects)}
+                              </span>
+                              <ArrowIcon className="rtl-flip h-4 w-4 text-paper/25 transition-all duration-300 group-hover:translate-x-1 group-hover:text-flame" />
+                            </span>
+                          </Link>
+                        );
+                      })}
+                    </div>
+
+                    {/* Console footer */}
+                    <div className="flex items-center justify-between border-t border-paper/10 pt-4 text-[11px] font-bold text-paper/60">
+                      <span>
+                        {PROJECTS.length} {t(T.catCount)} — 2019+
+                      </span>
+                      <button
+                        onClick={() => scrollToId("work")}
+                        className="group/f flex items-center gap-1.5 font-extrabold text-flame transition-colors hover:text-paper"
+                      >
+                        {t(T.heroCta1)}
+                        <ArrowIcon className="rtl-flip h-3.5 w-3.5 transition-transform duration-200 group-hover/f:translate-x-1" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <RotatingBadge
+                  text="DUPLEX STUDIO • WEB • DESIGN • FILM • GROWTH •"
+                  className="absolute -bottom-9 -start-5 h-28 w-28 drop-shadow-2xl md:-start-9"
+                />
               </div>
-            </div>
+            </Reveal>
           </div>
         </div>
       </section>
