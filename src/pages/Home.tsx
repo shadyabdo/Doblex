@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useLang } from "../i18n";
-import { HERO_FLIP, MARQUEE, PROCESS, STATS_LABELS, T } from "../data/translations";
+import { MARQUEE, PROCESS, STATS_LABELS, T } from "../data/translations";
 import {
   CATEGORIES,
   STATS,
@@ -27,248 +27,141 @@ function scrollToId(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-/** شريحة داكنة تنقلب كلماتها رأسيًا — كل كلمة بلون قسمها */
-function FlipWord({ words, active }: { words: string[]; active: number }) {
-  const n = words.length;
-  return (
-    <span
-      className="relative inline-block overflow-hidden rounded-[12px] bg-ink px-[0.4em] shadow-[0_14px_34px_rgba(13,31,51,0.28)]"
-      style={{ height: "1.24em" }}
-    >
-      <span
-        className="block transition-transform duration-[620ms] ease-[cubic-bezier(0.77,0,0.18,1)]"
-        style={{ transform: `translateY(-${active * (100 / n)}%)` }}
-      >
-        {words.map((w, i) => (
-          <span
-            key={w}
-            className="flex items-center gap-[0.35em] leading-[1.24]"
-            style={{ height: "1.24em" }}
-          >
-            <span
-              className="inline-block h-[0.32em] w-[0.32em] shrink-0 rounded-full"
-              style={{ background: CATEGORIES[i % CATEGORIES.length].color }}
-            />
-            <span style={{ color: CATEGORIES[i % CATEGORIES.length].color }}>{w}</span>
-          </span>
-        ))}
-      </span>
-    </span>
-  );
-}
-
-/* ============================ Statement Hero ============================ */
+/* ============================ Poster Hero ============================ */
 function CraftHero() {
   const { lang, t } = useLang();
-  const flipWords = HERO_FLIP[lang];
-  const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const total = CATEGORIES.length;
-
-  useEffect(() => {
-    if (paused) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const id = setInterval(() => setActive((a) => (a + 1) % total), 3800);
-    return () => clearInterval(id);
-  }, [paused, total]);
+  const clipImg = CATEGORIES[2].image;
 
   return (
-    <section className="relative overflow-hidden">
-      {/* ---------- Duplex split hero ---------- */}
-      <div className="grid lg:grid-cols-12">
-        {/* ===== الناحية الفاتحة ===== */}
-        <div className="relative lg:col-span-7">
-          <div className="blueprint absolute inset-0" aria-hidden />
-          <div
-            className="absolute -top-24 start-[-10%] h-[380px] w-[380px] rounded-full bg-teal/10 blur-3xl"
-            aria-hidden
-          />
-          <div
-            className="absolute bottom-0 end-[-6%] h-[300px] w-[300px] rounded-full bg-flame/10 blur-3xl"
-            aria-hidden
-          />
+    <section className="relative -mt-20 overflow-hidden md:-mt-24">
+      {/* ---------- Poster opener ---------- */}
+      <div className="blueprint absolute inset-0" aria-hidden />
+      <div
+        className="absolute -top-28 end-[-8%] h-[420px] w-[420px] rounded-full bg-teal/10 blur-3xl"
+        aria-hidden
+      />
+      <div
+        className="absolute top-80 start-[-10%] h-[340px] w-[340px] rounded-full bg-flame/10 blur-3xl"
+        aria-hidden
+      />
 
-          <div className="relative flex min-h-full items-center px-5 py-14 sm:px-8 md:px-12 md:py-20 lg:pe-4">
-            <div className="w-full max-w-2xl lg:ms-auto lg:me-12">
-              <div className="flex flex-wrap items-center gap-4">
-                <span className="inline-flex items-center gap-2.5 rounded-full border border-line bg-surface px-4 py-2 text-xs font-bold text-ink-soft shadow-sm">
-                  <span className="pulse-dot h-2 w-2 rounded-full bg-jade" />
-                  {t(T.heroAvailable)}
-                </span>
-                <p className="flex items-center gap-3 text-xs font-bold tracking-[0.24em] text-teal uppercase">
-                  <span className="h-px w-10 bg-flame" />
-                  {t(T.heroKicker)}
-                </p>
-              </div>
+      {/* كلمة شبحية تنحرف ببطء */}
+      <p
+        className="font-display drift-slow pointer-events-none absolute -top-8 end-0 hidden leading-none font-black text-ghost select-none lg:block"
+        style={{ fontSize: "clamp(8rem,16vw,15rem)" }}
+        dir="ltr"
+        aria-hidden
+      >
+        DUPLEX
+      </p>
 
-              <h1 className="font-display mt-8 text-ink">
-                <span
-                  className="mask-line text-[clamp(1.9rem,4.2vw,3.3rem)] leading-[1.15] font-black"
-                  style={{ "--line-delay": "60ms" } as React.CSSProperties}
-                >
-                  <span>{t(T.heroA1)}</span>
-                </span>
-                <span
-                  className="mask-line text-[clamp(2.5rem,6.2vw,4.6rem)] leading-[1.14] font-black"
-                  style={{ "--line-delay": "180ms" } as React.CSSProperties}
-                >
-                  <span className="flex items-center gap-3 md:gap-4">
-                    <FlipWord words={flipWords} active={active} />
-                    <Spark className="h-7 w-7 shrink-0 text-flame md:h-10 md:w-10" />
-                  </span>
-                </span>
-                <span
-                  className="mask-line text-[clamp(1.9rem,4.2vw,3.3rem)] leading-[1.15] font-black"
-                  style={{ "--line-delay": "300ms" } as React.CSSProperties}
-                >
-                  <span className="relative inline-block">
-                    {t(T.heroA3)}
-                    <svg
-                      className="absolute -bottom-2 start-0 h-3 w-full text-flame"
-                      viewBox="0 0 220 12"
-                      preserveAspectRatio="none"
-                      aria-hidden
-                    >
-                      <path
-                        d="M3 9c42-6 82-6.5 110-3.5 30 3.2 68 2.5 104-3.5"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="5"
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                  </span>
-                </span>
-              </h1>
+      {/* علامات زوايا البوستر */}
+      <div className="pointer-events-none absolute inset-4 z-10 hidden sm:block md:inset-6" aria-hidden>
+        <span className="absolute top-0 start-0 h-5 w-5 border-t-2 border-s-2 border-ink/25" />
+        <span className="absolute top-0 end-0 h-5 w-5 border-t-2 border-e-2 border-ink/25" />
+        <span className="absolute bottom-0 start-0 h-5 w-5 border-b-2 border-s-2 border-ink/25" />
+        <span className="absolute bottom-0 end-0 h-5 w-5 border-b-2 border-e-2 border-ink/25" />
+      </div>
 
-              <p className="mt-6 max-w-xl text-base leading-relaxed text-muted md:text-lg">
-                {t(T.heroP)}
-              </p>
+      {/* نص جانبي عمودي */}
+      <p
+        className="absolute top-1/2 end-7 z-10 hidden -translate-y-1/2 rotate-90 text-[10px] font-black tracking-[0.42em] whitespace-nowrap text-muted/70 uppercase xl:block"
+        dir="ltr"
+      >
+        Est. 2019 — Cairo, Egypt
+      </p>
 
-              <div className="mt-8 flex flex-wrap items-center gap-4">
-                <button
-                  onClick={() => scrollToId("work")}
-                  className="group flex items-center gap-2.5 rounded-full bg-flame px-7 py-3.5 text-sm font-bold text-white shadow-[0_10px_30px_rgba(232,89,12,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-flame-deep"
-                >
-                  {t(T.heroCta1)}
-                  <ArrowIcon className="rtl-flip h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-                </button>
-                <button
-                  onClick={() => scrollToId("departments")}
-                  className="rounded-full border-2 border-ink/15 px-7 py-3.5 text-sm font-bold text-ink transition-all duration-200 hover:border-teal hover:text-teal"
-                >
-                  {t(T.heroCta2)}
-                </button>
-              </div>
-
-              <div className="mt-9 flex flex-wrap items-stretch border-t-2 border-ink/10 pt-6">
-                {STATS.slice(0, 3).map((v, i) => (
-                  <div
-                    key={i}
-                    className={`py-1 pe-7 md:pe-8 ${i > 0 ? "border-s-2 border-line ps-7 md:ps-8" : ""}`}
-                  >
-                    <p className="font-display text-3xl font-black text-ink md:text-4xl">
-                      <CountUp value={v} suffix={i === 0 ? "+" : ""} />
-                    </p>
-                    <p className="mt-1 text-[11px] font-bold text-muted">
-                      {STATS_LABELS[lang][i]}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ===== الناحية الداكنة — لوحة أقسام حية ===== */}
-        <div
-          className="relative overflow-hidden bg-ink lg:col-span-5"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-        >
-          <div className="blueprint-dark absolute inset-0" aria-hidden />
-          {CATEGORIES.map((c, i) => (
-            <div
-              key={c.id}
-              className={`absolute inset-0 transition-opacity duration-700 ${
-                i === active ? "opacity-100" : "opacity-0"
-              }`}
-            >
-              <img
-                src={c.image}
-                alt={t(c.name)}
-                loading={i === 0 ? "eager" : "lazy"}
-                className={`h-full w-full object-cover ${i === active ? "kenburns" : ""}`}
-              />
-            </div>
-          ))}
-          <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/45 to-ink/15" />
-
-          <span
-            key={`num-${active}`}
-            className="font-display pop-in pointer-events-none absolute top-3 end-4 select-none text-[6.5rem] leading-none font-black text-ghost-light md:text-[8.5rem]"
-            dir="ltr"
-            aria-hidden
-          >
-            {CATEGORIES[active].num}
+      <div className="relative px-5 pt-32 pb-16 sm:px-8 md:px-12 md:pt-40 md:pb-20 lg:px-16">
+        {/* سطر الميتا */}
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <p className="flex items-center gap-3 text-xs font-bold tracking-[0.24em] text-teal uppercase">
+            <span className="h-px w-10 bg-flame" />
+            {t(T.heroKicker)}
+          </p>
+          <span className="inline-flex items-center gap-2.5 rounded-full border border-line bg-surface px-4 py-2 text-xs font-bold text-ink-soft shadow-sm">
+            <span className="pulse-dot h-2 w-2 rounded-full bg-jade" />
+            {t(T.heroAvailable)}
           </span>
+        </div>
 
-          <RotatingBadge
-            text="DUPLEX STUDIO • WEB • DESIGN • FILM • GROWTH •"
-            className="absolute top-6 -start-9 z-20 hidden h-24 w-24 drop-shadow-2xl lg:block"
-          />
+        {/* الووردمارك */}
+        <h1 className="font-display mt-10 text-ink md:mt-14">
+          <span
+            className="mask-line block text-[clamp(3.4rem,13vw,10.5rem)] leading-[0.98] font-black"
+            style={{ "--line-delay": "80ms" } as React.CSSProperties}
+          >
+            <span>
+              {t(T.brand)}
+              <span className="text-flame">.</span>
+            </span>
+          </span>
+        </h1>
+        <p className="mask-line -mt-1 md:-mt-3">
+          <span
+            className="text-img-clip font-display block w-fit text-[clamp(2rem,8vw,6.6rem)] leading-[1.04] font-black"
+            style={
+              {
+                "--line-delay": "220ms",
+                backgroundImage: `url(${clipImg})`,
+              } as React.CSSProperties
+            }
+            dir="ltr"
+          >
+            DUPLEX® STUDIO
+          </span>
+        </p>
 
-          <div className="relative flex h-full min-h-[430px] flex-col justify-end p-6 md:p-9 lg:min-h-[560px]">
-            <div key={`info-${active}`} className="pop-in">
-              <p
-                className="text-[10px] font-black tracking-[0.32em] uppercase md:text-[11px]"
-                style={{ color: CATEGORIES[active].color }}
-                dir="ltr"
+        {/* السطر السفلي: وصف + أزرار | أرقام */}
+        <div className="mt-12 grid items-end gap-10 md:mt-16 lg:grid-cols-12 lg:gap-8">
+          <div className="lg:col-span-7">
+            <p className="max-w-xl text-base leading-relaxed text-muted md:text-lg">
+              {t(T.heroP)}
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-4">
+              <button
+                onClick={() => scrollToId("work")}
+                className="group flex items-center gap-2.5 rounded-full bg-flame px-7 py-3.5 text-sm font-bold text-white shadow-[0_10px_30px_rgba(232,89,12,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-flame-deep"
               >
-                {CATEGORIES[active].latin}
-              </p>
-              <h3 className="font-display mt-2 text-3xl font-extrabold text-paper md:text-4xl">
-                {t(CATEGORIES[active].name)}
-              </h3>
-              <p className="mt-2.5 max-w-sm text-sm leading-relaxed text-paper/70 md:text-[15px]">
-                {t(CATEGORIES[active].blurb)}
-              </p>
-            </div>
-
-            <div className="mt-6 flex items-center justify-between gap-4 border-t border-paper/15 pt-5">
-              <Link
-                to={`/work/${CATEGORIES[active].id}`}
-                className="group inline-flex items-center gap-2 text-sm font-extrabold text-flame transition-colors hover:text-paper"
-              >
-                {t(T.exploreCat)}
+                {t(T.heroCta1)}
                 <ArrowIcon className="rtl-flip h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-              </Link>
-              <span className="text-xs font-bold text-paper/50">
-                {projectsByCategory(CATEGORIES[active].id).length} {t(T.depsProjects)}
-              </span>
-            </div>
-
-            <div className="mt-5 flex items-center gap-2">
-              {CATEGORIES.map((c, i) => (
-                <button
-                  key={c.id}
-                  onClick={() => setActive(i)}
-                  aria-label={t(c.name)}
-                  className={`h-2.5 rounded-full transition-all duration-300 ${
-                    i === active ? "w-9" : "w-2.5 bg-paper/30 hover:bg-paper/60"
-                  }`}
-                  style={i === active ? { background: c.color } : undefined}
-                />
-              ))}
-              <span
-                className="ms-auto text-[11px] font-bold text-paper/40 tabular-nums"
-                dir="ltr"
+              </button>
+              <button
+                onClick={() => scrollToId("departments")}
+                className="rounded-full border-2 border-ink/15 px-7 py-3.5 text-sm font-bold text-ink transition-all duration-200 hover:border-teal hover:text-teal"
               >
-                0{active + 1} / 0{total}
-              </span>
+                {t(T.heroCta2)}
+              </button>
+            </div>
+          </div>
+
+          <div className="lg:col-span-5">
+            <div className="grid grid-cols-3 gap-5 border-t-2 border-ink/10 pt-6 md:gap-6">
+              {STATS.slice(0, 3).map((v, i) => (
+                <div key={i}>
+                  <p className="font-display text-3xl font-black text-ink md:text-5xl">
+                    <CountUp value={v} suffix={i === 0 ? "+" : ""} />
+                  </p>
+                  <p className="mt-1.5 text-[11px] leading-snug font-bold text-muted">
+                    {STATS_LABELS[lang][i]}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
+      </div>
+
+      {/* مؤشر السكرول */}
+      <div
+        className="absolute bottom-5 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2.5 md:flex"
+        aria-hidden
+      >
+        <span className="text-[9px] font-black tracking-[0.4em] text-muted uppercase" dir="ltr">
+          Scroll
+        </span>
+        <span className="relative block h-10 w-px overflow-hidden bg-ink/15">
+          <span className="scrolldot absolute top-0 left-0 block h-3 w-px bg-flame" />
+        </span>
       </div>
 
       {/* ------------- Departments strip ------------- */}

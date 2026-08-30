@@ -46,7 +46,7 @@ export default function App() {
           <Analytics />
           <div className="flex min-h-screen flex-col">
             <Navbar />
-            <main className="flex-1">
+            <main className="flex-1 pt-20 md:pt-24">
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/work/:categoryId" element={<Category />} />
