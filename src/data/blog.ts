@@ -38,15 +38,19 @@ export const BLOG_CATEGORIES: BlogCategory[] = [
 export const getBlogCategory = (id: string): BlogCategory | undefined =>
   BLOG_CATEGORIES.find((c) => c.id === id);
 
+/* صور فوتوغرافية حقيقية (Unsplash) — بدون نصوص مولّدة، محتوى إنجليزي نظيف */
+const u = (id: string, w = 1280, h = 832) =>
+  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&h=${h}&q=80`;
+
 const IMG = {
-  team: "https://image.qwenlm.ai/generated-images/81591bcd-81fd-40b2-9e59-b1b05f923cda/_result.png",
-  services: "https://image.qwenlm.ai/generated-images/5c6a13a4-77f8-4cfb-9fc4-d963c1b67293/_result.png",
-  web: "https://image.qwenlm.ai/generated-images/cdba26e2-0317-46d3-988d-189e8a413214/_result.png",
-  graphic: "https://image.qwenlm.ai/generated-images/0f4241b7-cf05-41aa-ac53-e172b5b3dbf0/_result.png",
-  video: "https://image.qwenlm.ai/generated-images/3672147f-a408-4d29-98f8-7888071e8bbb/_result.png",
-  marketing: "https://image.qwenlm.ai/generated-images/378aec70-79ea-4ef6-b127-139f0cc35413/_result.png",
-  web2: "https://image.qwenlm.ai/generated-images/e537a6f3-5d4f-489f-8e1c-b47b9ed040c4/_result.png",
-  marketing2: "https://image.qwenlm.ai/generated-images/a9cec40f-deeb-44a7-9612-649e4bcc9550/_result.png",
+  team: u("photo-1522071820081-009f0129c71c"), // فريق يعمل معًا
+  services: u("photo-1497366216548-37526070297c"), // مساحة عمل مكتبية
+  web: u("photo-1461749280684-dccba630e2f6"), // كود على الشاشة
+  graphic: u("photo-1561070791-2526d30994b5"), // أدوات تصميم
+  video: u("photo-1492691527719-9d1e07e534b4"), // كاميرا وتصوير
+  marketing: u("photo-1460925895917-afdab827c52f"), // تحليلات على لابتوب
+  web2: u("photo-1472851294608-062f824d29cc"), // تسوق ومتاجر
+  marketing2: u("photo-1531973576160-7125cd663d86"), // اجتماع عمل
 };
 
 export const BLOG_POSTS: BlogPost[] = [

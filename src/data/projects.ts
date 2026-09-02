@@ -5,27 +5,34 @@ import type { Category, CategoryId, Project } from "./types";
 /*  الصور المُولَّدة تعيش على CDN، وروابط الديمو قابلة للاستبدال          */
 /* ------------------------------------------------------------------ */
 
+/*
+  صور فوتوغرافية حقيقية (Unsplash) — بدون نصوص مولّدة، محتوى إنجليزي نظيف.
+  معاملات الرابط: auto=format (صيغة مثالية) + fit=crop (قص للأبعاد) + w/h + q (جودة).
+*/
+const u = (id: string, w = 1280, h = 832) =>
+  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&h=${h}&q=80`;
+
 const IMG = {
-  ecommerce:
-    "https://image.qwenlm.ai/generated-images/e537a6f3-5d4f-489f-8e1c-b47b9ed040c4/_result.png",
-  realestate:
-    "https://image.qwenlm.ai/generated-images/cdba26e2-0317-46d3-988d-189e8a413214/_result.png",
-  restaurant:
-    "https://image.qwenlm.ai/generated-images/28ee5e9f-c7b3-4e37-a662-fc1e121dafeb/_result.png",
-  coffee:
-    "https://image.qwenlm.ai/generated-images/81591bcd-81fd-40b2-9e59-b1b05f923cda/_result.png",
-  posters:
-    "https://image.qwenlm.ai/generated-images/0f4241b7-cf05-41aa-ac53-e172b5b3dbf0/_result.png",
-  social:
-    "https://image.qwenlm.ai/generated-images/aed3db4f-e8e6-4b62-b5ef-629d16b6b87b/_result.png",
-  neonFilm:
-    "https://image.qwenlm.ai/generated-images/3672147f-a408-4d29-98f8-7888071e8bbb/_result.png",
-  desertFilm:
-    "https://image.qwenlm.ai/generated-images/a9cec40f-deeb-44a7-9612-649e4bcc9550/_result.png",
-  foodApp:
-    "https://image.qwenlm.ai/generated-images/378aec70-79ea-4ef6-b127-139f0cc35413/_result.png",
-  leadGen:
-    "https://image.qwenlm.ai/generated-images/5c6a13a4-77f8-4cfb-9fc4-d963c1b67293/_result.png",
+  /** متجر أورا — أزياء ومتجر إلكتروني */
+  ecommerce: u("photo-1445205170230-053b83016050"),
+  /** منصة ديار — عمارة ومباني حديثة */
+  realestate: u("photo-1486406146926-c627a92ad1ab"),
+  /** مطعم زيتون — داخل مطعم دافئ */
+  restaurant: u("photo-1517248135467-4c7edcad34c4"),
+  /** هوية قهوة مَدى — قهوة مختصة */
+  coffee: u("photo-1509042239860-f550ce710b93"),
+  /** بوسترات مهرجان ضوء — إضاءة حفل/مهرجان */
+  posters: u("photo-1514525253161-7a46d19cd819"),
+  /** سوشيال ميديا بَلس — لياقة وجيم */
+  social: u("photo-1534438327276-14e5300c3a48"),
+  /** فواصل شرارة — شارع ليلي بإضاءة نيون */
+  neonFilm: u("photo-1519501025264-65ba15a82390"),
+  /** فيلم ترحال — كثبان صحراوية وقت الغروب */
+  desertFilm: u("photo-1473580044384-7ba9967e16a0"),
+  /** إطلاق تطبيق وصلة — أطعمة شهية */
+  foodApp: u("photo-1504674900247-0877df9cc836"),
+  /** محرّك عملاء كلينيكا — شاشة تحليلات وتقارير */
+  leadGen: u("photo-1551288049-bebda4e38f71"),
 };
 
 export const LOGO_URL =
