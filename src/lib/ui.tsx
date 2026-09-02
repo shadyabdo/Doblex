@@ -5,6 +5,7 @@ import {
   type CSSProperties,
   type ReactNode,
 } from "react";
+import { DuplexMarkIcon } from "../components/icons";
 
 /* ------------------------- useInView ------------------------- */
 export function useInView<T extends HTMLElement>(
@@ -134,7 +135,7 @@ export function Marquee({
           <span className="font-display whitespace-nowrap px-6 text-lg font-bold tracking-wide md:text-xl">
             {item}
           </span>
-          <Spark
+          <DuplexMarkIcon
             className={`h-4 w-4 shrink-0 ${dark ? "text-flame" : "text-teal"}`}
           />
         </span>
