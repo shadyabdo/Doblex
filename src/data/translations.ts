@@ -13,7 +13,7 @@ export const T = {
   navHome: { ar: "الرئيسية", en: "Home" },
   navStart: { ar: "ابدأ مشروعك", en: "Start a project" },
 
-  heroKicker: { ar: "استوديو دوبليكس — تأسس 2019", en: "Duplex Studio — Est. 2019" },
+  heroKicker: { ar: "استوديو دوبليكس — تأسس 2026", en: "Duplex Studio — Est. 2026" },
   heroL1: { ar: "هنا بتتصنع", en: "We build digital" },
   heroL2: { ar: "التجارب الرقمية", en: "experiences" },
   heroL3: { ar: "اللي بتفرق.", en: "that actually land." },
@@ -25,9 +25,9 @@ export const T = {
   heroCta2: { ar: "تعرّف على الأقسام", en: "Meet the departments" },
   heroMeta1: { ar: "4 أقسام متكاملة", en: "4 integrated departments" },
   heroMeta2: { ar: "+48 مشروع مسلّم", en: "48+ shipped projects" },
-  heroMeta3: { ar: "6 سنوات خبرة", en: "6 years of craft" },
+  heroMeta3: { ar: "12 متخصص مبدع", en: "12 creative specialists" },
   heroStatTitle: { ar: "متوسط نمو الحملات", en: "Average campaign growth" },
-  heroStatNote: { ar: "عبر عملائنا في 2025", en: "Across our clients in 2025" },
+  heroStatNote: { ar: "عبر عملائنا في 2026", en: "Across our clients in 2026" },
   heroAvailable: { ar: "متاحون لمشروعات جديدة", en: "Available for new projects" },
   heroRollLead: { ar: "بنصنع", en: "We craft" },
   heroRollTail: { ar: "بتفرق.", en: "that land." },
@@ -71,8 +71,8 @@ export const T = {
   ctaCopied: { ar: "اتنسخ ✓", en: "Copied ✓" },
 
   footerAbout: {
-    ar: "استوديو تقني متكامل بيشتغل مع الشركات والبراندات الطموحة في مصر والخليج من 2019.",
-    en: "A full-stack tech studio working with ambitious companies and brands across Egypt & the GCC since 2019.",
+    ar: "استوديو تقني متكامل اتأسس سنة 2026، وبيشتغل مع الشركات والبراندات الطموحة في مصر والخليج.",
+    en: "A full-stack tech studio founded in 2026, working with ambitious companies and brands across Egypt & the GCC.",
   },
   footerDeps: { ar: "الأقسام", en: "Departments" },
   footerContact: { ar: "تواصل معنا", en: "Contact" },
@@ -155,8 +155,8 @@ export const MARQUEE: { ar: string[]; en: string[] } = {
 };
 
 export const STATS_LABELS: { ar: string[]; en: string[] } = {
-  ar: ["مشروع مسلّم", "عميل سعيد", "سنوات خبرة", "جائزة تصميم"],
-  en: ["Projects shipped", "Happy clients", "Years of craft", "Design awards"],
+  ar: ["مشروع مسلّم", "عميل سعيد", "متخصص في الفريق", "جائزة تصميم"],
+  en: ["Projects shipped", "Happy clients", "Team specialists", "Design awards"],
 };
 
 export const PROCESS: { ar: ProcessStep[]; en: ProcessStep[] } = {
