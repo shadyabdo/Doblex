@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, type CSSProperties } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useLang } from "../i18n";
-import { HERO_ROLL, MARQUEE, PROCESS, STATS_LABELS, T } from "../data/translations";
+import { MARQUEE, PROCESS, STATS_LABELS, T } from "../data/translations";
 import {
   CATEGORIES,
   STATS,
@@ -14,7 +14,6 @@ import {
   CountUp,
   Marquee,
   Reveal,
-  RotatingBadge,
   SectionHead,
   Spark,
 } from "../lib/ui";
@@ -27,105 +26,39 @@ function scrollToId(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-/* ============================ Roller Hero ============================ */
-function WordRoller({ words }: { words: string[] }) {
-  const [idx, setIdx] = useState(0);
-
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const id = setInterval(() => setIdx((i) => (i + 1) % words.length), 2400);
-    return () => clearInterval(id);
-  }, [words.length]);
-
-  const cat = CATEGORIES[idx % CATEGORIES.length];
-
-  return (
-    <span className="relative inline-block" style={{ height: "1.14em" }}>
-      <span className="block overflow-hidden" style={{ height: "1.14em" }}>
-        <span
-          className="block transition-transform duration-[560ms] ease-[cubic-bezier(0.77,0,0.18,1)]"
-          style={{ transform: `translateY(-${idx * (100 / words.length)}%)` }}
-        >
-          {words.map((w, i) => (
-            <span
-              key={w}
-              className="block"
-              style={{
-                color: CATEGORIES[i % CATEGORIES.length].color,
-                height: "1.14em",
-                lineHeight: 1.14,
-              }}
-            >
-              {w}
-            </span>
-          ))}
-        </span>
-      </span>
-      {/* خط سفلي يتجدد بلون القسم النشط */}
-      <span
-        key={`u-${idx}`}
-        className="origin-inline-start absolute -bottom-[0.05em] start-0 block h-[0.075em] w-full rounded-full"
-        style={{
-          background: cat.color,
-          animation: "underline-grow 0.55s cubic-bezier(0.22,1,0.36,1) both",
-        }}
-      />
-    </span>
-  );
-}
-
+/* ============================ Duplex Split Hero ============================ */
 function CraftHero() {
   const { lang, t } = useLang();
-  const rollWords = HERO_ROLL[lang];
 
   return (
-    <section className="relative -mt-20 overflow-hidden md:-mt-24">
-      <div className="blueprint absolute inset-0" aria-hidden />
-      <div
-        className="absolute -top-28 end-[-8%] h-[420px] w-[420px] rounded-full bg-teal/10 blur-3xl"
-        aria-hidden
-      />
-      <div
-        className="absolute top-72 start-[-10%] h-[340px] w-[340px] rounded-full bg-flame/10 blur-3xl"
-        aria-hidden
-      />
+    <section className="relative grid overflow-hidden lg:grid-cols-12">
+      {/* ===== الناحية الفاتحة — البيان ===== */}
+      <div className="relative lg:col-span-7">
+        <div className="blueprint absolute inset-0" aria-hidden />
+        <div
+          className="absolute -top-24 end-[-10%] h-[380px] w-[380px] rounded-full bg-teal/10 blur-3xl"
+          aria-hidden
+        />
 
-      <div className="relative px-5 pt-32 pb-14 sm:px-8 md:px-12 md:pt-40 md:pb-16 lg:px-16">
-        {/* سطر الميتا */}
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <p className="flex items-center gap-3 text-xs font-bold tracking-[0.24em] text-teal uppercase">
-            <span className="h-px w-10 bg-flame" />
-            {t(T.heroKicker)}
-          </p>
-          <span className="inline-flex items-center gap-2.5 rounded-full border border-line bg-surface px-4 py-2 text-xs font-bold text-ink-soft shadow-sm">
-            <span className="pulse-dot h-2 w-2 rounded-full bg-jade" />
-            {t(T.heroAvailable)}
-          </span>
-        </div>
-
-        {/* العنوان */}
-        <h1 className="font-display mt-12 max-w-5xl text-ink md:mt-16">
-          <span
-            className="mask-line block text-[clamp(1.9rem,4.5vw,3.3rem)] leading-[1.15] font-black"
-            style={{ "--line-delay": "60ms" } as React.CSSProperties}
-          >
-            <span>{t(T.heroRollLead)}</span>
-          </span>
-          <span
-            className="mask-line block text-[clamp(3.4rem,10vw,8rem)] leading-[1.08] font-black"
-            style={{ "--line-delay": "180ms" } as React.CSSProperties}
-          >
-            <span>
-              <WordRoller words={rollWords} />
+        <div className="relative px-5 pt-16 pb-14 sm:px-8 md:px-12 md:pt-24 md:pb-16 lg:pt-28 lg:ps-16">
+          <div className="flex flex-wrap items-center gap-4">
+            <p className="flex items-center gap-3 text-xs font-bold tracking-[0.24em] text-teal uppercase">
+              <span className="h-px w-10 bg-flame" />
+              {t(T.heroKicker)}
+            </p>
+            <span className="inline-flex items-center gap-2.5 rounded-full border border-line bg-surface px-4 py-2 text-xs font-bold text-ink-soft shadow-sm">
+              <span className="pulse-dot h-2 w-2 rounded-full bg-jade" />
+              {t(T.heroAvailable)}
             </span>
-          </span>
-          <span
-            className="mask-line block text-[clamp(1.9rem,4.5vw,3.3rem)] leading-[1.15] font-black"
-            style={{ "--line-delay": "300ms" } as React.CSSProperties}
-          >
-            <span className="flex items-center gap-3 md:gap-4">
+          </div>
+
+          <h1 className="font-display mt-9 text-ink">
+            <span className="block text-[clamp(2.7rem,6.2vw,5rem)] leading-[1.06] font-black">
+              {t(T.heroS1)}
+            </span>
+            <span className="block text-[clamp(2.7rem,6.2vw,5rem)] leading-[1.06] font-black text-teal">
               <span className="relative inline-block">
-                {t(T.heroRollTail)}
+                {t(T.heroS2)}
                 <svg
                   className="absolute -bottom-2 start-0 h-3 w-full text-flame"
                   viewBox="0 0 220 12"
@@ -141,122 +74,114 @@ function CraftHero() {
                   />
                 </svg>
               </span>
-              <Spark className="h-7 w-7 shrink-0 text-flame md:h-10 md:w-10" />
             </span>
-          </span>
-        </h1>
+          </h1>
 
-        {/* وصف + أزرار | أرقام */}
-        <div className="mt-12 grid items-end gap-10 md:mt-16 lg:grid-cols-12 lg:gap-8">
-          <div className="lg:col-span-7">
-            <p className="max-w-xl text-base leading-relaxed text-muted md:text-lg">
-              {t(T.heroP)}
-            </p>
-            <div className="mt-8 flex flex-wrap items-center gap-4">
-              <button
-                onClick={() => scrollToId("work")}
-                className="group flex items-center gap-2.5 rounded-full bg-flame px-7 py-3.5 text-sm font-bold text-white shadow-[0_10px_30px_rgba(232,89,12,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-flame-deep"
-              >
-                {t(T.heroCta1)}
-                <ArrowIcon className="rtl-flip h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-              </button>
-              <button
-                onClick={() => scrollToId("departments")}
-                className="rounded-full border-2 border-ink/15 px-7 py-3.5 text-sm font-bold text-ink transition-all duration-200 hover:border-teal hover:text-teal"
-              >
-                {t(T.heroCta2)}
-              </button>
-            </div>
+          <p className="mt-7 max-w-xl text-base leading-relaxed text-muted md:text-lg">
+            {t(T.heroP)}
+          </p>
+
+          <div className="mt-9 flex flex-wrap items-center gap-4">
+            <button
+              onClick={() => scrollToId("work")}
+              className="group flex items-center gap-2.5 rounded-full bg-flame px-7 py-3.5 text-sm font-bold text-white shadow-[0_10px_30px_rgba(232,89,12,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-flame-deep"
+            >
+              {t(T.heroCta1)}
+              <ArrowIcon className="rtl-flip h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+            </button>
+            <button
+              onClick={() => scrollToId("departments")}
+              className="rounded-full border-2 border-ink/15 px-7 py-3.5 text-sm font-bold text-ink transition-all duration-200 hover:border-teal hover:text-teal"
+            >
+              {t(T.heroCta2)}
+            </button>
           </div>
 
-          <div className="lg:col-span-5">
-            <div className="grid grid-cols-3 gap-5 border-t-2 border-ink/10 pt-6 md:gap-6">
-              {STATS.slice(0, 3).map((v, i) => (
-                <div key={i}>
-                  <p className="font-display text-3xl font-black text-ink md:text-5xl">
-                    <CountUp value={v} suffix={i === 0 ? "+" : ""} />
-                  </p>
-                  <p className="mt-1.5 text-[11px] leading-snug font-bold text-muted">
-                    {STATS_LABELS[lang][i]}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
+          <p className="mt-10 flex items-center gap-2.5 text-xs font-bold text-muted">
+            <Spark className="h-3.5 w-3.5 shrink-0 text-flame" />
+            {t(T.heroLangNote)}
+          </p>
         </div>
       </div>
 
-      {/* ------------- Departments strip ------------- */}
-      <div className="relative mt-14 md:mt-20">
-        <div className="container-x mb-5 flex items-end justify-between gap-4">
-          <p className="font-display text-lg font-extrabold text-ink md:text-xl">
-            {t(T.heroDepartments)}
-            <span className="ms-3 align-middle text-[10px] font-black tracking-[0.3em] text-muted" dir="ltr">
-              01 — 04
+      {/* ===== الناحية الداكنة — فهرس الأقسام ===== */}
+      <div className="relative overflow-hidden bg-ink lg:col-span-5">
+        <div className="blueprint-dark absolute inset-0" aria-hidden />
+        <div className="relative flex h-full flex-col p-6 md:p-9 lg:p-10">
+          <div className="flex items-center justify-between border-b border-paper/15 pb-5">
+            <p className="font-display text-lg font-extrabold text-paper md:text-xl">
+              {t(T.heroDeptsTitle)}
+            </p>
+            <span
+              className="rounded-full border border-paper/20 px-3 py-1 text-[10px] font-black tracking-[0.25em] text-paper/50"
+              dir="ltr"
+            >
+              04 DEPTS
             </span>
-          </p>
-          <p className="hidden items-center gap-2 text-xs font-bold text-muted sm:flex">
-            <Spark className="h-3.5 w-3.5 text-flame" />
-            {t(T.heroPanelsHint)}
-          </p>
-        </div>
+          </div>
 
-        <div className="grid grid-cols-2 gap-px border-y border-line bg-line md:flex md:h-[360px] md:gap-0 md:bg-transparent lg:h-[400px]">
-          {CATEGORIES.map((c, i) => {
-            const count = projectsByCategory(c.id).length;
-            return (
-              <Link
-                key={c.id}
-                to={`/work/${c.id}`}
-                className="group relative flex h-48 items-end overflow-hidden bg-ink transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] md:h-full md:min-w-0 md:flex-1 md:hover:flex-[2.3]"
-                style={{ "--acc": c.color } as React.CSSProperties}
-              >
-                <img
-                  src={c.image}
-                  alt={t(c.name)}
-                  loading={i > 1 ? "lazy" : "eager"}
-                  className="absolute inset-0 h-full w-full object-cover opacity-80 transition-all duration-700 ease-out group-hover:scale-[1.07] md:opacity-65 md:group-hover:opacity-95"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-ink/5" />
-                <span className="origin-inline-start absolute inset-x-0 top-0 h-1 scale-x-0 bg-[var(--acc)] transition-transform duration-500 group-hover:scale-x-100" />
-                <span className="font-display absolute top-4 end-4 text-sm font-black text-paper/70" dir="ltr">
-                  {c.num}
-                </span>
-
-                <div className="relative w-full p-4 md:p-6">
-                  <p
-                    className="text-[9px] font-black tracking-[0.28em] uppercase md:text-[10px]"
+          <nav className="flex-1" aria-label={t(T.heroDeptsTitle)}>
+            {CATEGORIES.map((c) => {
+              const count = projectsByCategory(c.id).length;
+              return (
+                <Link
+                  key={c.id}
+                  to={`/work/${c.id}`}
+                  className="group flex items-center gap-4 border-b border-paper/10 py-4 transition-colors duration-200 hover:bg-paper/[0.06] md:gap-5 md:py-5"
+                >
+                  <span
+                    className="font-display w-8 shrink-0 text-base font-black"
                     style={{ color: c.color }}
                     dir="ltr"
                   >
-                    {c.latin}
-                  </p>
-                  <p className="font-display mt-1 text-lg font-extrabold text-paper md:text-2xl">
-                    {t(c.name)}
-                  </p>
-
-                  <div className="grid transition-all duration-500 ease-out md:grid-rows-[0fr] md:group-hover:grid-rows-[1fr]">
-                    <div className="overflow-hidden">
-                      <p className="pt-2 text-xs leading-relaxed text-paper/75 md:text-sm">
-                        {t(c.blurb)}
-                      </p>
-                      <p className="flex items-center gap-2 pt-2.5 text-xs font-extrabold text-flame">
-                        {t(T.exploreCat)}
-                        <ArrowIcon className="rtl-flip h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
-                      </p>
-                    </div>
-                  </div>
-
-                  <p className="mt-1.5 text-[10px] font-bold text-paper/50 md:mt-2 md:text-[11px]">
+                    {c.num}
+                  </span>
+                  <span className="hidden h-11 w-14 shrink-0 overflow-hidden rounded-md border border-paper/15 sm:block">
+                    <img
+                      src={c.image}
+                      alt=""
+                      aria-hidden
+                      loading="lazy"
+                      className="h-full w-full object-cover"
+                    />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span
+                      className="font-display block truncate text-lg font-extrabold text-paper transition-colors duration-200 group-hover:text-[var(--hov)]"
+                      style={{ "--hov": c.color } as CSSProperties}
+                    >
+                      {t(c.name)}
+                    </span>
+                    <span
+                      className="mt-0.5 block text-[10px] font-black tracking-[0.24em] text-paper/35 uppercase"
+                      dir="ltr"
+                    >
+                      {c.latin}
+                    </span>
+                  </span>
+                  <span className="shrink-0 rounded-full bg-paper/10 px-3 py-1 text-[11px] font-bold text-paper/70">
                     {count} {t(T.depsProjects)}
-                  </p>
-                </div>
-              </Link>
-            );
-          })}
+                  </span>
+                  <ArrowIcon className="rtl-flip h-4 w-4 shrink-0 text-paper/30 transition-all duration-200 group-hover:translate-x-1 group-hover:text-flame" />
+                </Link>
+              );
+            })}
+          </nav>
+
+          <div className="grid grid-cols-3 gap-4 pt-6">
+            {STATS.slice(0, 3).map((v, i) => (
+              <div key={i}>
+                <p className="font-display text-3xl font-black text-paper md:text-4xl">
+                  <CountUp value={v} suffix={i === 0 ? "+" : ""} />
+                </p>
+                <p className="mt-1 text-[11px] leading-snug font-bold text-paper/50">
+                  {STATS_LABELS[lang][i]}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-
     </section>
   );
 }

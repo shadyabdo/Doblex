@@ -160,6 +160,15 @@ export function XIcon({ className = "h-4 w-4" }: IconProps) {
   );
 }
 
+export function DuplexMarkIcon({ className = "h-4 w-4" }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+      <rect x="3" y="3" width="12.5" height="12.5" rx="3" stroke="currentColor" strokeWidth="2.4" />
+      <rect x="8.5" y="8.5" width="12.5" height="12.5" rx="3" stroke="currentColor" strokeWidth="2.4" />
+    </svg>
+  );
+}
+
 export function CalendarIcon({ className = "h-4 w-4" }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>

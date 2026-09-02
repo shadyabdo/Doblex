@@ -31,6 +31,13 @@ export const T = {
   heroAvailable: { ar: "متاحون لمشروعات جديدة", en: "Available for new projects" },
   heroRollLead: { ar: "بنصنع", en: "We craft" },
   heroRollTail: { ar: "بتفرق.", en: "that land." },
+  heroS1: { ar: "من الفكرة", en: "From the idea" },
+  heroS2: { ar: "للنتيجة.", en: "to the results." },
+  heroDeptsTitle: { ar: "أقسام الاستوديو", en: "Studio departments" },
+  heroLangNote: {
+    ar: "الموقع بيتكلم عربي وإنجليزي — جرّب المبدّل من فوق.",
+    en: "This site speaks Arabic & English — try the toggle above.",
+  },
   heroA1: { ar: "فكرتك بتبقى", en: "Your idea becomes" },
   heroA3: { ar: "بتفرق.", en: "that lands." },
   heroPanelsHint: { ar: "مرّر على قسم لاستكشافه", en: "Hover a department to explore" },
