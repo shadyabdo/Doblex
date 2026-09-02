@@ -67,12 +67,12 @@ export const BLOG_POSTS: BlogPost[] = [
     },
     body: {
       ar: [
-        "بدأت دوبليكس في 2019 كفكرة بسيطة: لماذا يضطر صاحب المشروع للتعامل مع أربعة أطراف مختلفة — مطوّر، مصمم، مونتير، ومسوّق — بينما يمكن لكل هؤلاء أن يعملوا معًا تحت سقف واحد؟ كانت الإجابة هي دوبليكس.",
+        "بدأت دوبليكس في 2026 كفكرة بسيطة: لماذا يضطر صاحب المشروع للتعامل مع أربعة أطراف مختلفة — مطوّر، مصمم، مونتير، ومسوّق — بينما يمكن لكل هؤلاء أن يعملوا معًا تحت سقف واحد؟ كانت الإجابة هي دوبليكس.",
         "اليوم، يضم الفريق أكثر من 20 متخصصًا موزعين على أربعة أقسام متكاملة. نؤمن أن أفضل النتائج تولد عندما يتحدث المطوّر لغة المصمم، ويفهم المسوّق ما يفعله المونتير. هذا التكامل هو سرنا.",
         "قيمنا ثلاث: الشفافية مع العميل في كل مرحلة، الجودة التي لا نقبل فيها التنازل، والتعلّم المستمر. كل مشروع بالنسبة لنا ليس مجرد تسليم، بل فرصة لإثبات أن الإبداع المدروس يصنع الفارق الحقيقي.",
       ],
       en: [
-        "Duplex began in 2019 as a simple idea: why should a business owner juggle four separate parties — a developer, a designer, an editor, and a marketer — when they could all work together under one roof? The answer was Duplex.",
+        "Duplex began in 2026 as a simple idea: why should a business owner juggle four separate parties — a developer, a designer, an editor, and a marketer — when they could all work together under one roof? The answer was Duplex.",
         "Today, our team includes more than 20 specialists across four integrated departments. We believe the best results are born when the developer speaks the designer's language and the marketer understands what the editor does. This integration is our secret.",
         "Our values are three: transparency with the client at every stage, quality we never compromise on, and continuous learning. Every project is not just a delivery, but a chance to prove that thoughtful creativity makes a real difference.",
       ],

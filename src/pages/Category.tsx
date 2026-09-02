@@ -21,6 +21,9 @@ export default function Category() {
 
   const projects = projectsByCategory(cat.id);
   const years = projects.map((p) => p.year);
+  const minYear = Math.min(...years);
+  const maxYear = Math.max(...years);
+  const yearRange = minYear === maxYear ? `${minYear}` : `${minYear} – ${maxYear}`;
   const others = CATEGORIES.filter((c) => c.id !== cat.id);
 
   return (
@@ -83,7 +86,7 @@ export default function Category() {
                 {projects.length} {t(T.catCount)}
               </span>
               <span className="rounded-full border border-line bg-surface px-4 py-2 text-ink-soft" dir="ltr">
-                {Math.min(...years)} – {Math.max(...years)}
+                {yearRange}
               </span>
             </div>
           </Reveal>
