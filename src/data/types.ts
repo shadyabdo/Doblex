@@ -4,7 +4,8 @@ export interface LText {
   en: string;
 }
 
-export type CategoryId = "websites" | "graphic" | "video" | "marketing";
+/** معرّف التصنيف — نص حر لأن المحتوى يأتي ديناميكيًا من Firestore */
+export type CategoryId = string;
 
 /** نوع عرض الصورة داخل المعرض واللايت بوكس */
 export type FrameType = "full" | "crop-top" | "crop-detail" | "phone";

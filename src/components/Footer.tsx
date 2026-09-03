@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useLang } from "../i18n";
 import { T } from "../data/translations";
-import { CATEGORIES, CONTACT, LOGO_URL, SOCIALS } from "../data/projects";
+import { CONTACT, LOGO_URL, SOCIALS } from "../data/projects";
+import { useContent } from "../lib/content";
 import {
   CopyIcon,
   MailIcon,
@@ -15,6 +16,7 @@ import { CountUp, Reveal, Spark } from "../lib/ui";
 
 export default function Footer() {
   const { lang, t } = useLang();
+  const { categories } = useContent();
   const [copied, setCopied] = useState(false);
 
   const copyEmail = async () => {
@@ -129,7 +131,7 @@ export default function Footer() {
               {t(T.footerDeps)}
             </h3>
             <ul className="space-y-3">
-              {CATEGORIES.map((c) => (
+              {categories.map((c) => (
                 <li key={c.id}>
                   <Link
                     to={`/work/${c.id}`}

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useLang } from "../i18n";
-import { getCategory } from "../data/projects";
+import { useContent } from "../lib/content";
 import type { Project } from "../data/types";
 import { ArrowIcon } from "./icons";
 
@@ -12,6 +12,7 @@ export default function ProjectCard({
   big?: boolean;
 }) {
   const { t } = useLang();
+  const { getCategory } = useContent();
   const cat = getCategory(project.category);
   if (!cat) return null;
 

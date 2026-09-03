@@ -3,7 +3,7 @@ import { Link, Navigate, useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useLang } from "../i18n";
 import { T } from "../data/translations";
-import { CATEGORIES, getCategory, projectsByCategory } from "../data/projects";
+import { useContent } from "../lib/content";
 import { Reveal } from "../lib/ui";
 import { ArrowIcon } from "../components/icons";
 import ProjectCard from "../components/ProjectCard";
@@ -11,6 +11,7 @@ import ProjectCard from "../components/ProjectCard";
 export default function Category() {
   const { categoryId } = useParams();
   const { t } = useLang();
+  const { categories, getCategory, projectsByCategory } = useContent();
   const cat = getCategory(categoryId ?? "");
 
   useEffect(() => {
@@ -21,10 +22,12 @@ export default function Category() {
 
   const projects = projectsByCategory(cat.id);
   const years = projects.map((p) => p.year);
-  const minYear = Math.min(...years);
-  const maxYear = Math.max(...years);
-  const yearRange = minYear === maxYear ? `${minYear}` : `${minYear} – ${maxYear}`;
-  const others = CATEGORIES.filter((c) => c.id !== cat.id);
+  const yearRange = years.length
+    ? Math.min(...years) === Math.max(...years)
+      ? `${Math.min(...years)}`
+      : `${Math.min(...years)} – ${Math.max(...years)}`
+    : "—";
+  const others = categories.filter((c) => c.id !== cat.id);
 
   return (
     <>

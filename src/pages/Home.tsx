@@ -3,13 +3,8 @@ import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useLang } from "../i18n";
 import { MARQUEE, PROCESS, STATS_LABELS, T } from "../data/translations";
-import {
-  CATEGORIES,
-  STATS,
-  featuredProjects,
-  projectsByCategory,
-} from "../data/projects";
-import { BLOG_POSTS } from "../data/blog";
+import { STATS } from "../data/projects";
+import { useContent } from "../lib/content";
 import {
   CountUp,
   Marquee,
@@ -29,6 +24,7 @@ function scrollToId(id: string) {
 /* ============================ Duplex Split Hero ============================ */
 function CraftHero() {
   const { lang, t } = useLang();
+  const { categories, projectsByCategory } = useContent();
 
   return (
     <section className="relative grid overflow-hidden lg:grid-cols-12">

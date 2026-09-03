@@ -244,6 +244,40 @@ body::after {
   }
 }
 
+/* ---------- شاشة المزامنة ---------- */
+@keyframes sync-bar {
+  0%,
+  100% {
+    height: 10px;
+    opacity: 0.4;
+  }
+  50% {
+    height: 34px;
+    opacity: 1;
+  }
+}
+.sync-bar {
+  height: 10px;
+  animation: sync-bar 1s ease-in-out infinite;
+}
+@keyframes sync-sheen {
+  from {
+    transform: translateX(-120%);
+  }
+  to {
+    transform: translateX(120%);
+  }
+}
+.sync-sheen {
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 70%
+  );
+  animation: sync-sheen 1.4s ease-in-out infinite;
+}
+
 /* ---------- قائمة الموبايل ---------- */
 @keyframes menu-in {
   from {

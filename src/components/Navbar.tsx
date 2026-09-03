@@ -2,7 +2,8 @@ import { useEffect, useState, type ReactElement } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useLang } from "../i18n";
 import { T } from "../data/translations";
-import { CATEGORIES, CONTACT, LOGO_URL, SOCIALS } from "../data/projects";
+import { CONTACT, LOGO_URL, SOCIALS } from "../data/projects";
+import { useContent } from "../lib/content";
 import {
   ArrowIcon,
   BlogIcon,
@@ -21,19 +22,13 @@ interface IconProps {
   className?: string;
 }
 
-const SHORT: Record<string, { ar: string; en: string }> = {
-  websites: { ar: "المواقع", en: "Web" },
-  graphic: { ar: "الجرافيك", en: "Design" },
-  video: { ar: "الفيديو", en: "Film" },
-  marketing: { ar: "التسويق", en: "Growth" },
-};
-
-const CATEGORY_ICONS: Record<string, (p: IconProps) => ReactElement> = {
-  websites: CodeIcon,
-  graphic: PenIcon,
-  video: FilmIcon,
-  marketing: MegaphoneIcon,
-};
+/** أيقونات تُوزع على الأقسام بالتناوب لأن معرّفاتها ديناميكية من Firestore */
+const CATEGORY_ICONS: ((p: IconProps) => ReactElement)[] = [
+  CodeIcon,
+  PenIcon,
+  FilmIcon,
+  MegaphoneIcon,
+];
 
 /** هيدر عائم على شكل كبسولة منفصلة عن حافة الصفحة */
 export default function Navbar() {
@@ -58,6 +53,8 @@ export default function Navbar() {
     };
   }, [open]);
 
+  const { categories } = useContent();
+
   const links = [
     {
       to: "/",
@@ -67,17 +64,17 @@ export default function Navbar() {
       Icon: HomeIcon,
       end: true,
     },
-    ...CATEGORIES.map((c) => ({
+    ...categories.map((c, i) => ({
       to: `/work/${c.id}`,
       num: c.num,
-      label: SHORT[c.id][lang],
+      label: t(c.name),
       color: c.color,
-      Icon: CATEGORY_ICONS[c.id],
+      Icon: CATEGORY_ICONS[i % CATEGORY_ICONS.length],
       end: false,
     })),
     {
       to: "/blog",
-      num: "05",
+      num: String(categories.length + 1).padStart(2, "0"),
       label: lang === "ar" ? "المدونة" : "Blog",
       color: "#E8590C",
       Icon: BlogIcon,
