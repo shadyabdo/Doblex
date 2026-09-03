@@ -3,13 +3,8 @@ import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useLang } from "../i18n";
 import { MARQUEE, PROCESS, STATS_LABELS, T } from "../data/translations";
-import {
-  CATEGORIES,
-  STATS,
-  featuredProjects,
-  projectsByCategory,
-} from "../data/projects";
-import { BLOG_POSTS } from "../data/blog";
+import { STATS } from "../data/projects";
+import { useContent } from "../lib/content";
 import {
   CountUp,
   Marquee,
@@ -29,6 +24,7 @@ function scrollToId(id: string) {
 /* ============================ Duplex Split Hero ============================ */
 function CraftHero() {
   const { lang, t } = useLang();
+  const { categories, projectsByCategory } = useContent();
 
   return (
     <section className="relative grid overflow-hidden lg:grid-cols-12">
@@ -121,7 +117,7 @@ function CraftHero() {
           </div>
 
           <nav className="flex-1" aria-label={t(T.heroDeptsTitle)}>
-            {CATEGORIES.map((c) => {
+            {categories.map((c) => {
               const count = projectsByCategory(c.id).length;
               return (
                 <Link
@@ -189,8 +185,9 @@ function CraftHero() {
 /* ============================ Home Page ============================ */
 export default function Home() {
   const { lang, t } = useLang();
+  const { categories, projectsByCategory, featuredProjects, posts } = useContent();
   const featured = featuredProjects();
-  const latestPosts = BLOG_POSTS.slice(0, 4);
+  const latestPosts = posts.slice(0, 4);
 
   useEffect(() => {
     document.title =
@@ -231,7 +228,7 @@ export default function Home() {
         />
 
         <div className="border-t border-line">
-          {CATEGORIES.map((c, i) => {
+          {categories.map((c, i) => {
             const count = projectsByCategory(c.id).length;
             return (
               <Reveal key={c.id} delay={i * 80}>
@@ -295,7 +292,7 @@ export default function Home() {
             end={
               <Reveal delay={150}>
                 <div className="flex flex-wrap gap-2.5">
-                  {CATEGORIES.map((c) => (
+                  {categories.map((c) => (
                     <Link
                       key={c.id}
                       to={`/work/${c.id}`}

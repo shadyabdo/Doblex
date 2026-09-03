@@ -3,18 +3,15 @@ import { Link, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useLang } from "../i18n";
 import { T } from "../data/translations";
-import {
-  AUTHOR,
-  BLOG_CATEGORIES,
-  BLOG_POSTS,
-  getBlogCategory,
-} from "../data/blog";
+import { AUTHOR } from "../data/blog";
+import { useContent } from "../lib/content";
 import { Reveal, Spark } from "../lib/ui";
 import BlogCard, { formatDate } from "../components/BlogCard";
 import { ArrowIcon } from "../components/icons";
 
 export default function Blog() {
   const { lang, t } = useLang();
+  const { posts, blogCategories, getBlogCategory } = useContent();
   const [params, setParams] = useSearchParams();
   const activeCat = params.get("cat") ?? "";
 
@@ -26,8 +23,8 @@ export default function Blog() {
   }, [lang]);
 
   const filtered = activeCat
-    ? BLOG_POSTS.filter((p) => p.categoryId === activeCat)
-    : BLOG_POSTS;
+    ? posts.filter((p) => p.categoryId === activeCat)
+    : posts;
 
   const featured = !activeCat ? filtered[0] : null;
   const rest = featured ? filtered.slice(1) : filtered;
@@ -93,7 +90,7 @@ export default function Blog() {
 
             <p className="mt-6 text-sm font-bold text-ink-soft">
               {lang === "ar" ? "بقلم" : "Written by"}{" "}
-              <span className="text-teal">{t(AUTHOR)}</span> · {BLOG_POSTS.length}{" "}
+              <span className="text-teal">{t(AUTHOR)}</span> · {posts.length}{" "}
               {lang === "ar" ? "مقالة" : "articles"}
             </p>
           </Reveal>
@@ -113,7 +110,7 @@ export default function Blog() {
           >
             {lang === "ar" ? "الكل" : "All"}
           </button>
-          {BLOG_CATEGORIES.map((c) => (
+          {blogCategories.map((c) => (
             <button
               key={c.id}
               onClick={() => setCat(activeCat === c.id ? "" : c.id)}

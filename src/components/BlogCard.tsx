@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useLang } from "../i18n";
-import { AUTHOR, getBlogCategory, type BlogPost } from "../data/blog";
+import { AUTHOR, type BlogPost } from "../data/blog";
+import { useContent } from "../lib/content";
 import { ArrowIcon, CalendarIcon, ClockIcon, UserIcon } from "./icons";
 
 export function formatDate(iso: string, lang: string): string {
@@ -14,6 +15,7 @@ export function formatDate(iso: string, lang: string): string {
 
 export default function BlogCard({ post }: { post: BlogPost }) {
   const { lang, t } = useLang();
+  const { getBlogCategory } = useContent();
   const cat = getBlogCategory(post.categoryId);
 
   return (

@@ -3,7 +3,8 @@ import { Link, Navigate, useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useLang } from "../i18n";
 import { T } from "../data/translations";
-import { CONTACT, getCategory, getProject, nextInCategory } from "../data/projects";
+import { CONTACT } from "../data/projects";
+import { useContent } from "../lib/content";
 import { CountUp, Reveal } from "../lib/ui";
 import { ArrowIcon, ExternalIcon, PlayIcon } from "../components/icons";
 import { FrameImage } from "../components/Lightbox";
@@ -14,6 +15,7 @@ import VideoPlayer from "../components/VideoPlayer";
 export default function ProjectDetail() {
   const { slug } = useParams();
   const { lang, t } = useLang();
+  const { getCategory, getProject, nextInCategory } = useContent();
   const project = getProject(slug ?? "");
 
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
@@ -27,7 +29,18 @@ export default function ProjectDetail() {
 
   if (!project) return <Navigate to="/" replace />;
 
-  const cat = getCategory(project.category)!;
+  const cat =
+    getCategory(project.category) ??
+    ({
+      id: project.category,
+      num: "",
+      name: { ar: "", en: "" },
+      latin: "",
+      blurb: { ar: "", en: "" },
+      image: "",
+      color: "#0B7C74",
+      tint: "#E1F0EE",
+    } as const);
   const next = nextInCategory(project);
   const address = project.demoUrl ?? `duplex.studio/demo/${project.slug}`;
   const g = project.gallery;
@@ -367,6 +380,7 @@ export default function ProjectDetail() {
       </section>
 
       {/* ================= Next project ================= */}
+      {next && (
       <section className="border-t border-line">
         <Link
           to={`/project/${next.slug}`}
@@ -401,6 +415,7 @@ export default function ProjectDetail() {
           </div>
         </Link>
       </section>
+      )}
 
       {/* ================= Modals ================= */}
       {lightboxIndex !== null && (
