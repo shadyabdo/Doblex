@@ -93,14 +93,6 @@ function ContentGate({ children }: { children: ReactNode }) {
             />
           ))}
         </div>
-        <div>
-          <p className="font-display text-lg font-extrabold text-ink">
-            {isAr ? "جاري المزامنة مع السحاب" : "Syncing with the cloud"}
-          </p>
-          <p className="mt-1 text-sm text-muted" dir="ltr">
-            Firestore · dublex-26
-          </p>
-        </div>
       </div>
     );
   }
