@@ -3,7 +3,8 @@ import { Link, Navigate, useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useLang } from "../i18n";
 import { T } from "../data/translations";
-import { AUTHOR, BLOG_POSTS, getBlogCategory, getBlogPost } from "../data/blog";
+import { AUTHOR } from "../data/blog";
+import { useContent } from "../lib/content";
 import { Reveal, Spark } from "../lib/ui";
 import BlogCard, { formatDate } from "../components/BlogCard";
 import { ArrowIcon, CalendarIcon, ClockIcon, UserIcon } from "../components/icons";
@@ -11,6 +12,7 @@ import { ArrowIcon, CalendarIcon, ClockIcon, UserIcon } from "../components/icon
 export default function BlogPost() {
   const { slug } = useParams();
   const { lang, t } = useLang();
+  const { posts, getBlogCategory, getBlogPost } = useContent();
   const post = getBlogPost(slug ?? "");
 
   useEffect(() => {
@@ -21,9 +23,9 @@ export default function BlogPost() {
 
   const cat = getBlogCategory(post.categoryId);
   const body = post.body[lang];
-  const related = BLOG_POSTS.filter(
-    (p) => p.categoryId === post.categoryId && p.id !== post.id
-  ).slice(0, 3);
+  const related = posts
+    .filter((p) => p.categoryId === post.categoryId && p.id !== post.id)
+    .slice(0, 3);
 
   return (
     <>
