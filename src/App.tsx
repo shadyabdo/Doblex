@@ -9,9 +9,9 @@ import {
 import { HelmetProvider } from "react-helmet-async";
 import { LanguageProvider, useLang } from "./i18n";
 import { ContentProvider, useContent } from "./lib/content";
-import { LOGO_URL } from "./data/projects";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
+import { LOGO_URL } from "./data";
+import { Navbar, Footer } from "./components/chrome";
+import { RefreshIcon } from "./components/icons";
 import Home from "./pages/Home";
 import Category from "./pages/Category";
 import ProjectDetail from "./pages/ProjectDetail";
@@ -27,43 +27,6 @@ function ScrollToTop() {
   return null;
 }
 
-/** شبكة أمان: أي خطأ وقت التشغيل يعرض شاشة ودّية بدل الشاشة البيضاء */
-class ErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
-  state = { failed: false };
-
-  static getDerivedStateFromError() {
-    return { failed: true };
-  }
-
-  componentDidCatch(error: Error, info: ErrorInfo) {
-    console.error("[Duplex] Render error:", error, info);
-  }
-
-  render() {
-    if (!this.state.failed) return this.props.children;
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-paper px-6 text-center">
-        <span className="block h-16 w-16 overflow-hidden rounded-2xl border border-line bg-surface shadow">
-          <img src={LOGO_URL} alt="Duplex" className="h-full w-full object-cover" />
-        </span>
-        <div className="max-w-md">
-          <p className="font-display text-xl font-extrabold text-ink">حدث خطأ غير متوقع</p>
-          <p className="mt-2 text-sm leading-relaxed text-muted">
-            Something went wrong while rendering the page. Please reload — if it
-            persists, check the Firestore connection.
-          </p>
-        </div>
-        <button
-          onClick={() => window.location.reload()}
-          className="rounded-full bg-flame px-7 py-3 text-sm font-bold text-white shadow-[0_10px_30px_rgba(232,89,12,0.35)] transition-all hover:-translate-y-0.5 hover:bg-flame-deep"
-        >
-          إعادة تحميل الصفحة
-        </button>
-      </div>
-    );
-  }
-}
-
 function Analytics() {
   const { pathname } = useLocation();
   useEffect(() => {
@@ -72,10 +35,43 @@ function Analytics() {
   return null;
 }
 
-/** شاشة تظهر أثناء المزامنة مع السحاب أو عند تعذّر الاتصال */
+/** شبكة أمان: تعرض رسالة ودّية بدل الشاشة البيضاء عند أي خطأ */
+class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
+  state = { hasError: false };
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error("[duplex] render error:", error, info);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-paper px-6 text-center">
+          <span className="block h-16 w-16 overflow-hidden rounded-2xl border border-line bg-surface shadow">
+            <img src={LOGO_URL} alt="Duplex" className="h-full w-full object-cover" />
+          </span>
+          <p className="font-display text-xl font-extrabold text-ink">حدث خطأ غير متوقع</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="flex items-center gap-2 rounded-full bg-flame px-7 py-3 text-sm font-bold text-white shadow-[0_10px_30px_rgba(232,89,12,0.35)] transition-all hover:-translate-y-0.5 hover:bg-flame-deep"
+          >
+            <RefreshIcon className="h-4 w-4" />
+            إعادة تحميل الصفحة
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+/** شاشة التحميل (لوجو + أنميشن فقط) + بوابة المحتوى */
 function ContentGate({ children }: { children: ReactNode }) {
-  const { loading, error, retry } = useContent();
-  const { isAr } = useLang();
+  const { loading } = useContent();
 
   if (loading) {
     return (
@@ -97,33 +93,23 @@ function ContentGate({ children }: { children: ReactNode }) {
     );
   }
 
-  if (error) {
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-paper px-6 text-center">
-        <span className="block h-16 w-16 overflow-hidden rounded-2xl border border-line bg-surface shadow">
-          <img src={LOGO_URL} alt="Duplex" className="h-full w-full object-cover" />
-        </span>
-        <div className="max-w-md">
-          <p className="font-display text-xl font-extrabold text-ink">
-            {isAr ? "تعذّر الاتصال بقاعدة البيانات" : "Couldn't reach the database"}
-          </p>
-          <p className="mt-2 text-sm leading-relaxed text-muted">
-            {isAr
-              ? "المحتوى يُقرأ لحظيًا من Firestore. تأكد من اتصالك بالإنترنت ومن قواعد الأمان، ثم أعد المحاولة."
-              : "Content is read live from Firestore. Check your connection and security rules, then retry."}
-          </p>
-        </div>
-        <button
-          onClick={retry}
-          className="rounded-full bg-flame px-7 py-3 text-sm font-bold text-white shadow-[0_10px_30px_rgba(232,89,12,0.35)] transition-all hover:-translate-y-0.5 hover:bg-flame-deep"
-        >
-          {isAr ? "إعادة المحاولة" : "Retry"}
-        </button>
-      </div>
-    );
-  }
-
   return <>{children}</>;
+}
+
+function SyncChip() {
+  const { syncFailed, retry } = useContent();
+  const { isAr } = useLang();
+  if (!syncFailed) return null;
+  return (
+    <button
+      onClick={retry}
+      className="fixed bottom-5 start-5 z-50 flex items-center gap-2.5 rounded-full bg-ink px-4 py-2.5 text-xs font-bold text-paper shadow-[0_14px_36px_rgba(13,31,51,0.35)] transition-transform hover:-translate-y-0.5"
+    >
+      <span className="pulse-dot h-2 w-2 rounded-full bg-flame" />
+      {isAr ? "المزامنة متعثرة — اضغط لإعادة المحاولة" : "Sync stalled — tap to retry"}
+      <RefreshIcon className="h-3.5 w-3.5 text-flame" />
+    </button>
+  );
 }
 
 export default function App() {
@@ -153,6 +139,7 @@ export default function App() {
                     </Routes>
                   </main>
                   <Footer />
+                  <SyncChip />
                 </div>
               </ContentGate>
             </HashRouter>

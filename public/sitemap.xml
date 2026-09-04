@@ -1,46 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   دوبليكس — خريطة الموقع
-  غيّر النطاق أدناه إلى نطاقك الفعلي.
-  ملاحظة: المشروع يستخدم HashRouter حاليًا؛ إذا انتقلت إلى BrowserRouter
+  غيّر النطاق إلى نطاقك الفعلي.
+  ملاحظة: المشروع يستخدم HashRouter؛ إذا انتقلت إلى BrowserRouter
   احذف علامة "#" من الروابط لتصبح نظيفة لمحركات البحث.
 -->
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
-
-  <!-- الرئيسية -->
-  <url>
-    <loc>https://duplex.studio/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-
-  <!-- صفحات الأقسام -->
-  <url><loc>https://duplex.studio/#/work/websites</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://duplex.studio/#/work/graphic</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://duplex.studio/#/work/video</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://duplex.studio/#/work/marketing</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-
-  <!-- المدونة -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://duplex.studio/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
   <url><loc>https://duplex.studio/#/blog</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
-  <url><loc>https://duplex.studio/#/blog/duplex-story</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://duplex.studio/#/blog/what-we-do</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://duplex.studio/#/blog/speed-matters</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://duplex.studio/#/blog/brand-identity</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://duplex.studio/#/blog/short-video-power</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://duplex.studio/#/blog/measure-marketing</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://duplex.studio/#/blog/ecommerce-mistakes</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://duplex.studio/#/blog/launch-playbook</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-
-  <!-- صفحات المشاريع -->
-  <url><loc>https://duplex.studio/#/project/aura-store</loc><priority>0.5</priority></url>
-  <url><loc>https://duplex.studio/#/project/diyar-estates</loc><priority>0.5</priority></url>
-  <url><loc>https://duplex.studio/#/project/zaytoun-restaurant</loc><priority>0.5</priority></url>
-  <url><loc>https://duplex.studio/#/project/mada-coffee</loc><priority>0.5</priority></url>
-  <url><loc>https://duplex.studio/#/project/daw-festival</loc><priority>0.5</priority></url>
-  <url><loc>https://duplex.studio/#/project/pulse-fitness</loc><priority>0.5</priority></url>
-  <url><loc>https://duplex.studio/#/project/sharara-cuts</loc><priority>0.5</priority></url>
-  <url><loc>https://duplex.studio/#/project/tarhal-film</loc><priority>0.5</priority></url>
-  <url><loc>https://duplex.studio/#/project/wasla-launch</loc><priority>0.5</priority></url>
-  <url><loc>https://duplex.studio/#/project/clinica-leads</loc><priority>0.5</priority></url>
+  <!-- صفحات الأقسام والمشاريع والمقالات تُنشأ ديناميكيًا من محتوى الداشبورد؛
+       أضفها هنا كلما أضفت محتوى جديدًا أو ولّدها تلقائيًا من Firestore. -->
 </urlset>

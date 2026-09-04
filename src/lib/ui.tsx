@@ -5,7 +5,7 @@ import {
   type CSSProperties,
   type ReactNode,
 } from "react";
-import { DuplexMarkIcon } from "../components/icons";
+import { Spark, DuplexMarkIcon } from "../components/icons";
 
 /* ------------------------- useInView ------------------------- */
 export function useInView<T extends HTMLElement>(
@@ -109,24 +109,13 @@ export function CountUp({
   );
 }
 
-/* ------------------------- Spark icon ------------------------- */
-export function Spark({ className = "" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
-      <path d="M12 1.5c.9 5.6 2.4 8.3 3.9 9.4 1.3 1 3.4 1.1 6.6 1.1-5.6.9-8.3 2.4-9.4 3.9-1 1.3-1.1 3.4-1.1 6.6-.9-5.6-2.4-8.3-3.9-9.4-1.3-1-3.4-1.1-6.6-1.1 5.6-.9 8.3-2.4 9.4-3.9 1-1.3 1.1-3.4 1.1-6.6Z" />
-    </svg>
-  );
-}
-
 /* ------------------------- Marquee ------------------------- */
 export function Marquee({
   items,
   dark = false,
-  slow = false,
 }: {
   items: string[];
   dark?: boolean;
-  slow?: boolean;
 }) {
   const row = (key: string) => (
     <div key={key} className="flex shrink-0 items-center" aria-hidden={key === "b"}>
@@ -150,7 +139,7 @@ export function Marquee({
         dark ? "border-paper/10 bg-ink text-paper" : "border-line bg-surface text-ink"
       } py-4`}
     >
-      <div className={`marquee-track ${slow ? "marquee-slow" : ""}`}>
+      <div className="marquee-track">
         {row("a")}
         {row("b")}
       </div>

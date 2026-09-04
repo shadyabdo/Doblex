@@ -1,22 +1,12 @@
-import { useEffect, type CSSProperties } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useLang } from "../i18n";
-import { MARQUEE, PROCESS, STATS_LABELS, T } from "../data/translations";
-import { STATS } from "../data/projects";
+import { T, MARQUEE, PROCESS, STATS, STATS_LABELS } from "../data";
 import { useContent } from "../lib/content";
-import {
-  CountUp,
-  Marquee,
-  Reveal,
-  SectionHead,
-  Spark,
-} from "../lib/ui";
-import { ArrowIcon } from "../components/icons";
-import ProjectCard from "../components/ProjectCard";
-import BlogCard from "../components/BlogCard";
+import { CountUp, Marquee, Reveal, SectionHead } from "../lib/ui";
+import { ArrowIcon, Spark } from "../components/icons";
+import { ProjectCard, BlogCard } from "../components/project";
 
-/** تمرير ناعم لعنصر داخل الصفحة — متوافق مع HashRouter */
 function scrollToId(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
@@ -28,54 +18,41 @@ function CraftHero() {
 
   return (
     <section className="relative grid overflow-hidden lg:grid-cols-12">
-      {/* ===== الناحية الفاتحة — البيان ===== */}
+      {/* ---------- البيان (فاتح) ---------- */}
       <div className="relative lg:col-span-7">
         <div className="blueprint absolute inset-0" aria-hidden />
-        <div
-          className="absolute -top-24 end-[-10%] h-[380px] w-[380px] rounded-full bg-teal/10 blur-3xl"
-          aria-hidden
-        />
+        <div className="absolute -top-24 end-[-10%] h-[380px] w-[380px] rounded-full bg-teal/10 blur-3xl" aria-hidden />
+        <div className="absolute bottom-0 start-[-8%] h-[300px] w-[300px] rounded-full bg-flame/10 blur-3xl" aria-hidden />
 
-        <div className="relative px-5 pt-16 pb-14 sm:px-8 md:px-12 md:pt-24 md:pb-16 lg:pt-28 lg:ps-16">
-          <div className="flex flex-wrap items-center gap-4">
-            <p className="flex items-center gap-3 text-xs font-bold tracking-[0.24em] text-teal uppercase">
-              <span className="h-px w-10 bg-flame" />
-              {t(T.heroKicker)}
-            </p>
-            <span className="inline-flex items-center gap-2.5 rounded-full border border-line bg-surface px-4 py-2 text-xs font-bold text-ink-soft shadow-sm">
-              <span className="pulse-dot h-2 w-2 rounded-full bg-jade" />
-              {t(T.heroAvailable)}
-            </span>
-          </div>
+        <div className="container-x relative flex h-full flex-col justify-center py-20 lg:py-28">
+          <span className="inline-flex w-fit items-center gap-2.5 rounded-full border border-line bg-surface px-4 py-2 text-xs font-bold text-ink-soft shadow-sm">
+            <span className="pulse-dot h-2 w-2 rounded-full bg-jade" />
+            {t(T.heroAvailable)}
+          </span>
 
-          <h1 className="font-display mt-9 text-ink">
-            <span className="block text-[clamp(2.7rem,6.2vw,5rem)] leading-[1.06] font-black">
-              {t(T.heroS1)}
+          <p className="mt-7 flex items-center gap-3 text-xs font-bold tracking-[0.24em] text-teal uppercase">
+            <span className="h-px w-10 bg-flame" />
+            {t(T.heroKicker)}
+          </p>
+
+          <h1 className="font-display mt-6 text-[2.9rem] leading-[1.06] font-black text-ink sm:text-6xl xl:text-[5rem]">
+            <span className="mask-line" style={{ "--line-delay": "60ms" } as React.CSSProperties}>
+              <span>{t(T.heroS1)}</span>
             </span>
-            <span className="block text-[clamp(2.7rem,6.2vw,5rem)] leading-[1.06] font-black text-teal">
-              <span className="relative inline-block">
-                {t(T.heroS2)}
-                <svg
-                  className="absolute -bottom-2 start-0 h-3 w-full text-flame"
-                  viewBox="0 0 220 12"
-                  preserveAspectRatio="none"
-                  aria-hidden
-                >
-                  <path
-                    d="M3 9c42-6 82-6.5 110-3.5 30 3.2 68 2.5 104-3.5"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="5"
-                    strokeLinecap="round"
-                  />
-                </svg>
+            <span className="mask-line" style={{ "--line-delay": "200ms" } as React.CSSProperties}>
+              <span className="flex items-center gap-3">
+                <span className="relative inline-block text-teal">
+                  {t(T.heroS2)}
+                  <svg className="absolute -bottom-2.5 start-0 h-3 w-full text-flame" viewBox="0 0 220 12" preserveAspectRatio="none" aria-hidden>
+                    <path d="M3 9c42-6 82-6.5 110-3.5 30 3.2 68 2.5 104-3.5" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />
+                  </svg>
+                </span>
+                <Spark className="mb-2 inline h-8 w-8 shrink-0 text-flame" />
               </span>
             </span>
           </h1>
 
-          <p className="mt-7 max-w-xl text-base leading-relaxed text-muted md:text-lg">
-            {t(T.heroP)}
-          </p>
+          <p className="mt-8 max-w-xl text-lg leading-relaxed text-muted">{t(T.depsSub)}</p>
 
           <div className="mt-9 flex flex-wrap items-center gap-4">
             <button
@@ -93,89 +70,60 @@ function CraftHero() {
             </button>
           </div>
 
-          <p className="mt-10 flex items-center gap-2.5 text-xs font-bold text-muted">
-            <Spark className="h-3.5 w-3.5 shrink-0 text-flame" />
-            {t(T.heroLangNote)}
+          <p className="mt-10 flex items-center gap-2 text-xs font-semibold text-muted/80">
+            <Spark className="h-3.5 w-3.5 text-flame" />
+            {t(T.heroSwitchHint)}
           </p>
         </div>
       </div>
 
-      {/* ===== الناحية الداكنة — فهرس الأقسام ===== */}
-      <div className="relative overflow-hidden bg-ink lg:col-span-5">
+      {/* ---------- فهرس الأقسام (داكن) ---------- */}
+      <div className="relative bg-ink text-paper lg:col-span-5">
         <div className="blueprint-dark absolute inset-0" aria-hidden />
-        <div className="relative flex h-full flex-col p-6 md:p-9 lg:p-10">
-          <div className="flex items-center justify-between border-b border-paper/15 pb-5">
-            <p className="font-display text-lg font-extrabold text-paper md:text-xl">
-              {t(T.heroDeptsTitle)}
-            </p>
-            <span
-              className="rounded-full border border-paper/20 px-3 py-1 text-[10px] font-black tracking-[0.25em] text-paper/50"
-              dir="ltr"
-            >
-              04 DEPTS
-            </span>
-          </div>
+        <div className="absolute -top-16 -end-16 h-56 w-56 rounded-full bg-flame/20 blur-3xl" aria-hidden />
 
-          <nav className="flex-1" aria-label={t(T.heroDeptsTitle)}>
-            {categories.map((c) => {
+        <div className="relative flex h-full flex-col justify-center px-6 py-14 sm:px-10 lg:py-20">
+          <p className="mb-6 flex items-center gap-3 text-xs font-bold tracking-[0.24em] text-paper/60 uppercase">
+            <span className="h-px w-8 bg-flame" />
+            {t(T.heroDeptsTitle)}
+          </p>
+
+          <nav className="flex flex-col" aria-label={t(T.heroDeptsTitle)}>
+            {categories.map((c, i) => {
               const count = projectsByCategory(c.id).length;
               return (
                 <Link
                   key={c.id}
                   to={`/work/${c.id}`}
-                  className="group flex items-center gap-4 border-b border-paper/10 py-4 transition-colors duration-200 hover:bg-paper/[0.06] md:gap-5 md:py-5"
+                  className="group relative flex items-center gap-4 border-b border-paper/10 py-5 transition-all duration-300 first:border-t hover:bg-paper/[0.05] hover:ps-2"
                 >
-                  <span
-                    className="font-display w-8 shrink-0 text-base font-black"
-                    style={{ color: c.color }}
-                    dir="ltr"
-                  >
+                  <span className="font-display w-9 shrink-0 text-sm font-black tabular-nums" style={{ color: c.color }} dir="ltr">
                     {c.num}
                   </span>
-                  <span className="hidden h-11 w-14 shrink-0 overflow-hidden rounded-md border border-paper/15 sm:block">
-                    <img
-                      src={c.image}
-                      alt=""
-                      aria-hidden
-                      loading="lazy"
-                      className="h-full w-full object-cover"
-                    />
+                  <span className="block h-14 w-20 shrink-0 overflow-hidden rounded-lg border border-paper/15">
+                    <img src={c.image} alt={t(c.name)} loading={i > 1 ? "lazy" : "eager"} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span
-                      className="font-display block truncate text-lg font-extrabold text-paper transition-colors duration-200 group-hover:text-[var(--hov)]"
-                      style={{ "--hov": c.color } as CSSProperties}
-                    >
+                    <span className="font-display block truncate text-lg font-extrabold text-paper transition-colors duration-200 group-hover:text-flame">
                       {t(c.name)}
                     </span>
-                    <span
-                      className="mt-0.5 block text-[10px] font-black tracking-[0.24em] text-paper/35 uppercase"
-                      dir="ltr"
-                    >
-                      {c.latin}
+                    <span className="mt-0.5 block text-[10px] font-black tracking-[0.2em] text-paper/40" dir="ltr">
+                      {c.latin || c.id.toUpperCase()}
                     </span>
                   </span>
-                  <span className="shrink-0 rounded-full bg-paper/10 px-3 py-1 text-[11px] font-bold text-paper/70">
-                    {count} {t(T.depsProjects)}
+                  <span className="flex shrink-0 items-center gap-3">
+                    <span className="whitespace-nowrap text-[11px] font-bold text-paper/55">
+                      {count} {t(T.depsProjects)}
+                    </span>
+                    <ArrowIcon className="rtl-flip h-4 w-4 text-paper/25 transition-all duration-300 group-hover:translate-x-1 group-hover:text-flame" />
                   </span>
-                  <ArrowIcon className="rtl-flip h-4 w-4 shrink-0 text-paper/30 transition-all duration-200 group-hover:translate-x-1 group-hover:text-flame" />
+                  <span className="absolute inset-y-0 start-0 w-1 origin-top scale-y-0 transition-transform duration-300 group-hover:scale-y-100" style={{ background: c.color }} />
                 </Link>
               );
             })}
           </nav>
 
-          <div className="grid grid-cols-3 gap-4 pt-6">
-            {STATS.slice(0, 3).map((v, i) => (
-              <div key={i}>
-                <p className="font-display text-3xl font-black text-paper md:text-4xl">
-                  <CountUp value={v} suffix={i === 0 ? "+" : ""} />
-                </p>
-                <p className="mt-1 text-[11px] leading-snug font-bold text-paper/50">
-                  {STATS_LABELS[lang][i]}
-                </p>
-              </div>
-            ))}
-          </div>
+          <p className="mt-6 text-[11px] font-semibold text-paper/45">{t(T.heroSplitHint)}</p>
         </div>
       </div>
     </section>
@@ -189,20 +137,11 @@ export default function Home() {
   const featured = featuredProjects();
   const latestPosts = posts.slice(0, 4);
 
-  useEffect(() => {
-    document.title =
-      lang === "ar"
-        ? "دوبليكس | Duplex — استوديو تقني متكامل"
-        : "Duplex — Full-stack Tech Studio";
-  }, [lang]);
-
   return (
     <>
       <Helmet>
         <title>
-          {lang === "ar"
-            ? "دوبليكس | Duplex — استوديو تقني متكامل"
-            : "Duplex — Full-stack Tech Studio"}
+          {lang === "ar" ? "دوبليكس | Duplex — استوديو تقني متكامل" : "Duplex — Full-stack Tech Studio"}
         </title>
         <meta
           name="description"
@@ -216,17 +155,11 @@ export default function Home() {
 
       <CraftHero />
 
-      {/* ============================ Marquee ============================ */}
       <Marquee items={lang === "ar" ? MARQUEE.ar : MARQUEE.en} />
 
       {/* ============================ Departments ============================ */}
       <section id="departments" className="container-x scroll-mt-24 py-20 md:py-28">
-        <SectionHead
-          kicker={t(T.depsKicker)}
-          title={t(T.depsTitle)}
-          sub={t(T.depsSub)}
-        />
-
+        <SectionHead kicker={t(T.depsKicker)} title={t(T.depsTitle)} sub={t(T.depsSub)} />
         <div className="border-t border-line">
           {categories.map((c, i) => {
             const count = projectsByCategory(c.id).length;
@@ -236,46 +169,20 @@ export default function Home() {
                   to={`/work/${c.id}`}
                   className="group relative grid grid-cols-[44px_1fr_auto] items-center gap-4 overflow-hidden border-b border-line px-2 py-7 transition-all duration-300 hover:bg-surface md:grid-cols-[64px_1fr_auto_auto] md:px-5 md:py-8"
                 >
-                  <span
-                    className="font-display text-sm font-black tracking-widest"
-                    style={{ color: c.color }}
-                  >
-                    {c.num}
-                  </span>
-
+                  <span className="font-display text-sm font-black tracking-widest" style={{ color: c.color }}>{c.num}</span>
                   <span className="min-w-0">
-                    <span
-                      className="font-display block text-2xl font-extrabold text-ink transition-colors duration-300 md:text-4xl"
-                      style={{ ["--hov" as string]: c.color }}
-                    >
-                      <span className="group-hover:text-[var(--hov)]">{t(c.name)}</span>
+                    <span className="font-display block truncate text-xl font-extrabold text-ink transition-colors duration-200 group-hover:text-[var(--hov)] md:text-2xl" style={{ ["--hov" as string]: c.color }}>
+                      {t(c.name)}
                     </span>
-                    <span className="mt-1 hidden max-w-xl text-sm leading-relaxed text-muted md:block">
-                      {t(c.blurb)}
-                    </span>
+                    <span className="mt-1 hidden truncate text-sm text-muted sm:block">{t(c.blurb)}</span>
                   </span>
-
-                  <span
-                    className="hidden rounded-full px-3.5 py-1.5 text-xs font-extrabold md:block"
-                    style={{ background: c.tint, color: c.color }}
-                  >
+                  <span className="hidden whitespace-nowrap text-xs font-bold text-muted md:block">
                     {count} {t(T.depsProjects)}
                   </span>
-
-                  <span
-                    className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-line text-ink transition-all duration-300 group-hover:rotate-45 group-hover:border-transparent group-hover:text-white"
-                    style={{ ["--hov" as string]: c.color }}
-                  >
-                    <ArrowIcon className="rtl-flip -rotate-45 h-5 w-5 transition-transform duration-300 group-hover:rotate-0" />
+                  <span className="flex h-11 w-11 items-center justify-center rounded-full border border-line text-ink transition-all duration-300 group-hover:border-transparent group-hover:text-white" style={{ ["--hov" as string]: c.color }}>
+                    <ArrowIcon className="rtl-flip h-4 w-4" />
                   </span>
-
-                  <img
-                    src={c.image}
-                    alt=""
-                    aria-hidden
-                    loading="lazy"
-                    className="pointer-events-none absolute end-44 top-1/2 hidden h-24 w-40 -translate-y-1/2 rotate-3 scale-90 rounded-lg object-cover opacity-0 shadow-2xl transition-all duration-500 group-hover:rotate-6 group-hover:scale-100 group-hover:opacity-100 xl:block"
-                  />
+                  <span className="absolute inset-x-0 bottom-0 h-0.5 origin-inline-start scale-x-0 transition-transform duration-500 group-hover:scale-x-100" style={{ background: c.color }} />
                 </Link>
               </Reveal>
             );
@@ -283,62 +190,56 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ============================ Featured work ============================ */}
-      <section id="work" className="scroll-mt-24 border-y border-line bg-surface/60">
-        <div className="container-x py-20 md:py-28">
-          <SectionHead
-            kicker={t(T.workKicker)}
-            title={t(T.workTitle)}
-            end={
-              <Reveal delay={150}>
-                <div className="flex flex-wrap gap-2.5">
-                  {categories.map((c) => (
-                    <Link
-                      key={c.id}
-                      to={`/work/${c.id}`}
-                      className="rounded-full border border-line bg-surface px-4 py-2 text-xs font-bold text-ink-soft transition-all duration-200 hover:-translate-y-0.5 hover:border-transparent hover:text-white"
-                      onMouseEnter={(e) => (e.currentTarget.style.background = c.color)}
-                      onMouseLeave={(e) => (e.currentTarget.style.background = "")}
-                    >
-                      {t(c.name)} · {projectsByCategory(c.id).length}
-                    </Link>
-                  ))}
-                </div>
-              </Reveal>
-            }
-          />
-
-          <div className="grid gap-8 md:grid-cols-2">
-            {featured.map((p, i) => (
-              <Reveal key={p.id} delay={(i % 2) * 130} className={i % 2 === 1 ? "md:mt-14" : ""}>
-                <ProjectCard project={p} big />
-              </Reveal>
-            ))}
+      {/* ============================ Selected work ============================ */}
+      {featured.length > 0 && (
+        <section id="work" className="scroll-mt-24 border-y border-line bg-surface/70">
+          <div className="container-x py-20 md:py-28">
+            <SectionHead
+              kicker={t(T.workKicker)}
+              title={t(T.workTitle)}
+              end={
+                categories.length > 0 ? (
+                  <Reveal delay={150}>
+                    <div className="flex flex-wrap gap-2.5">
+                      {categories.map((c) => (
+                        <Link
+                          key={c.id}
+                          to={`/work/${c.id}`}
+                          className="rounded-full border border-line bg-surface px-4 py-2 text-xs font-bold text-ink-soft transition-all duration-200 hover:-translate-y-0.5 hover:border-transparent hover:text-white"
+                          onMouseEnter={(e) => (e.currentTarget.style.background = c.color)}
+                          onMouseLeave={(e) => (e.currentTarget.style.background = "")}
+                        >
+                          {t(c.name)} · {projectsByCategory(c.id).length}
+                        </Link>
+                      ))}
+                    </div>
+                  </Reveal>
+                ) : undefined
+              }
+            />
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {featured.map((p, i) => (
+                <Reveal key={p.id} delay={(i % 3) * 110}>
+                  <ProjectCard project={p} />
+                </Reveal>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* ============================ Stats band ============================ */}
-      <section className="relative overflow-hidden bg-ink text-paper">
+      {/* ============================ Stats ============================ */}
+      <section className="relative overflow-hidden bg-teal-deep text-paper">
         <div className="blueprint-dark absolute inset-0" aria-hidden />
         <div className="container-x relative py-16 md:py-20">
-          <Reveal>
-            <p className="mb-10 flex items-center gap-3 text-xs font-bold tracking-[0.24em] text-teal-tint/70 uppercase">
-              <Spark className="h-4 w-4 text-flame" />
-              {t(T.statsKicker)}
-            </p>
-          </Reveal>
-          <div className="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4">
+          <p className="mb-10 text-center text-xs font-bold tracking-[0.24em] text-teal-tint/70 uppercase">{t(T.statsKicker)}</p>
+          <div className="grid grid-cols-2 gap-10 md:grid-cols-4">
             {STATS.map((v, i) => (
-              <Reveal key={i} delay={i * 110}>
-                <div className="border-s-2 border-flame/70 ps-5">
-                  <p className="font-display text-5xl font-black md:text-6xl">
-                    <CountUp value={v} suffix={i === 0 ? "+" : ""} />
-                  </p>
-                  <p className="mt-2 text-sm font-semibold text-paper/60">
-                    {(lang === "ar" ? STATS_LABELS.ar : STATS_LABELS.en)[i]}
-                  </p>
-                </div>
+              <Reveal key={i} delay={i * 90} className="text-center">
+                <p className="font-display text-5xl font-black text-paper md:text-6xl">
+                  <CountUp value={v} suffix={i === 0 ? "+" : ""} />
+                </p>
+                <p className="mt-2 text-sm font-semibold text-paper/65">{STATS_LABELS[lang][i]}</p>
               </Reveal>
             ))}
           </div>
@@ -348,20 +249,16 @@ export default function Home() {
       {/* ============================ Process ============================ */}
       <section className="container-x py-20 md:py-28">
         <SectionHead kicker={t(T.processKicker)} title={t(T.processTitle)} />
-        <div className="border-t border-line">
-          {(lang === "ar" ? PROCESS.ar : PROCESS.en).map((step, i) => (
-            <Reveal key={i} delay={i * 90}>
-              <div className="group flex flex-col gap-4 border-b border-line py-8 transition-all duration-300 hover:bg-surface hover:ps-4 md:flex-row md:items-start md:gap-10 md:py-9">
-                <span className="font-display ghost-num text-5xl leading-none font-black md:w-28 md:text-6xl">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {PROCESS[lang].map((step, i) => (
+            <Reveal key={i} delay={i * 100}>
+              <div className="group relative h-full rounded-xl border border-line bg-surface p-6 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_24px_50px_rgba(13,31,51,0.12)]">
+                <span className="font-display ghost-num text-5xl leading-none font-black transition-colors duration-300 group-hover:text-teal">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <div>
-                  <h3 className="font-display flex items-center gap-3 text-xl font-extrabold text-ink md:text-2xl">
-                    <span className="h-2 w-2 rounded-full bg-flame transition-transform duration-300 group-hover:scale-150" />
-                    {step.t}
-                  </h3>
-                  <p className="mt-3 max-w-2xl leading-relaxed text-muted">{step.d}</p>
-                </div>
+                <h3 className="font-display mt-4 text-lg font-extrabold text-ink">{step.t}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted">{step.d}</p>
+                <span className="absolute top-6 end-6 h-2 w-2 rounded-full bg-flame opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
               </div>
             </Reveal>
           ))}
@@ -369,38 +266,34 @@ export default function Home() {
       </section>
 
       {/* ============================ Blog ============================ */}
-      <section id="blog" className="scroll-mt-24 border-t border-line bg-surface/60">
-        <div className="container-x py-20 md:py-28">
-          <SectionHead
-            kicker={lang === "ar" ? "04 — من المدونة" : "04 — From the blog"}
-            title={lang === "ar" ? "آخر ما كتبناه" : "Latest from our blog"}
-            sub={
-              lang === "ar"
-                ? "رؤى وقصص وخبرة فريق دوبليكس في التصميم والتطوير والفيديو والتسويق."
-                : "Insights, stories and expertise from the Duplex team on design, development, video and marketing."
-            }
-            end={
-              <Reveal delay={150}>
-                <Link
-                  to="/blog"
-                  className="group flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-bold text-paper transition-all duration-200 hover:-translate-y-0.5 hover:bg-teal"
-                >
-                  {lang === "ar" ? "عرض المزيد" : "View more"}
-                  <ArrowIcon className="rtl-flip h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-                </Link>
-              </Reveal>
-            }
-          />
-
-          <div className="grid gap-7 sm:grid-cols-2 xl:grid-cols-4">
-            {latestPosts.map((p, i) => (
-              <Reveal key={p.id} delay={(i % 4) * 90}>
-                <BlogCard post={p} />
-              </Reveal>
-            ))}
+      {latestPosts.length > 0 && (
+        <section className="border-t border-line bg-surface/70">
+          <div className="container-x py-20 md:py-28">
+            <SectionHead
+              kicker={t(T.blogKicker)}
+              title={t(T.blogPageTitle)}
+              end={
+                <Reveal delay={150}>
+                  <Link
+                    to="/blog"
+                    className="group flex items-center gap-2.5 rounded-full border-2 border-ink/15 px-6 py-3 text-sm font-bold text-ink transition-all duration-200 hover:border-flame hover:bg-flame hover:text-white"
+                  >
+                    {t(T.blogMore)}
+                    <ArrowIcon className="rtl-flip h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+                  </Link>
+                </Reveal>
+              }
+            />
+            <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-4">
+              {latestPosts.map((p, i) => (
+                <Reveal key={p.id} delay={(i % 4) * 90}>
+                  <BlogCard post={p} />
+                </Reveal>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </>
   );
 }

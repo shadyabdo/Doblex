@@ -4,22 +4,33 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
+  type Dispatch,
   type ReactNode,
+  type SetStateAction,
 } from "react";
 import { doc, onSnapshot } from "firebase/firestore";
-import { db, ensureAuth, CONTENT_COLLECTION, CONTENT_DOC } from "./firebase";
+import {
+  db,
+  ensureAuth,
+  PROJECT_ID,
+  CONTENT_COLLECTION,
+  CONTENT_DOC,
+} from "./firebase";
+import { needsEn, translateTexts } from "./translator";
 import type {
   Category,
   GalleryItem,
   LText,
   Project,
   ResultStat,
-} from "../data/types";
-import type { BlogCategory, BlogPost } from "../data/blog";
+  BlogCategory,
+  BlogPost,
+} from "../data";
 
 /* ------------------------------------------------------------------ */
-/*  لوحات ألوان احتياطية (تُستخدم لو لم يحدّد المحتوى لونًا)             */
+/*  لوحات ألوان وصور احتياطية                                           */
 /* ------------------------------------------------------------------ */
 const PALETTE = [
   { color: "#0B7C74", tint: "#E1F0EE" },
@@ -30,7 +41,6 @@ const PALETTE = [
   { color: "#7C3AED", tint: "#EFE9FD" },
 ];
 
-/** صور احتياطية نظيفة لو لم يوفر المحتوى صورة */
 const u = (id: string, w = 1280, h = 832) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&h=${h}&q=80`;
 const FALLBACK_IMGS = [
@@ -48,7 +58,6 @@ const FALLBACK_IMGS = [
 const str = (v: unknown): string =>
   v == null ? "" : typeof v === "string" ? v : String(v);
 
-/** يحوّل أي قيمة نصية (نص بسيط أو كائن ar/en) إلى LText */
 function toLText(v: unknown): LText {
   if (v == null) return { ar: "", en: "" };
   if (typeof v === "string") return { ar: v, en: v };
@@ -61,14 +70,9 @@ function toLText(v: unknown): LText {
   return { ar: str(v), en: str(v) };
 }
 
-/** يحوّل الوصف إلى { ar: string[], en: string[] } سواء كان نصًا أو مصفوفة أو كائنًا */
 function toParagraphs(v: unknown): { ar: string[]; en: string[] } {
   const split = (s: string) =>
-    s
-      .split(/\n+/)
-      .map((x) => x.trim())
-      .filter(Boolean);
-
+    s.split(/\n+/).map((x) => x.trim()).filter(Boolean);
   if (v == null) return { ar: [], en: [] };
   if (typeof v === "string") {
     const p = split(v);
@@ -89,30 +93,34 @@ function toParagraphs(v: unknown): { ar: string[]; en: string[] } {
   return { ar: [], en: [] };
 }
 
-/** يحوّل قائمة خدمات/وسوم إلى LText[] */
 function toLTextList(v: unknown): LText[] {
   if (!Array.isArray(v)) return [];
   return v.map((x) => toLText(x)).filter((x) => x.ar || x.en);
 }
 
-/** يبني معرض صور من مصفوفة روابط أو كائنات، مع صورة احتياطية */
 function toGallery(v: unknown, fallback: string): GalleryItem[] {
   const make = (src: string, i: number): GalleryItem => ({
     src,
     type: i === 0 ? "full" : i % 3 === 1 ? "crop-top" : i % 3 === 2 ? "crop-detail" : "phone",
     caption: { ar: `لقطة ${i + 1}`, en: `Shot ${i + 1}` },
   });
-
   if (Array.isArray(v) && v.length) {
     return v
-      .map((x) => (typeof x === "string" ? x : str((x as Record<string, unknown>)?.src ?? (x as Record<string, unknown>)?.url ?? (x as Record<string, unknown>)?.image)))
+      .map((x) =>
+        typeof x === "string"
+          ? x
+          : str(
+              (x as Record<string, unknown>)?.src ??
+                (x as Record<string, unknown>)?.url ??
+                (x as Record<string, unknown>)?.image
+            )
+      )
       .filter(Boolean)
       .map(make);
   }
   return fallback ? [make(fallback, 0)] : [];
 }
 
-/** يبني قائمة نتائج/إحصائيات إن وُجدت */
 function toResults(v: unknown): ResultStat[] | undefined {
   if (!Array.isArray(v) || !v.length) return undefined;
   const out: ResultStat[] = [];
@@ -147,7 +155,6 @@ function normalizeCategory(raw: Record<string, unknown>, i: number): Category {
   };
 }
 
-/** يحاول مطابقة مرجع المشروع (id/اسم/رقم) مع تصنيف موجود */
 function resolveCategoryId(ref: unknown, categories: Category[]): string {
   if (categories.length === 0) return str(ref);
   const s = str(ref).trim().toLowerCase();
@@ -165,7 +172,8 @@ function resolveCategoryId(ref: unknown, categories: Category[]): string {
 
 function normalizeProject(raw: Record<string, unknown>, i: number, categories: Category[]): Project {
   const title = toLText(raw.title ?? raw.name);
-  const image = str(raw.image ?? raw.cover ?? raw.thumb ?? raw.img) || FALLBACK_IMGS[i % FALLBACK_IMGS.length];
+  const image =
+    str(raw.image ?? raw.cover ?? raw.thumb ?? raw.img) || FALLBACK_IMGS[i % FALLBACK_IMGS.length];
   return {
     id: str(raw.id ?? `p-${i}`),
     slug: str(raw.slug ?? raw.id ?? `project-${i}`),
@@ -199,7 +207,9 @@ function normalizePost(raw: Record<string, unknown>, i: number): BlogPost {
     categoryId: str(raw.categoryId ?? raw.category ?? raw.cat ?? raw.tag ?? ""),
     image: str(raw.image ?? raw.cover ?? raw.thumb) || FALLBACK_IMGS[i % FALLBACK_IMGS.length],
     date: str(raw.date ?? raw.publishedAt ?? raw.createdAt) || new Date().toISOString().slice(0, 10),
-    readMinutes: Number(raw.readMinutes ?? raw.readTime ?? raw.minutes) || Math.max(2, Math.round(body.ar.join(" ").split(/\s+/).length / 180)),
+    readMinutes:
+      Number(raw.readMinutes ?? raw.readTime ?? raw.minutes) ||
+      Math.max(2, Math.round(body.ar.join(" ").split(/\s+/).length / 180)),
     tags: Array.isArray(raw.tags) ? raw.tags.map((x) => str(x)).filter(Boolean) : [],
   };
 }
@@ -214,7 +224,6 @@ function normalizeBlogCategory(raw: Record<string, unknown>, i: number): BlogCat
   };
 }
 
-/** يشتق تصنيفات المقالات من المقالات نفسها لو لم تُ provided */
 function deriveBlogCategories(posts: BlogPost[]): BlogCategory[] {
   const seen = new Map<string, BlogCategory>();
   posts.forEach((p) => {
@@ -231,7 +240,7 @@ function deriveBlogCategories(posts: BlogPost[]): BlogCategory[] {
 }
 
 /* ------------------------------------------------------------------ */
-/*  استخراج المصفوفات من المستند — بالأسماء أولًا ثم بالشكل             */
+/*  استخراج المصفوفات من المستند                                        */
 /* ------------------------------------------------------------------ */
 const KEY_SETS = {
   categories: ["categories", "domains", "fields", "areas", "departments", "sections", "اقسام", "أقسام", "مجالات", "المجالات"],
@@ -242,7 +251,6 @@ const KEY_SETS = {
 
 const normKey = (k: string) => k.trim().toLowerCase().replace(/[\s_-]/g, "");
 
-/** يجمع كل المصفوفات من المستوى الأعلى ومستوى واحد متداخل */
 function collectArrays(data: Record<string, unknown>): { key: string; value: unknown[] }[] {
   const out: { key: string; value: unknown[] }[] = [];
   for (const [k, v] of Object.entries(data)) {
@@ -265,58 +273,221 @@ function pickByKey(arrays: { key: string; value: unknown[] }[], keys: string[]):
   return null;
 }
 
-/** يطبّع المستند الخام إلى نماذج الموقع */
-export function normalizeContent(data: Record<string, unknown>): {
+const isObjArr = (v: unknown): v is Record<string, unknown>[] =>
+  Array.isArray(v) &&
+  v.length > 0 &&
+  v.every((x) => x && typeof x === "object" && !Array.isArray(x));
+
+const guessCategories = (v: unknown) =>
+  isObjArr(v) && v.some((x) => x.name != null || x.title != null || x.blurb != null || x.description != null);
+const guessProjects = (v: unknown) =>
+  isObjArr(v) && v.some((x) => x.demoUrl != null || x.demo != null || x.gallery != null || x.client != null || x.services != null);
+const guessPosts = (v: unknown) =>
+  isObjArr(v) && v.some((x) => x.date != null || x.body != null || x.content != null || x.publishedAt != null || x.excerpt != null);
+
+export function normalizeContent(raw: Record<string, unknown>): {
   categories: Category[];
   projects: Project[];
   posts: BlogPost[];
   blogCategories: BlogCategory[];
 } {
+  const data: Record<string, unknown> = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
   const arrays = collectArrays(data);
 
-  const rawCats = pickByKey(arrays, KEY_SETS.categories) ?? [];
-  const rawProjects = pickByKey(arrays, KEY_SETS.projects) ?? [];
-  const rawPosts = pickByKey(arrays, KEY_SETS.posts) ?? [];
-  const rawBlogCats = pickByKey(arrays, KEY_SETS.blogCategories);
+  let catsArr = pickByKey(arrays, KEY_SETS.categories);
+  let projectsArr = pickByKey(arrays, KEY_SETS.projects);
+  let postsArr = pickByKey(arrays, KEY_SETS.posts);
+  const blogCatsArr = pickByKey(arrays, KEY_SETS.blogCategories);
 
-  // لو لم نجد بالمفاتيح، خمّن بالشكل
-  const leftover = arrays.filter(
-    (a) =>
-      !rawCats.includes(a.value) && !rawProjects.includes(a.value) && !rawPosts.includes(a.value)
+  const taken = new Set<unknown[]>(
+    [catsArr, projectsArr, postsArr, blogCatsArr].filter((x): x is unknown[] => !!x)
   );
-  const guess = { cats: rawCats as unknown[], projects: rawProjects as unknown[], posts: rawPosts as unknown[] };
-  if (!rawCats.length || !rawProjects.length || !rawPosts.length) {
-    for (const a of leftover) {
-      const first = a.value[0] as Record<string, unknown> | undefined;
-      if (!first || typeof first !== "object") continue;
-      const has = (...ks: string[]) => ks.some((k) => first[k] != null);
-      if (!guess.posts.length && (has("date", "body", "content", "publishedAt", "readMinutes"))) guess.posts = a.value;
-      else if (!guess.projects.length && (has("demoUrl", "gallery", "demo", "client", "services"))) guess.projects = a.value;
-      else if (!guess.cats.length && (has("name", "title", "blurb"))) guess.cats = a.value;
+
+  for (const a of arrays) {
+    if (taken.has(a.value)) continue;
+    if (!catsArr && guessCategories(a.value)) {
+      catsArr = a.value;
+      taken.add(a.value);
+    } else if (!projectsArr && guessProjects(a.value)) {
+      projectsArr = a.value;
+      taken.add(a.value);
+    } else if (!postsArr && guessPosts(a.value)) {
+      postsArr = a.value;
+      taken.add(a.value);
     }
   }
 
-  const categories = (guess.cats as Record<string, unknown>[]).map(normalizeCategory);
-  const projects = (guess.projects as Record<string, unknown>[]).map((p, i) => normalizeProject(p, i, categories));
-  const posts = (guess.posts as Record<string, unknown>[]).map(normalizePost);
-  const blogCategories = rawBlogCats
-    ? (rawBlogCats as Record<string, unknown>[]).map(normalizeBlogCategory)
+  const categories = (catsArr ?? []).map((x, i) => normalizeCategory(x as Record<string, unknown>, i));
+  const projects = (projectsArr ?? []).map((x, i) => normalizeProject(x as Record<string, unknown>, i, categories));
+  const posts = (postsArr ?? []).map((x, i) => normalizePost(x as Record<string, unknown>, i));
+  const blogCategories = blogCatsArr
+    ? blogCatsArr.map((x, i) => normalizeBlogCategory(x as Record<string, unknown>, i))
     : deriveBlogCategories(posts);
 
   return { categories, projects, posts, blogCategories };
 }
 
 /* ------------------------------------------------------------------ */
-/*  المزوّد — يقرأ المستند لحظيًا ويوزعه على التطبيق                     */
+/*  الترجمة التلقائية عربي → إنجليزي للمحتوى القادم من الداشبورد          */
 /* ------------------------------------------------------------------ */
-interface ContentValue {
-  loading: boolean;
-  error: string | null;
-  ready: boolean;
+function collectTranslatables(d: {
   categories: Category[];
   projects: Project[];
   posts: BlogPost[];
   blogCategories: BlogCategory[];
+}): string[] {
+  const set = new Set<string>();
+  const add = (ar: string, en: string) => {
+    if (needsEn(ar, en)) set.add(ar);
+  };
+  for (const c of d.categories) {
+    add(c.name.ar, c.name.en);
+    add(c.blurb.ar, c.blurb.en);
+  }
+  for (const p of d.projects) {
+    add(p.title.ar, p.title.en);
+    add(p.tagline.ar, p.tagline.en);
+    add(p.client.ar, p.client.en);
+    add(p.duration.ar, p.duration.en);
+    p.services.forEach((s) => add(s.ar, s.en));
+    p.description.ar.forEach((par, i) => add(par, p.description.en[i]));
+    p.gallery.forEach((g) => add(g.caption.ar, g.caption.en));
+    p.results?.forEach((r) => add(r.label.ar, r.label.en));
+  }
+  for (const b of d.posts) {
+    add(b.title.ar, b.title.en);
+    add(b.excerpt.ar, b.excerpt.en);
+    b.body.ar.forEach((par, i) => add(par, b.body.en[i]));
+    b.tags.forEach((tag) => add(tag, tag));
+  }
+  for (const bc of d.blogCategories) add(bc.name.ar, bc.name.en);
+  return [...set];
+}
+
+function applyTranslations(d: {
+  categories: Category[];
+  projects: Project[];
+  posts: BlogPost[];
+  blogCategories: BlogCategory[];
+}) {
+  const texts = collectTranslatables(d);
+  if (!texts.length) return;
+  translateTexts(texts).then((map) => {
+    if (!Object.keys(map).length) return;
+    const trL = (x: LText) => {
+      x.en = map[x.ar] || x.en;
+    };
+    setDataSafe((prev) => {
+      const next = {
+        categories: prev.categories.map((c) => ({ ...c, name: { ...c.name }, blurb: { ...c.blurb } })),
+        projects: prev.projects.map((p) => ({
+          ...p,
+          title: { ...p.title },
+          tagline: { ...p.tagline },
+          client: { ...p.client },
+          duration: { ...p.duration },
+          services: p.services.map((s) => ({ ...s })),
+          description: { ar: [...p.description.ar], en: [...p.description.en] },
+          gallery: p.gallery.map((g) => ({ ...g, caption: { ...g.caption } })),
+          results: p.results?.map((r) => ({ ...r, label: { ...r.label } })),
+        })),
+        posts: prev.posts.map((b) => ({
+          ...b,
+          title: { ...b.title },
+          excerpt: { ...b.excerpt },
+          body: { ar: [...b.body.ar], en: [...b.body.en] },
+          tags: [...b.tags],
+        })),
+        blogCategories: prev.blogCategories.map((bc) => ({ ...bc, name: { ...bc.name } })),
+      };
+      for (const c of next.categories) {
+        trL(c.name);
+        trL(c.blurb);
+        if (needsEn(c.name.ar, c.latin)) c.latin = (map[c.name.ar] || c.name.en || "").toUpperCase();
+      }
+      for (const p of next.projects) {
+        trL(p.title);
+        trL(p.tagline);
+        trL(p.client);
+        trL(p.duration);
+        p.services.forEach(trL);
+        p.description.ar.forEach((par, i) => {
+          const tr = map[par];
+          if (tr) p.description.en[i] = tr;
+        });
+        p.gallery.forEach((g) => trL(g.caption));
+        p.results?.forEach((r) => trL(r.label));
+      }
+      for (const b of next.posts) {
+        trL(b.title);
+        trL(b.excerpt);
+        b.body.ar.forEach((par, i) => {
+          const tr = map[par];
+          if (tr) b.body.en[i] = tr;
+        });
+        b.tags = b.tags.map((tag) => map[tag] || tag);
+      }
+      for (const bc of next.blogCategories) trL(bc.name);
+      return next;
+    });
+  });
+}
+
+/* ------------------------------------------------------------------ */
+/*  قراءة بديلة عبر Firestore REST API (تعمل لو SDK اتحجب)               */
+/* ------------------------------------------------------------------ */
+type FsValue = {
+  stringValue?: string;
+  integerValue?: string | number;
+  doubleValue?: number;
+  booleanValue?: boolean;
+  nullValue?: null;
+  arrayValue?: { values?: FsValue[] };
+  mapValue?: { fields?: Record<string, FsValue> };
+};
+
+function decodeFsValue(v: FsValue | undefined): unknown {
+  if (!v || typeof v !== "object") return null;
+  if ("stringValue" in v) return v.stringValue ?? "";
+  if ("integerValue" in v) return Number(v.integerValue);
+  if ("doubleValue" in v) return v.doubleValue ?? 0;
+  if ("booleanValue" in v) return !!v.booleanValue;
+  if ("nullValue" in v) return null;
+  if ("arrayValue" in v) return (v.arrayValue?.values ?? []).map(decodeFsValue);
+  if ("mapValue" in v) {
+    const out: Record<string, unknown> = {};
+    for (const [k, val] of Object.entries(v.mapValue?.fields ?? {})) out[k] = decodeFsValue(val);
+    return out;
+  }
+  return null;
+}
+
+async function fetchViaRest(): Promise<Record<string, unknown> | null> {
+  const url = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/${CONTENT_COLLECTION}/${CONTENT_DOC}`;
+  const res = await fetch(url);
+  if (!res.ok) return null;
+  const json = (await res.json()) as { fields?: Record<string, FsValue> };
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(json.fields ?? {})) out[k] = decodeFsValue(v);
+  return out;
+}
+
+/* ------------------------------------------------------------------ */
+/*  المزوّد                                                              */
+/* ------------------------------------------------------------------ */
+type ContentData = {
+  categories: Category[];
+  projects: Project[];
+  posts: BlogPost[];
+  blogCategories: BlogCategory[];
+};
+
+const EMPTY: ContentData = { categories: [], projects: [], posts: [], blogCategories: [] };
+
+interface ContentValue extends ContentData {
+  loading: boolean;
+  syncFailed: boolean;
+  ready: boolean;
   getCategory: (id: string) => Category | undefined;
   getProject: (slug: string) => Project | undefined;
   projectsByCategory: (id: string) => Project[];
@@ -324,64 +495,132 @@ interface ContentValue {
   nextInCategory: (p: Project) => Project | undefined;
   getBlogPost: (slug: string) => BlogPost | undefined;
   getBlogCategory: (id: string) => BlogCategory | undefined;
-  postsByCategory: (id: string) => BlogPost[];
   retry: () => void;
 }
 
 const ContentContext = createContext<ContentValue | null>(null);
 
+/** setter عام صغير علشان applyTranslations تقدر تحدّث البيانات */
+let setDataSafe: React.Dispatch<React.SetStateAction<ContentData>> = () => undefined;
+
 export function ContentProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [data, setData] = useState<{
-    categories: Category[];
-    projects: Project[];
-    posts: BlogPost[];
-    blogCategories: BlogCategory[];
-  }>({ categories: [], projects: [], posts: [], blogCategories: [] });
+  const [syncFailed, setSyncFailed] = useState(false);
+  const [data, setData] = useState<ContentData>(EMPTY);
+  const [ready, setReady] = useState(false);
   const [tick, setTick] = useState(0);
+  const firstRun = useRef(true);
 
   useEffect(() => {
-    let unsub: (() => void) | null = null;
-    let cancelled = false;
-    setLoading(true);
-    setError(null);
+    setDataSafe = setData;
+  }, []);
 
-    ensureAuth().then(() => {
-      if (cancelled) return;
-      const ref = doc(db, CONTENT_COLLECTION, CONTENT_DOC);
-      unsub = onSnapshot(
-        ref,
-        (snap) => {
-          if (cancelled) return;
-          const raw = (snap.exists() ? snap.data() : {}) as Record<string, unknown>;
-          setData(normalizeContent(raw));
-          setLoading(false);
-        },
-        (err) => {
-          if (cancelled) return;
-          console.error("[Duplex] Firestore read error:", err);
-          setError(err?.message ?? "تعذّر الاتصال بقاعدة البيانات");
+  useEffect(() => {
+    let cancelled = false;
+    let unsub: (() => void) | null = null;
+    let gotData = false;
+
+    if (firstRun.current) setLoading(true);
+    firstRun.current = false;
+
+    const ingest = (raw: Record<string, unknown>) => {
+      const normalized = normalizeContent(raw);
+      setData(normalized);
+      setReady(true);
+      setSyncFailed(false);
+      setLoading(false);
+      applyTranslations(normalized);
+    };
+
+    const restAttempt = async () => {
+      if (cancelled || gotData) return;
+      try {
+        const d = await fetchViaRest();
+        if (cancelled || gotData) return;
+        if (d && Object.keys(d).length) {
+          gotData = true;
+          ingest(d);
+        } else if (!gotData) {
+          setSyncFailed(true);
           setLoading(false);
         }
-      );
-    });
+      } catch {
+        if (!gotData && !cancelled) {
+          setSyncFailed(true);
+          setLoading(false);
+        }
+      }
+    };
+
+    const fs = db;
+    if (fs) {
+      ensureAuth().finally(() => {
+        if (cancelled) return;
+        try {
+          unsub = onSnapshot(
+            doc(fs, CONTENT_COLLECTION, CONTENT_DOC),
+            (snap) => {
+              if (cancelled) return;
+              gotData = true;
+              if (snap.exists()) {
+                ingest(snap.data() as Record<string, unknown>);
+              } else {
+                setData(EMPTY);
+                setReady(true);
+                setSyncFailed(false);
+                setLoading(false);
+              }
+            },
+            () => {
+              // القراءة عبر الـ SDK فشلت (قواعد أمان/شبكة) — جرّب REST
+              if (!gotData) void restAttempt();
+            }
+          );
+        } catch {
+          void restAttempt();
+        }
+      });
+    } else {
+      void restAttempt();
+    }
+
+    // تأمين: لو الـ SDK بطيء أو صامت، جرّب REST بعد شوية
+    const t1 = setTimeout(() => {
+      if (!gotData) void restAttempt();
+    }, 1500);
+
+    // سقف صارم: الموقع يفتح مهما حصل خلال 8 ثواني
+    const t2 = setTimeout(() => {
+      if (!gotData && !cancelled) {
+        setSyncFailed(true);
+        setLoading(false);
+      }
+    }, 8000);
 
     return () => {
       cancelled = true;
       if (unsub) unsub();
+      clearTimeout(t1);
+      clearTimeout(t2);
     };
   }, [tick]);
 
-  const retry = useCallback(() => setTick((t) => t + 1), []);
+  // إعادة محاولة في الخلفية كل 15 ثانية طالما مفيش بيانات
+  useEffect(() => {
+    if (ready) return;
+    const iv = setInterval(() => setTick((v) => v + 1), 15000);
+    return () => clearInterval(iv);
+  }, [ready]);
+
+  const retry = useCallback(() => setTick((v) => v + 1), []);
 
   const value = useMemo<ContentValue>(() => {
     const { categories, projects, posts, blogCategories } = data;
     const byCat = (id: string) => projects.filter((p) => p.category === id);
     return {
       loading,
-      error,
-      ready: !loading && !error,
+      syncFailed,
+      ready,
       categories,
       projects,
       posts,
@@ -391,20 +630,19 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       projectsByCategory: byCat,
       featuredProjects: () => {
         const f = projects.filter((p) => p.featured);
-        return f.length ? f : projects.slice(0, 4);
+        return f.length ? f : projects.slice(0, 3);
       },
       nextInCategory: (p) => {
         const list = byCat(p.category);
-        if (!list.length) return undefined;
+        if (list.length < 2) return undefined;
         const i = list.findIndex((x) => x.id === p.id);
         return list[(i + 1) % list.length];
       },
       getBlogPost: (slug) => posts.find((p) => p.slug === slug),
       getBlogCategory: (id) => blogCategories.find((c) => c.id === id),
-      postsByCategory: (id) => posts.filter((p) => p.categoryId === id),
       retry,
     };
-  }, [data, loading, error, retry]);
+  }, [data, loading, syncFailed, ready, retry]);
 
   return <ContentContext.Provider value={value}>{children}</ContentContext.Provider>;
 }

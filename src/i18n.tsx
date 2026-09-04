@@ -6,7 +6,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { LText } from "./data/types";
+import type { LText } from "./data";
 
 export type Lang = "ar" | "en";
 
@@ -43,7 +43,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   }, [lang, dir]);
 
   const setLang = useCallback((l: Lang) => setLangState(l), []);
-
   const t = useCallback((text: LText) => text[lang], [lang]);
 
   return (

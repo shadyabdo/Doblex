@@ -1,13 +1,11 @@
-import { useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useLang } from "../i18n";
-import { T } from "../data/translations";
-import { AUTHOR } from "../data/blog";
+import { AUTHOR, T } from "../data";
 import { useContent } from "../lib/content";
-import { Reveal, Spark } from "../lib/ui";
-import BlogCard, { formatDate } from "../components/BlogCard";
+import { Reveal } from "../lib/ui";
 import { ArrowIcon } from "../components/icons";
+import { BlogCard, formatDate } from "../components/project";
 
 export default function Blog() {
   const { lang, t } = useLang();
@@ -15,17 +13,7 @@ export default function Blog() {
   const [params, setParams] = useSearchParams();
   const activeCat = params.get("cat") ?? "";
 
-  useEffect(() => {
-    document.title =
-      lang === "ar"
-        ? `مدونة دوبليكس — مقالات ورؤى رقمية`
-        : `Duplex Blog — Digital articles & insights`;
-  }, [lang]);
-
-  const filtered = activeCat
-    ? posts.filter((p) => p.categoryId === activeCat)
-    : posts;
-
+  const filtered = activeCat ? posts.filter((p) => p.categoryId === activeCat) : posts;
   const featured = !activeCat ? filtered[0] : null;
   const rest = featured ? filtered.slice(1) : filtered;
 
@@ -39,9 +27,7 @@ export default function Blog() {
   return (
     <>
       <Helmet>
-        <title>
-          {lang === "ar" ? "مدونة دوبليكس — مقالات ورؤى" : "Duplex Blog — Articles & Insights"}
-        </title>
+        <title>{lang === "ar" ? "مدونة دوبليكس — مقالات ورؤى" : "Duplex Blog — Articles & Insights"}</title>
         <meta
           name="description"
           content={
@@ -55,42 +41,17 @@ export default function Blog() {
       {/* ---------- Header ---------- */}
       <section className="relative overflow-hidden border-b border-line bg-surface">
         <div className="blueprint absolute inset-0" aria-hidden />
-        <p
-          className="font-display pointer-events-none absolute -bottom-6 end-0 hidden translate-y-4 text-[8rem] leading-none font-black select-none md:block lg:text-[11rem]"
-          style={{ color: "transparent", WebkitTextStroke: "1.5px rgba(11,124,116,0.18)" }}
-          aria-hidden
-        >
-          BLOG
-        </p>
         <div className="absolute -top-20 start-[-6%] h-72 w-72 rounded-full bg-teal/10 blur-3xl" aria-hidden />
-
         <div className="container-x relative py-14 md:py-20">
           <Reveal>
-            <nav className="mb-8 flex items-center gap-2 text-xs font-bold text-muted" aria-label="Breadcrumb">
-              <Link to="/" className="transition-colors hover:text-teal">
-                {t(T.backHome)}
-              </Link>
-              <ArrowIcon className="rtl-flip h-3 w-3" />
-              <span className="text-teal">{lang === "ar" ? "المدونة" : "Blog"}</span>
-            </nav>
-
-            <span className="inline-flex items-center gap-2 rounded-full bg-teal-tint px-4 py-1.5 text-xs font-extrabold text-teal">
-              <Spark className="h-3.5 w-3.5 text-flame" />
-              {lang === "ar" ? "أفكار، قصص، وخبرة" : "Ideas, stories & expertise"}
-            </span>
-
-            <h1 className="font-display mt-5 text-4xl leading-[1.1] font-black text-ink md:text-6xl">
-              {lang === "ar" ? "مدونة دوبليكس" : "The Duplex Blog"}
-            </h1>
-            <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted">
-              {lang === "ar"
-                ? "كل ما تعلمناه من عشرات المشاريع: رؤى عن التصميم والتطوير والفيديو والتسويق، مكتوبة ببساطة لفريقك ولمشروعك."
-                : "Everything we've learned from dozens of projects: insights on design, development, video and marketing — written simply for your team and your business."}
+            <p className="mb-4 flex items-center gap-3 text-xs font-bold tracking-[0.22em] text-teal uppercase">
+              <span className="h-px w-10 bg-flame" />
+              {t(T.blogKicker)}
             </p>
-
+            <h1 className="font-display text-4xl leading-[1.1] font-black text-ink md:text-6xl">{t(T.blogPageTitle)}</h1>
+            <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted">{t(T.blogPageSub)}</p>
             <p className="mt-6 text-sm font-bold text-ink-soft">
-              {lang === "ar" ? "بقلم" : "Written by"}{" "}
-              <span className="text-teal">{t(AUTHOR)}</span> · {posts.length}{" "}
+              {t(T.by)} <span className="text-teal">{t(AUTHOR)}</span> · {posts.length}{" "}
               {lang === "ar" ? "مقالة" : "articles"}
             </p>
           </Reveal>
@@ -98,107 +59,69 @@ export default function Blog() {
       </section>
 
       {/* ---------- Category filter ---------- */}
-      <section className="container-x pt-10">
-        <div className="flex flex-wrap items-center gap-2.5">
-          <button
-            onClick={() => setCat("")}
-            className={`rounded-full border px-5 py-2 text-sm font-bold transition-all duration-200 ${
-              !activeCat
-                ? "border-ink bg-ink text-paper shadow-md"
-                : "border-line bg-surface text-ink-soft hover:border-teal hover:text-teal"
-            }`}
-          >
-            {lang === "ar" ? "الكل" : "All"}
-          </button>
-          {blogCategories.map((c) => (
+      {blogCategories.length > 0 && (
+        <section className="container-x pt-10">
+          <div className="flex flex-wrap items-center gap-2.5">
             <button
-              key={c.id}
-              onClick={() => setCat(activeCat === c.id ? "" : c.id)}
-              className={`flex items-center gap-2 rounded-full border px-5 py-2 text-sm font-bold transition-all duration-200 ${
-                activeCat === c.id
-                  ? "border-transparent text-white shadow-md"
-                  : "border-line bg-surface text-ink-soft hover:-translate-y-0.5"
+              onClick={() => setCat("")}
+              className={`rounded-full border px-5 py-2 text-sm font-bold transition-all duration-200 ${
+                !activeCat
+                  ? "border-ink bg-ink text-paper shadow-md"
+                  : "border-line bg-surface text-ink-soft hover:border-teal hover:text-teal"
               }`}
-              style={
-                activeCat === c.id
-                  ? { background: c.color }
-                  : { ["--h" as string]: c.color }
-              }
-              onMouseEnter={(e) => {
-                if (activeCat !== c.id) {
-                  e.currentTarget.style.borderColor = c.color;
-                  e.currentTarget.style.color = c.color;
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (activeCat !== c.id) {
-                  e.currentTarget.style.borderColor = "";
-                  e.currentTarget.style.color = "";
-                }
-              }}
             >
-              <span
-                className="h-1.5 w-1.5 rounded-full"
-                style={{ background: activeCat === c.id ? "#fff" : c.color }}
-              />
-              {t(c.name)}
+              {t(T.all)}
             </button>
-          ))}
-        </div>
+            {blogCategories.map((c) => (
+              <button
+                key={c.id}
+                onClick={() => setCat(activeCat === c.id ? "" : c.id)}
+                className={`flex items-center gap-2 rounded-full border px-5 py-2 text-sm font-bold transition-all duration-200 ${
+                  activeCat === c.id ? "border-transparent text-white shadow-md" : "border-line bg-surface text-ink-soft hover:-translate-y-0.5"
+                }`}
+                style={activeCat === c.id ? { background: c.color } : undefined}
+              >
+                <span className="h-2 w-2 rounded-full" style={{ background: activeCat === c.id ? "#fff" : c.color }} />
+                {t(c.name)}
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
 
-        {activeName && (
-          <p className="mt-5 text-sm font-bold text-muted">
-            {lang === "ar" ? "تصنيف" : "Category"}:{" "}
-            <span style={{ color: activeName.color }}>{t(activeName.name)}</span> ·{" "}
-            {filtered.length} {lang === "ar" ? "مقالة" : "articles"}
-          </p>
-        )}
-      </section>
-
-      {/* ---------- Featured post ---------- */}
+      {/* ---------- Featured ---------- */}
       {featured && (
         <section className="container-x pt-10">
           <Reveal>
             <Link
               to={`/blog/${featured.slug}`}
-              className="group grid overflow-hidden rounded-xl border border-line bg-surface transition-all duration-300 hover:shadow-[0_30px_60px_rgba(13,31,51,0.14)] lg:grid-cols-2"
+              className="group grid overflow-hidden rounded-xl border border-line bg-surface transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_30px_60px_rgba(13,31,51,0.15)] lg:grid-cols-2"
             >
-              <div className="relative aspect-[16/10] overflow-hidden lg:aspect-auto lg:min-h-[340px]">
-                <img
-                  src={featured.image}
-                  alt={t(featured.title)}
-                  className="img-zoom h-full w-full object-cover"
-                />
-                <span className="absolute top-4 start-4 rounded-full bg-flame px-3.5 py-1.5 text-[11px] font-extrabold text-white">
-                  {lang === "ar" ? "الأحدث" : "Latest"}
-                </span>
+              <div className="relative aspect-[16/10] overflow-hidden bg-paper lg:aspect-auto">
+                <img src={featured.image} alt={t(featured.title)} className="img-zoom h-full w-full object-cover" />
               </div>
               <div className="flex flex-col justify-center p-7 md:p-10">
                 {(() => {
                   const cat = getBlogCategory(featured.categoryId);
                   return cat ? (
-                    <span
-                      className="w-fit rounded-full px-3 py-1 text-[11px] font-extrabold"
-                      style={{ background: cat.tint, color: cat.color }}
-                    >
+                    <span className="mb-4 inline-flex w-fit rounded-full px-3.5 py-1.5 text-[11px] font-extrabold" style={{ background: cat.tint, color: cat.color }}>
                       {t(cat.name)}
                     </span>
                   ) : null;
                 })()}
-                <h2 className="font-display mt-4 text-2xl leading-snug font-extrabold text-ink transition-colors duration-200 group-hover:text-teal md:text-3xl">
+                <h2 className="font-display text-2xl leading-snug font-extrabold text-ink transition-colors duration-200 group-hover:text-teal md:text-3xl">
                   {t(featured.title)}
                 </h2>
-                <p className="mt-3 leading-relaxed text-muted">
-                  {t(featured.excerpt)}
-                </p>
-                <p className="mt-5 text-xs font-bold text-ink-soft">
-                  {t(AUTHOR)} · {formatDate(featured.date, lang)} ·{" "}
-                  {featured.readMinutes} {lang === "ar" ? "دقائق قراءة" : "min read"}
-                </p>
-                <span className="mt-6 flex w-fit items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-xs font-bold text-paper transition-all duration-200 group-hover:bg-teal">
-                  {lang === "ar" ? "اقرأ المقالة" : "Read article"}
-                  <ArrowIcon className="rtl-flip h-3.5 w-3.5" />
-                </span>
+                <p className="mt-3 line-clamp-3 leading-relaxed text-muted">{t(featured.excerpt)}</p>
+                <div className="mt-6 flex items-center justify-between">
+                  <span className="text-xs font-bold text-muted">
+                    {formatDate(featured.date, lang)} · {featured.readMinutes} {t(T.readMin)}
+                  </span>
+                  <span className="flex items-center gap-2 text-sm font-bold text-teal">
+                    {lang === "ar" ? "اقرأ المقال" : "Read article"}
+                    <ArrowIcon className="rtl-flip h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+                  </span>
+                </div>
               </div>
             </Link>
           </Reveal>
@@ -208,8 +131,8 @@ export default function Blog() {
       {/* ---------- Grid ---------- */}
       <section className="container-x py-14 md:py-16">
         {rest.length === 0 ? (
-          <p className="py-16 text-center text-lg font-bold text-muted">
-            {lang === "ar" ? "لا توجد مقالات في هذا التصنيف بعد." : "No articles in this category yet."}
+          <p className="rounded-xl border border-dashed border-line bg-surface px-6 py-16 text-center text-lg font-bold text-muted">
+            {t(T.noPosts)} {activeName ? `— ${t(activeName.name)}` : ""}
           </p>
         ) : (
           <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
