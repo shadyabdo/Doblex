@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  دوبليكس — خريطة الموقع
+  غيّر النطاق إلى نطاقك الفعلي.
+  ملاحظة: المشروع يستخدم HashRouter؛ إذا انتقلت إلى BrowserRouter
+  احذف علامة "#" من الروابط لتصبح نظيفة لمحركات البحث.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://duplex.studio/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://duplex.studio/#/blog</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <!-- صفحات الأقسام والمشاريع والمقالات تُنشأ ديناميكيًا من محتوى الداشبورد؛
+       أضفها هنا كلما أضفت محتوى جديدًا أو ولّدها تلقائيًا من Firestore. -->
+</urlset>
