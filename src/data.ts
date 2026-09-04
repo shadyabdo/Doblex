@@ -114,6 +114,9 @@ export const T: Record<string, LText> = {
   heroCta1: { ar: "استكشف أعمالنا", en: "Explore our work" },
   heroCta2: { ar: "تعرّف على الأقسام", en: "Meet the departments" },
   heroSwitchHint: { ar: "جرّب تبديل اللغة — المحتوى بيتبدل معاها", en: "Try switching the language — content switches too" },
+  heroFeatured: { ar: "مشروع في الواجهة", en: "Featured project" },
+  heroViewCase: { ar: "افتح دراسة الحالة", en: "Open the case study" },
+  heroNoWork: { ar: "أضف مشاريعك من الداشبورد لتظهر هنا", en: "Add your projects from the dashboard to showcase them here" },
 
   depsKicker: { ar: "01 — الأقسام", en: "01 — Departments" },
   depsTitle: { ar: "أقسام الاستوديو", en: "Studio departments" },
