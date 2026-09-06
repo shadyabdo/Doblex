@@ -3,7 +3,6 @@ import { Link, useLocation } from "react-router-dom";
 import { useLang } from "../i18n";
 import { T, CONTACT, LOGO_URL, SOCIALS } from "../data";
 import { useContent } from "../lib/content";
-import { TotalViewBadge } from "../lib/views";
 import { CountUp, Reveal } from "../lib/ui";
 import {
   ArrowIcon,
@@ -144,9 +143,6 @@ export function Navbar() {
           </nav>
 
           <div className="flex items-center gap-2">
-            {/* إجمالي المشاهدات */}
-            <TotalViewBadge label={t(T.viewsLabel)} className="hidden sm:inline-flex" />
-
             {/* مبدّل اللغة بمؤشر منزلق */}
             <div
               className="relative flex rounded-full border border-line bg-surface p-1 text-xs font-black"
