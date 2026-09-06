@@ -212,30 +212,4 @@ export function ViewBadge({
   );
 }
 
-/** شارة إجمالي المشاهدات (توضع في أعلى الصفحة/الهيدر) */
-export function TotalViewBadge({
-  label,
-  tone = "light",
-  className = "",
-}: {
-  label?: string;
-  tone?: "light" | "dark";
-  className?: string;
-}) {
-  const { total } = useViews();
 
-  return (
-    <span
-      className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-bold tabular-nums ${
-        tone === "dark"
-          ? "border-paper/20 bg-paper/10 text-paper/85"
-          : "border-line bg-surface text-ink-soft shadow-sm"
-      } ${className}`}
-      title={label}
-    >
-      <EyeIcon className={`h-4 w-4 ${tone === "dark" ? "text-flame" : "text-teal"}`} />
-      <span className="font-extrabold">{formatCount(total)}</span>
-      {label && <span className={tone === "dark" ? "text-paper/60" : "text-muted"}>{label}</span>}
-    </span>
-  );
-}
