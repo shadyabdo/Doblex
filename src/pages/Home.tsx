@@ -4,6 +4,7 @@ import { Helmet } from "react-helmet-async";
 import { useLang } from "../i18n";
 import { T, MARQUEE, PROCESS, STATS, STATS_LABELS } from "../data";
 import { useContent } from "../lib/content";
+import { useTrackView } from "../lib/views";
 import { CountUp, Marquee, Reveal, SectionHead } from "../lib/ui";
 import { ArrowIcon, Spark } from "../components/icons";
 import { ProjectCard, BlogCard } from "../components/project";
@@ -250,6 +251,8 @@ export default function Home() {
   const { categories, projectsByCategory, featuredProjects, posts } = useContent();
   const featured = featuredProjects();
   const latestPosts = posts.slice(0, 4);
+
+  useTrackView("home");
 
   return (
     <>

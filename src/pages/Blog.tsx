@@ -6,12 +6,15 @@ import { useContent } from "../lib/content";
 import { Reveal } from "../lib/ui";
 import { ArrowIcon } from "../components/icons";
 import { BlogCard, formatDate } from "../components/project";
+import { useTrackView, ViewBadge } from "../lib/views";
 
 export default function Blog() {
   const { lang, t } = useLang();
   const { posts, blogCategories, getBlogCategory } = useContent();
   const [params, setParams] = useSearchParams();
   const activeCat = params.get("cat") ?? "";
+
+  useTrackView("blog");
 
   const filtered = activeCat ? posts.filter((p) => p.categoryId === activeCat) : posts;
   const featured = !activeCat ? filtered[0] : null;
@@ -54,6 +57,9 @@ export default function Blog() {
               {t(T.by)} <span className="text-teal">{t(AUTHOR)}</span> · {posts.length}{" "}
               {lang === "ar" ? "مقالة" : "articles"}
             </p>
+            <div className="mt-5">
+              <ViewBadge viewKey="blog" label={t(T.pageViewsLabel)} />
+            </div>
           </Reveal>
         </div>
       </section>

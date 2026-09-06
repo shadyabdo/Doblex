@@ -6,12 +6,15 @@ import { useContent } from "../lib/content";
 import { Reveal } from "../lib/ui";
 import { ArrowIcon } from "../components/icons";
 import { ProjectCard } from "../components/project";
+import { useTrackView, ViewBadge } from "../lib/views";
 
 export default function Category() {
   const { categoryId } = useParams();
   const { t } = useLang();
   const { categories, getCategory, projectsByCategory } = useContent();
   const cat = getCategory(categoryId ?? "");
+
+  useTrackView(cat ? `work_${cat.id}` : null);
 
   if (!cat) return <Navigate to="/" replace />;
 
@@ -68,6 +71,7 @@ export default function Category() {
             <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted">{t(cat.blurb)}</p>
 
             <div className="mt-8 flex flex-wrap items-center gap-3 text-xs font-extrabold">
+              <ViewBadge viewKey={`work_${cat.id}`} label={t(T.pageViewsLabel)} />
               <span className="rounded-full px-4 py-2" style={{ background: cat.tint, color: cat.color }}>
                 {projects.length} {t(T.catCount)}
               </span>

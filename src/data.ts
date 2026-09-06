@@ -104,6 +104,8 @@ export const T: Record<string, LText> = {
   navHome: { ar: "الرئيسية", en: "Home" },
   navBlog: { ar: "المدونة", en: "Blog" },
   navStart: { ar: "ابدأ مشروعك", en: "Start a project" },
+  viewsLabel: { ar: "مشاهدة", en: "views" },
+  pageViewsLabel: { ar: "مشاهدة لهذه الصفحة", en: "page views" },
 
   heroKicker: { ar: "استوديو دوبليكس — تأسس 2026", en: "Duplex Studio — Est. 2026" },
   heroAvailable: { ar: "متاحون لمشروعات جديدة", en: "Available for new projects" },

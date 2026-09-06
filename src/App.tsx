@@ -9,6 +9,7 @@ import {
 import { HelmetProvider } from "react-helmet-async";
 import { LanguageProvider, useLang } from "./i18n";
 import { ContentProvider, useContent } from "./lib/content";
+import { ViewsProvider } from "./lib/views";
 import { LOGO_URL } from "./data";
 import { Navbar, Footer } from "./components/chrome";
 import { RefreshIcon } from "./components/icons";
@@ -120,6 +121,7 @@ export default function App() {
   return (
     <ErrorBoundary>
       <LanguageProvider>
+        <ViewsProvider>
         <HelmetProvider>
           <ContentProvider>
             <HashRouter>
@@ -145,6 +147,7 @@ export default function App() {
             </HashRouter>
           </ContentProvider>
         </HelmetProvider>
+        </ViewsProvider>
       </LanguageProvider>
     </ErrorBoundary>
   );
