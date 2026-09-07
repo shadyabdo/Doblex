@@ -418,13 +418,71 @@ export function DemoViewer({ pages, address, onClose }: { pages: DemoPage[]; add
 }
 
 /* ============================ VideoPlayer ============================ */
+
+/**
+ * يحلل رابط الفيديو ويعيد نوعه ورابط التشغيل المناسب
+ * يدعم: YouTube, Vimeo, Google Drive, روابط مباشرة (mp4, webm, etc)
+ */
+function parseVideoUrl(url: string): { type: "youtube" | "vimeo" | "direct" | "other"; embedUrl: string; videoId?: string } {
+  // YouTube
+  const youtubeMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|v\/)|youtu\.be\/)([^&?\/\s]+)/);
+  if (youtubeMatch) {
+    return {
+      type: "youtube",
+      embedUrl: `https://www.youtube.com/embed/${youtubeMatch[1]}?autoplay=1&rel=0`,
+      videoId: youtubeMatch[1],
+    };
+  }
+
+  // Vimeo
+  const vimeoMatch = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  if (vimeoMatch) {
+    return {
+      type: "vimeo",
+      embedUrl: `https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1&title=0&byline=0&portrait=0`,
+      videoId: vimeoMatch[1],
+    };
+  }
+
+  // Google Drive
+  const driveMatch = url.match(/drive\.google\.com\/file\/d\/([^\/]+)\/view/);
+  if (driveMatch) {
+    return {
+      type: "other",
+      embedUrl: `https://drive.google.com/file/d/${driveMatch[1]}/preview`,
+      videoId: driveMatch[1],
+    };
+  }
+
+  // روابط مباشرة (mp4, webm, ogg, mov)
+  if (/\.(mp4|webm|ogg|mov|m4v)(\?.*)?$/i.test(url)) {
+    return { type: "direct", embedUrl: url };
+  }
+
+  // أي رابط آخر (افتراضي: embed)
+  return { type: "other", embedUrl: url };
+}
+
 export function VideoPlayer({ src, poster, title }: { src: string; poster: string; title: string }) {
   const [playing, setPlaying] = useState(false);
+  const videoInfo = parseVideoUrl(src);
 
   return (
     <div className="group/player relative overflow-hidden rounded-xl border border-line bg-ink shadow-[0_30px_60px_rgba(13,31,51,0.25)]">
       {playing ? (
-        <video src={src} poster={poster} controls autoPlay playsInline className="aspect-video w-full bg-ink" />
+        <>
+          {videoInfo.type === "direct" ? (
+            <video src={src} poster={poster} controls autoPlay playsInline className="aspect-video w-full bg-ink" />
+          ) : (
+            <iframe
+              src={videoInfo.embedUrl}
+              className="aspect-video w-full bg-ink"
+              allow="autoplay; fullscreen; picture-in-picture"
+              allowFullScreen
+              title={title}
+            />
+          )}
+        </>
       ) : (
         <button onClick={() => setPlaying(true)} className="relative block w-full cursor-pointer text-start" aria-label={`Play: ${title}`}>
           <img
