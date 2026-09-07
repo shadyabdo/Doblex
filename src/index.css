@@ -311,104 +311,79 @@ button:hover .img-zoom {
   }
 }
 
-/* ---------- SweetAlert2 Lightbox Styles - Modern Design ---------- */
-.swal-lightbox-popup {
-  max-width: 95vw !important;
-  max-height: 95vh !important;
-  width: auto !important;
-  padding: 0 !important;
-  background: transparent !important;
-  border-radius: 20px !important;
-  overflow: hidden;
-  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5) !important;
-  animation: popup-zoom-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+/* ---------- yet-another-react-lightbox Custom Styles ---------- */
+.yarl__root {
+  --yarl__background: rgba(13, 31, 51, 0.95) !important;
+  --yarl__color_control_active: #e8590c !important;
+  --yarl__color_control_inactive: rgba(243, 246, 248, 0.5) !important;
+  --yarl__color_button: #ffffff !important;
+  --yarl__background_button: rgba(13, 31, 51, 0.8) !important;
+  --yarl__background_button_active: #e8590c !important;
 }
 
-@keyframes popup-zoom-in {
-  from {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+.yarl__container {
+  backdrop-filter: blur(10px) !important;
 }
 
-.swal-lightbox-image {
+.yarl__slide_image {
   max-height: 85vh !important;
   max-width: 95vw !important;
-  width: auto !important;
-  height: auto !important;
   object-fit: contain !important;
-  border-radius: 20px !important;
-  margin: 0 !important;
-  display: block !important;
-  box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.1),
-              0 20px 60px rgba(0, 0, 0, 0.4) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4) !important;
 }
 
-.swal-lightbox-title {
-  position: absolute !important;
-  bottom: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  color: #ffffff !important;
-  font-size: 1.1rem !important;
-  font-weight: 600 !important;
-  padding: 1.5rem 2rem !important;
-  margin: 0 !important;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.6) 70%, transparent 100%) !important;
-  text-align: center !important;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5) !important;
-  z-index: 10 !important;
-}
-
-/* SweetAlert2 general overrides */
-.swal2-popup {
-  font-family: inherit !important;
-}
-
-.swal2-close {
-  position: absolute !important;
-  top: 20px !important;
-  right: 20px !important;
-  color: #ffffff !important;
-  font-size: 2.5rem !important;
-  width: 50px !important;
-  height: 50px !important;
-  border-radius: 50% !important;
-  background: rgba(0, 0, 0, 0.6) !important;
-  backdrop-filter: blur(10px) !important;
-  border: 2px solid rgba(255, 255, 255, 0.2) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+.yarl__button {
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-  z-index: 100 !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
 }
 
-.swal2-close:hover {
-  color: #ffffff !important;
+.yarl__button:hover {
+  transform: scale(1.1) !important;
+}
+
+.yarl__close_button {
+  background: rgba(13, 31, 51, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  border-radius: 50% !important;
+}
+
+.yarl__close_button:hover {
   background: #e8590c !important;
-  border-color: #e8590c !important;
-  transform: rotate(90deg) scale(1.1) !important;
-  box-shadow: 0 6px 30px rgba(232, 89, 12, 0.5) !important;
 }
 
-.swal2-close:focus {
-  box-shadow: 0 0 0 3px rgba(232, 89, 12, 0.3) !important;
+.yarl__navigation_prev,
+.yarl__navigation_next {
+  background: rgba(13, 31, 51, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.yarl__navigation_prev:hover,
+.yarl__navigation_next:hover {
+  background: #e8590c !important;
+}
+
+.yarl__slide_description {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%) !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5) !important;
+}
+
+.yarl__counter {
+  background: rgba(13, 31, 51, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  border-radius: 20px !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
 }
 
 /* RTL support */
-[dir="rtl"] .swal2-close {
-  right: auto !important;
-  left: 20px !important;
+[dir="rtl"] .yarl__navigation_prev {
+  right: 0 !important;
+  left: auto !important;
 }
 
-/* Backdrop overlay */
-.swal2-backdrop-show {
-  background: rgba(0, 0, 0, 0.92) !important;
-  backdrop-filter: blur(8px) !important;
+[dir="rtl"] .yarl__navigation_next {
+  left: 0 !important;
+  right: auto !important;
 }

@@ -23,7 +23,8 @@
     "react-router-dom": "^6.8.0",
     "recharts": "^2.10.0",
     "sweetalert2": "^11.26.25",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "yet-another-react-lightbox": "^3.32.2"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.7",
