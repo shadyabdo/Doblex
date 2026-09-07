@@ -5,7 +5,7 @@ import { T } from "../data";
 import { useContent } from "../lib/content";
 import { Reveal } from "../lib/ui";
 import { ArrowIcon } from "../components/icons";
-import { ProjectCard } from "../components/project";
+import { ProjectCard, VideoPlayer } from "../components/project";
 import { useTrackView, ViewBadge } from "../lib/views";
 
 export default function Category() {
@@ -84,6 +84,38 @@ export default function Category() {
           </Reveal>
         </div>
       </section>
+
+      {/* ---------- Videos ---------- */}
+      {(() => {
+        const videoProjects = projects.filter((p) => p.videoUrl);
+        if (videoProjects.length === 0) return null;
+        return (
+          <section className="border-b border-line bg-ink text-paper">
+            <div className="container-x py-16 md:py-20">
+              <Reveal>
+                <p className="mb-3 flex items-center gap-3 text-xs font-bold tracking-[0.22em] uppercase" style={{ color: cat.color }}>
+                  <span className="h-px w-10 bg-flame" />
+                  {t(T.videosKicker)}
+                </p>
+                <h2 className="font-display text-3xl font-extrabold md:text-4xl">{t(T.videosTitle)}</h2>
+              </Reveal>
+              <div className="mt-10 grid gap-8 md:grid-cols-2">
+                {videoProjects.map((p, i) => (
+                  <Reveal key={p.id} delay={i * 120}>
+                    <div>
+                      <VideoPlayer src={p.videoUrl!} poster={p.image} title={t(p.title)} />
+                      <div className="mt-4">
+                        <h3 className="font-display text-lg font-extrabold">{t(p.title)}</h3>
+                        <p className="mt-1 text-sm text-paper/60">{t(p.tagline)}</p>
+                      </div>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+      })()}
 
       {/* ---------- Projects ---------- */}
       <section className="container-x py-16 md:py-20">

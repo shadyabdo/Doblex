@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
 import { useLang } from "../i18n";
 import { T, AUTHOR, type Project, type BlogPost, type GalleryItem } from "../data";
 import { useContent } from "../lib/content";
@@ -168,7 +169,7 @@ export function FrameImage({ item, url }: { item: GalleryItem; url?: string }) {
   );
 }
 
-/* ============================ Lightbox ============================ */
+/* ============================ Lightbox with SweetAlert2 ============================ */
 export function Lightbox({
   items,
   index,
@@ -184,89 +185,131 @@ export function Lightbox({
 }) {
   const { t } = useLang();
   const len = items.length;
-  const next = () => onIndex((index + 1) % len);
-  const prev = () => onIndex((index - 1 + len) % len);
+  const [isOpen, setIsOpen] = useState(false);
 
+  // فتح Lightbox عند أول render
+  useEffect(() => {
+    if (!isOpen) {
+      setIsOpen(true);
+      
+      const item = items[index];
+      
+      Swal.fire({
+        imageUrl: item.src,
+        imageAlt: t(item.caption),
+        title: t(item.caption),
+        html: `<div class="swal-counter">${index + 1} / ${len}</div>`,
+        showConfirmButton: false,
+        showCloseButton: true,
+        customClass: {
+          popup: "swal-lightbox-popup",
+          image: "swal-lightbox-image",
+          title: "swal-lightbox-title",
+        },
+        didOpen: () => {
+          const popup = Swal.getPopup();
+          if (popup) {
+            // إضافة أزرار التنقل
+            const navContainer = document.createElement("div");
+            navContainer.className = "swal-lightbox-nav";
+            navContainer.innerHTML = `
+              <button class="swal-nav-btn swal-nav-prev" aria-label="Previous">
+                <svg class="rtl-flip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 12h15m-6-7 7 7-7 7"/>
+                </svg>
+              </button>
+              <button class="swal-nav-btn swal-nav-next" aria-label="Next">
+                <svg class="rtl-flip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 12h15m-6-7 7 7-7 7"/>
+                </svg>
+              </button>
+            `;
+            popup.appendChild(navContainer);
+
+            // إضافة مصغرات الصور
+            const thumbsContainer = document.createElement("div");
+            thumbsContainer.className = "swal-lightbox-thumbs";
+            items.forEach((it, i) => {
+              const thumb = document.createElement("button");
+              thumb.className = `swal-thumb ${i === index ? "swal-thumb-active" : ""}`;
+              thumb.innerHTML = `<img src="${it.src}" alt="" />`;
+              thumb.onclick = () => onIndex(i);
+              thumbsContainer.appendChild(thumb);
+            });
+            popup.appendChild(thumbsContainer);
+
+            // ربط أزرار التنقل
+            const prevBtn = popup.querySelector(".swal-nav-prev");
+            const nextBtn = popup.querySelector(".swal-nav-next");
+            
+            if (prevBtn) {
+              prevBtn.addEventListener("click", () => {
+                onIndex((index - 1 + len) % len);
+              });
+            }
+            
+            if (nextBtn) {
+              nextBtn.addEventListener("click", () => {
+                onIndex((index + 1) % len);
+              });
+            }
+          }
+        },
+        willClose: () => {
+          setIsOpen(false);
+          onClose();
+        },
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // تحديث الصورة عند تغيير index
+  useEffect(() => {
+    if (isOpen && Swal.isVisible()) {
+      const item = items[index];
+      Swal.update({
+        imageUrl: item.src,
+        imageAlt: t(item.caption),
+        title: t(item.caption),
+        html: `<div class="swal-counter">${index + 1} / ${len}</div>`,
+      });
+
+      // تحديث المصغرات النشطة
+      const thumbs = document.querySelectorAll(".swal-thumb");
+      thumbs.forEach((thumb, i) => {
+        if (i === index) {
+          thumb.classList.add("swal-thumb-active");
+        } else {
+          thumb.classList.remove("swal-thumb-active");
+        }
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [index]);
+
+  // دعم لوحة المفاتيح
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (!isOpen) return;
+      
       const rtl = document.documentElement.dir === "rtl";
-      if (e.key === "Escape") onClose();
-      if (e.key === "ArrowRight") (rtl ? prev : next)();
-      if (e.key === "ArrowLeft") (rtl ? next : prev)();
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        rtl ? onIndex((index - 1 + len) % len) : onIndex((index + 1) % len);
+      }
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        rtl ? onIndex((index + 1) % len) : onIndex((index - 1 + len) % len);
+      }
     };
+    
     window.addEventListener("keydown", onKey);
-    document.body.style.overflow = "hidden";
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
-    };
+    return () => window.removeEventListener("keydown", onKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [index, len]);
+  }, [index, isOpen, len]);
 
-  const item = items[index];
-
-  return (
-    <div
-      className="fixed inset-0 z-[90] flex flex-col bg-ink/95 backdrop-blur-sm"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Image lightbox"
-      onClick={onClose}
-    >
-      <div className="flex items-center justify-between px-5 py-4 md:px-8" onClick={(e) => e.stopPropagation()}>
-        <p className="text-sm font-bold text-paper/70 tabular-nums" dir="ltr">
-          {index + 1} / {len}
-        </p>
-        <button
-          onClick={onClose}
-          aria-label={t(T.close)}
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-paper/20 text-paper transition-all duration-200 hover:rotate-90 hover:border-flame hover:bg-flame"
-        >
-          <CloseIcon className="h-5 w-5" />
-        </button>
-      </div>
-
-      <div className="relative flex min-h-0 flex-1 items-center justify-center px-4 md:px-24">
-        <button
-          onClick={(e) => { e.stopPropagation(); prev(); }}
-          aria-label="Previous"
-          className="absolute start-3 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-paper/20 bg-paper/5 text-paper transition-all duration-200 hover:border-flame hover:bg-flame md:start-6"
-        >
-          <ArrowIcon className="rtl-flip h-5 w-5 rotate-180" />
-        </button>
-
-        <div key={index} className="pop-in w-full max-w-4xl" onClick={(e) => e.stopPropagation()}>
-          <FrameImage item={item} url={url} />
-        </div>
-
-        <button
-          onClick={(e) => { e.stopPropagation(); next(); }}
-          aria-label="Next"
-          className="absolute end-3 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-paper/20 bg-paper/5 text-paper transition-all duration-200 hover:border-flame hover:bg-flame md:end-6"
-        >
-          <ArrowIcon className="rtl-flip h-5 w-5" />
-        </button>
-      </div>
-
-      <div className="px-5 pt-4 pb-6 md:px-8" onClick={(e) => e.stopPropagation()}>
-        <p className="mb-4 text-center text-sm font-semibold text-paper/80">{t(item.caption)}</p>
-        <div className="flex justify-center gap-2 overflow-x-auto pb-1">
-          {items.map((it, i) => (
-            <button
-              key={i}
-              onClick={() => onIndex(i)}
-              aria-label={`Image ${i + 1}`}
-              className={`h-12 w-[72px] shrink-0 overflow-hidden rounded-md border-2 transition-all duration-200 ${
-                i === index ? "border-flame opacity-100" : "border-transparent opacity-50 hover:opacity-90"
-              }`}
-            >
-              <img src={it.src} alt="" className="h-full w-full object-cover" />
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+  return null;
 }
 
 /* ============================ DemoViewer ============================ */
@@ -418,13 +461,71 @@ export function DemoViewer({ pages, address, onClose }: { pages: DemoPage[]; add
 }
 
 /* ============================ VideoPlayer ============================ */
+
+/**
+ * يحلل رابط الفيديو ويعيد نوعه ورابط التشغيل المناسب
+ * يدعم: YouTube, Vimeo, Google Drive, روابط مباشرة (mp4, webm, etc)
+ */
+function parseVideoUrl(url: string): { type: "youtube" | "vimeo" | "direct" | "other"; embedUrl: string; videoId?: string } {
+  // YouTube
+  const youtubeMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|v\/)|youtu\.be\/)([^&?\/\s]+)/);
+  if (youtubeMatch) {
+    return {
+      type: "youtube",
+      embedUrl: `https://www.youtube.com/embed/${youtubeMatch[1]}?autoplay=1&rel=0`,
+      videoId: youtubeMatch[1],
+    };
+  }
+
+  // Vimeo
+  const vimeoMatch = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  if (vimeoMatch) {
+    return {
+      type: "vimeo",
+      embedUrl: `https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1&title=0&byline=0&portrait=0`,
+      videoId: vimeoMatch[1],
+    };
+  }
+
+  // Google Drive
+  const driveMatch = url.match(/drive\.google\.com\/file\/d\/([^\/]+)\/view/);
+  if (driveMatch) {
+    return {
+      type: "other",
+      embedUrl: `https://drive.google.com/file/d/${driveMatch[1]}/preview`,
+      videoId: driveMatch[1],
+    };
+  }
+
+  // روابط مباشرة (mp4, webm, ogg, mov)
+  if (/\.(mp4|webm|ogg|mov|m4v)(\?.*)?$/i.test(url)) {
+    return { type: "direct", embedUrl: url };
+  }
+
+  // أي رابط آخر (افتراضي: embed)
+  return { type: "other", embedUrl: url };
+}
+
 export function VideoPlayer({ src, poster, title }: { src: string; poster: string; title: string }) {
   const [playing, setPlaying] = useState(false);
+  const videoInfo = parseVideoUrl(src);
 
   return (
     <div className="group/player relative overflow-hidden rounded-xl border border-line bg-ink shadow-[0_30px_60px_rgba(13,31,51,0.25)]">
       {playing ? (
-        <video src={src} poster={poster} controls autoPlay playsInline className="aspect-video w-full bg-ink" />
+        <>
+          {videoInfo.type === "direct" ? (
+            <video src={src} poster={poster} controls autoPlay playsInline className="aspect-video w-full bg-ink" />
+          ) : (
+            <iframe
+              src={videoInfo.embedUrl}
+              className="aspect-video w-full bg-ink"
+              allow="autoplay; fullscreen; picture-in-picture"
+              allowFullScreen
+              title={title}
+            />
+          )}
+        </>
       ) : (
         <button onClick={() => setPlaying(true)} className="relative block w-full cursor-pointer text-start" aria-label={`Play: ${title}`}>
           <img
