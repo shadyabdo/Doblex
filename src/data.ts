@@ -198,6 +198,8 @@ export const T: Record<string, LText> = {
   close: { ar: "إغلاق", en: "Close" },
   of: { ar: "من", en: "of" },
   filmTitle: { ar: "الفيديو الكامل", en: "The full film" },
+  videosKicker: { ar: "فيديوهات القسم", en: "Department videos" },
+  videosTitle: { ar: "شاهد أعمالنا المرئية", en: "Watch our video work" },
   filmNote: {
     ar: "نسخة العرض — الفيديو النهائي يُسلَّم بجودة 4K مع ألوان وصوت معتمد.",
     en: "Preview cut — the final film is delivered in 4K with graded color & mastered audio.",
