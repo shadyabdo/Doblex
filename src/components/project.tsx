@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Swal from "sweetalert2";
+import LightboxComponent from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
 import { useLang } from "../i18n";
 import { T, AUTHOR, type Project, type BlogPost, type GalleryItem } from "../data";
 import { useContent } from "../lib/content";
@@ -169,7 +170,7 @@ export function FrameImage({ item, url }: { item: GalleryItem; url?: string }) {
   );
 }
 
-/* ============================ Lightbox with SweetAlert2 (Simple Popup) ============================ */
+/* ============================ Lightbox with yet-another-react-lightbox ============================ */
 export function Lightbox({
   items,
   index,
@@ -184,35 +185,36 @@ export function Lightbox({
   url?: string;
 }) {
   const { t } = useLang();
+  const [open, setOpen] = useState(true);
 
-  useEffect(() => {
-    const item = items[index];
-    
-    Swal.fire({
-      imageUrl: item.src,
-      imageAlt: t(item.caption),
-      title: t(item.caption),
-      showConfirmButton: false,
-      showCloseButton: true,
-      customClass: {
-        popup: "swal-lightbox-popup",
-        image: "swal-lightbox-image",
-        title: "swal-lightbox-title",
-      },
-      willClose: () => {
-        onClose();
-      },
-    });
+  const slides = items.map((item) => ({
+    src: item.src,
+    description: t(item.caption),
+  }));
 
-    return () => {
-      if (Swal.isVisible()) {
-        Swal.close();
-      }
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [index]);
+  const handleClose = () => {
+    setOpen(false);
+    onClose();
+  };
 
-  return null;
+  const handleView = ({ index: newIndex }: { index: number }) => {
+    onIndex(newIndex);
+  };
+
+  return (
+    <LightboxComponent
+      open={open}
+      close={handleClose}
+      index={index}
+      slides={slides}
+      on={{
+        view: handleView,
+      }}
+      carousel={{
+        finite: false,
+      }}
+    />
+  );
 }
 
 /* ============================ DemoViewer ============================ */
