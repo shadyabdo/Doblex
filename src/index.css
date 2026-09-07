@@ -323,7 +323,7 @@ button:hover .img-zoom {
 }
 
 .swal-lightbox-image {
-  max-height: 60vh !important;
+  max-height: 70vh !important;
   object-fit: contain !important;
   border-radius: 0 !important;
   margin: 0 !important;
@@ -331,99 +331,11 @@ button:hover .img-zoom {
 
 .swal-lightbox-title {
   color: #f3f6f8 !important;
-  font-size: 1.1rem !important;
+  font-size: 1rem !important;
   font-weight: 600 !important;
-  padding: 1rem 1.5rem 0.5rem !important;
+  padding: 1rem 1.5rem !important;
   margin: 0 !important;
-}
-
-.swal-lightbox-nav {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  transform: translateY(-50%);
-  display: flex;
-  justify-content: space-between;
-  padding: 0 1rem;
-  pointer-events: none;
-  z-index: 10;
-}
-
-.swal-nav-btn {
-  pointer-events: auto;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: rgba(243, 246, 248, 0.1);
-  border: 2px solid rgba(243, 246, 248, 0.2);
-  color: #f3f6f8;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  backdrop-filter: blur(10px);
-}
-
-.swal-nav-btn:hover {
-  background: #e8590c;
-  border-color: #e8590c;
-  transform: scale(1.1);
-}
-
-.swal-nav-btn svg {
-  width: 20px;
-  height: 20px;
-}
-
-.swal-lightbox-thumbs {
-  display: flex;
-  gap: 0.5rem;
-  padding: 1rem;
-  overflow-x: auto;
-  justify-content: center;
-  background: rgba(13, 31, 51, 0.5);
-  border-top: 1px solid rgba(243, 246, 248, 0.1);
-}
-
-.swal-thumb {
-  flex-shrink: 0;
-  width: 72px;
-  height: 48px;
-  border-radius: 6px;
-  overflow: hidden;
-  border: 2px solid transparent;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  opacity: 0.5;
-  padding: 0;
-  background: transparent;
-}
-
-.swal-thumb:hover {
-  opacity: 0.9;
-  transform: translateY(-2px);
-}
-
-.swal-thumb-active {
-  border-color: #e8590c;
-  opacity: 1;
-}
-
-.swal-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* RTL support for navigation buttons */
-[dir="rtl"] .swal-nav-prev svg {
-  transform: scaleX(-1);
-}
-
-[dir="rtl"] .swal-nav-next svg {
-  transform: scaleX(-1) rotate(180deg);
+  background: rgba(13, 31, 51, 0.8);
 }
 
 /* SweetAlert2 general overrides */

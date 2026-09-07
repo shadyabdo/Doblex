@@ -169,7 +169,7 @@ export function FrameImage({ item, url }: { item: GalleryItem; url?: string }) {
   );
 }
 
-/* ============================ Lightbox with SweetAlert2 ============================ */
+/* ============================ Lightbox with SweetAlert2 (Simple Popup) ============================ */
 export function Lightbox({
   items,
   index,
@@ -184,130 +184,33 @@ export function Lightbox({
   url?: string;
 }) {
   const { t } = useLang();
-  const len = items.length;
-  const [isOpen, setIsOpen] = useState(false);
 
-  // فتح Lightbox عند أول render
   useEffect(() => {
-    if (!isOpen) {
-      setIsOpen(true);
-      
-      const item = items[index];
-      
-      Swal.fire({
-        imageUrl: item.src,
-        imageAlt: t(item.caption),
-        title: t(item.caption),
-        html: `<div class="swal-counter">${index + 1} / ${len}</div>`,
-        showConfirmButton: false,
-        showCloseButton: true,
-        customClass: {
-          popup: "swal-lightbox-popup",
-          image: "swal-lightbox-image",
-          title: "swal-lightbox-title",
-        },
-        didOpen: () => {
-          const popup = Swal.getPopup();
-          if (popup) {
-            // إضافة أزرار التنقل
-            const navContainer = document.createElement("div");
-            navContainer.className = "swal-lightbox-nav";
-            navContainer.innerHTML = `
-              <button class="swal-nav-btn swal-nav-prev" aria-label="Previous">
-                <svg class="rtl-flip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M4 12h15m-6-7 7 7-7 7"/>
-                </svg>
-              </button>
-              <button class="swal-nav-btn swal-nav-next" aria-label="Next">
-                <svg class="rtl-flip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M4 12h15m-6-7 7 7-7 7"/>
-                </svg>
-              </button>
-            `;
-            popup.appendChild(navContainer);
+    const item = items[index];
+    
+    Swal.fire({
+      imageUrl: item.src,
+      imageAlt: t(item.caption),
+      title: t(item.caption),
+      showConfirmButton: false,
+      showCloseButton: true,
+      customClass: {
+        popup: "swal-lightbox-popup",
+        image: "swal-lightbox-image",
+        title: "swal-lightbox-title",
+      },
+      willClose: () => {
+        onClose();
+      },
+    });
 
-            // إضافة مصغرات الصور
-            const thumbsContainer = document.createElement("div");
-            thumbsContainer.className = "swal-lightbox-thumbs";
-            items.forEach((it, i) => {
-              const thumb = document.createElement("button");
-              thumb.className = `swal-thumb ${i === index ? "swal-thumb-active" : ""}`;
-              thumb.innerHTML = `<img src="${it.src}" alt="" />`;
-              thumb.onclick = () => onIndex(i);
-              thumbsContainer.appendChild(thumb);
-            });
-            popup.appendChild(thumbsContainer);
-
-            // ربط أزرار التنقل
-            const prevBtn = popup.querySelector(".swal-nav-prev");
-            const nextBtn = popup.querySelector(".swal-nav-next");
-            
-            if (prevBtn) {
-              prevBtn.addEventListener("click", () => {
-                onIndex((index - 1 + len) % len);
-              });
-            }
-            
-            if (nextBtn) {
-              nextBtn.addEventListener("click", () => {
-                onIndex((index + 1) % len);
-              });
-            }
-          }
-        },
-        willClose: () => {
-          setIsOpen(false);
-          onClose();
-        },
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // تحديث الصورة عند تغيير index
-  useEffect(() => {
-    if (isOpen && Swal.isVisible()) {
-      const item = items[index];
-      Swal.update({
-        imageUrl: item.src,
-        imageAlt: t(item.caption),
-        title: t(item.caption),
-        html: `<div class="swal-counter">${index + 1} / ${len}</div>`,
-      });
-
-      // تحديث المصغرات النشطة
-      const thumbs = document.querySelectorAll(".swal-thumb");
-      thumbs.forEach((thumb, i) => {
-        if (i === index) {
-          thumb.classList.add("swal-thumb-active");
-        } else {
-          thumb.classList.remove("swal-thumb-active");
-        }
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [index]);
-
-  // دعم لوحة المفاتيح
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (!isOpen) return;
-      
-      const rtl = document.documentElement.dir === "rtl";
-      if (e.key === "ArrowRight") {
-        e.preventDefault();
-        rtl ? onIndex((index - 1 + len) % len) : onIndex((index + 1) % len);
-      }
-      if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        rtl ? onIndex((index + 1) % len) : onIndex((index - 1 + len) % len);
+    return () => {
+      if (Swal.isVisible()) {
+        Swal.close();
       }
     };
-    
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [index, isOpen, len]);
+  }, [index]);
 
   return null;
 }
