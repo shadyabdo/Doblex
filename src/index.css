@@ -326,10 +326,8 @@ button:hover .img-zoom {
 }
 
 .yarl__slide_image {
-  max-height: 95vh !important;
-  max-width: 98vw !important;
-  width: auto !important;
-  height: auto !important;
+  width: 100% !important;
+  height: 100% !important;
   object-fit: contain !important;
   border-radius: 8px !important;
   box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5) !important;
