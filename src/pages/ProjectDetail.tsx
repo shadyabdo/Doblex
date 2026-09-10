@@ -65,14 +65,16 @@ export default function ProjectDetail() {
       );
     }
     return (
-      <button
-        onClick={() => setDemoOpen(true)}
+      <a
+        href={project.demoUrl}
+        target="_blank"
+        rel="noopener noreferrer"
         className="flex w-full items-center justify-center gap-2.5 rounded-full py-3.5 text-sm font-bold text-white shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:opacity-90"
         style={style}
       >
         <ExternalIcon className="h-4 w-4" />
         {project.category === "graphic" ? t(T.viewDesigns) : t(T.viewDemo)}
-      </button>
+      </a>
     );
   };
 
@@ -225,18 +227,7 @@ export default function ProjectDetail() {
                   <img src={project.image} alt={t(project.title)} className="img-zoom h-full w-full object-cover" />
                 </div>
                 <div className="p-6">
-                  {actionButton()}
-                  {project.demoUrl && (
-                    <a
-                      href={project.demoUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="mt-3 flex items-center justify-center gap-2 rounded-full border border-line py-3 text-sm font-bold text-ink-soft transition-all duration-200 hover:border-teal hover:text-teal"
-                    >
-                      <ExternalIcon className="h-4 w-4" />
-                      {t(T.openExternal)}
-                    </a>
-                  )}
+                  {project.demoUrl && actionButton()}
                 </div>
               </div>
             </Reveal>
