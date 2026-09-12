@@ -121,18 +121,18 @@ export function Navbar() {
                   key={l.to}
                   to={l.to}
                   title={l.label}
-                  className={`group flex items-center gap-1.5 rounded-full px-2.5 py-2 text-xs font-bold whitespace-nowrap transition-all duration-200 xl:px-3 ${
+                  className={`group flex items-center gap-1 rounded-full px-2 py-1.5 text-[11px] font-semibold whitespace-nowrap transition-all duration-200 sm:px-2.5 sm:py-2 sm:text-xs sm:gap-1.5 xl:px-3 ${
                     active ? "bg-ink text-paper shadow-md" : "text-ink-soft hover:bg-surface hover:text-ink"
                   }`}
                 >
                   <Ic
-                    className={`h-4 w-4 shrink-0 transition-transform duration-200 group-hover:-translate-y-0.5 ${
+                    className={`h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:-translate-y-0.5 sm:h-4 sm:w-4 ${
                       active ? "text-flame" : ""
                     }`}
                   />
                   <span className="hidden xl:inline">{l.label}</span>
                   <span
-                    className="text-[9px] font-black tracking-wider tabular-nums"
+                    className="text-[8px] font-semibold tracking-wider tabular-nums sm:text-[9px]"
                     style={{ color: active ? l.color : undefined }}
                   >
                     {l.num}
@@ -145,19 +145,19 @@ export function Navbar() {
           <div className="flex items-center gap-2">
             {/* مبدّل اللغة بمؤشر منزلق */}
             <div
-              className="relative flex rounded-full border border-line bg-surface p-1 text-xs font-black"
+              className="relative flex rounded-full border border-line bg-surface p-0.5 text-[11px] font-semibold sm:p-1 sm:text-xs"
               role="group"
               aria-label="Language"
             >
               <span
-                className={`absolute top-1 bottom-1 w-[calc(50%-0.25rem)] rounded-full bg-teal shadow transition-all duration-300 ease-out ${
-                  lang === "ar" ? "start-1" : "start-[calc(50%+0.05rem)]"
+                className={`absolute top-0.5 bottom-0.5 w-[calc(50%-0.15rem)] rounded-full bg-teal shadow transition-all duration-300 ease-out sm:top-1 sm:bottom-1 sm:w-[calc(50%-0.25rem)] ${
+                  lang === "ar" ? "start-0.5 sm:start-1" : "start-[calc(50%+0.05rem)]"
                 }`}
                 aria-hidden
               />
               <button
                 onClick={() => setLang("ar")}
-                className={`relative z-10 w-9 rounded-full py-1.5 transition-colors duration-300 ${
+                className={`relative z-10 w-7 rounded-full py-1 transition-colors duration-300 sm:w-9 sm:py-1.5 ${
                   lang === "ar" ? "text-white" : "text-muted hover:text-ink"
                 }`}
               >
@@ -165,7 +165,7 @@ export function Navbar() {
               </button>
               <button
                 onClick={() => setLang("en")}
-                className={`relative z-10 w-9 rounded-full py-1.5 transition-colors duration-300 ${
+                className={`relative z-10 w-7 rounded-full py-1 transition-colors duration-300 sm:w-9 sm:py-1.5 ${
                   lang === "en" ? "text-white" : "text-muted hover:text-ink"
                 }`}
               >
@@ -175,7 +175,7 @@ export function Navbar() {
 
             <a
               href={`mailto:${CONTACT.email}`}
-              className="hidden items-center gap-2 rounded-full bg-flame px-4 py-2.5 text-xs font-bold text-white shadow-[0_6px_20px_rgba(232,89,12,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-flame-deep md:flex"
+              className="hidden items-center gap-1.5 rounded-full bg-flame px-3 py-2 text-[11px] font-semibold text-white shadow-[0_6px_20px_rgba(232,89,12,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-flame-deep md:flex md:px-4 md:py-2.5 md:text-xs"
             >
               <MailIcon className="h-3.5 w-3.5" />
               {t(T.navStart)}
@@ -183,11 +183,11 @@ export function Navbar() {
 
             <button
               onClick={() => setOpen((v) => !v)}
-              className="rounded-full border border-line bg-surface p-2.5 text-ink transition-colors hover:border-teal hover:text-teal lg:hidden"
+              className="rounded-full border border-line bg-surface p-2 text-ink transition-colors hover:border-teal hover:text-teal sm:p-2.5 lg:hidden"
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
             >
-              {open ? <CloseIcon /> : <MenuIcon />}
+              {open ? <CloseIcon className="h-4 w-4 sm:h-5 sm:w-5" /> : <MenuIcon className="h-4 w-4 sm:h-5 sm:w-5" />}
             </button>
           </div>
         </div>
