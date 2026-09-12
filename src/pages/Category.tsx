@@ -139,7 +139,7 @@ export default function Category() {
         <section className="border-t border-line bg-surface/70">
           <div className="container-x py-10 sm:py-12 md:py-14">
             <p className="mb-4 text-xs font-bold tracking-[0.22em] text-muted uppercase sm:mb-6">{t(T.otherCats)}</p>
-            <div className="grid gap-3 sm:gap-4 sm:grid-cols-3">
+            <div className="grid gap-3 sm:gap-4">
               {others.map((c, i) => (
                 <Reveal key={c.id} delay={i * 90}>
                   <Link
