@@ -121,7 +121,7 @@ export function Navbar() {
                   key={l.to}
                   to={l.to}
                   title={l.label}
-                  className={`group flex items-center gap-1 rounded-full px-2 py-1.5 text-[11px] font-semibold whitespace-nowrap transition-all duration-200 sm:px-2.5 sm:py-2 sm:text-xs sm:gap-1.5 xl:px-3 ${
+                  className={`group flex items-center gap-1 rounded-full px-2 py-1.5 text-[10px] font-semibold whitespace-nowrap transition-all duration-200 sm:px-2.5 sm:py-2 sm:text-[11px] md:text-xs md:gap-1.5 xl:px-3 ${
                     active ? "bg-ink text-paper shadow-md" : "text-ink-soft hover:bg-surface hover:text-ink"
                   }`}
                 >
