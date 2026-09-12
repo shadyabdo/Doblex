@@ -130,7 +130,7 @@ export function Navbar() {
                       active ? "text-flame" : ""
                     }`}
                   />
-                  <span className="hidden md:inline md:max-w-[60px] lg:max-w-[80px] xl:max-w-none truncate">{l.label}</span>
+                  <span className="hidden lg:inline lg:max-w-[80px] xl:max-w-none truncate">{l.label}</span>
                   <span
                     className="text-[8px] font-semibold tracking-wider tabular-nums sm:text-[9px]"
                     style={{ color: active ? l.color : undefined }}
@@ -214,7 +214,7 @@ export function Navbar() {
                     {l.num}
                   </span>
                   <Ic className="h-5 w-5 text-paper/60 transition-colors group-hover:text-flame" />
-                  <span className="font-display text-2xl font-extrabold">{l.label}</span>
+                  <span className="font-display text-2xl font-extrabold truncate max-w-[200px] sm:max-w-[250px] md:max-w-[300px]">{l.label}</span>
                   <ArrowIcon className="rtl-flip ms-auto h-5 w-5 text-paper/25 transition-all group-hover:translate-x-1 group-hover:text-flame" />
                 </Link>
               );
