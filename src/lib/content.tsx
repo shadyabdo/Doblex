@@ -174,6 +174,19 @@ function normalizeProject(raw: Record<string, unknown>, i: number, categories: C
   const title = toLText(raw.title ?? raw.name);
   const image =
     str(raw.image ?? raw.cover ?? raw.thumb ?? raw.img) || FALLBACK_IMGS[i % FALLBACK_IMGS.length];
+  
+  // قراءة رابط الديمو من جميع الحقول الممكنة
+  const demoUrlValue = str(
+    raw.demoUrl ?? 
+    raw.demo ?? 
+    raw.url ?? 
+    raw.link ?? 
+    raw.website ??
+    raw.demo_url ??
+    raw.projectUrl ??
+    raw.liveUrl
+  );
+  
   return {
     id: str(raw.id ?? `p-${i}`),
     slug: str(raw.slug ?? raw.id ?? `project-${i}`),
@@ -187,7 +200,7 @@ function normalizeProject(raw: Record<string, unknown>, i: number, categories: C
     services: toLTextList(raw.services ?? raw.tags ?? raw.scope),
     image,
     gallery: toGallery(raw.gallery ?? raw.images ?? raw.screenshots ?? raw.photos, image),
-    demoUrl: str(raw.demoUrl ?? raw.demo ?? raw.url ?? raw.link ?? raw.website) || undefined,
+    demoUrl: demoUrlValue || undefined,
     videoUrl: str(raw.videoUrl ?? raw.video) || undefined,
     results: toResults(raw.results ?? raw.stats ?? raw.metrics),
     featured: Boolean(raw.featured),
