@@ -79,6 +79,18 @@ export function ProjectCard({ project }: { project: Project }) {
           {project.client.ar && <span className="rounded-full bg-paper px-2.5 py-1">{t(project.client)}</span>}
           {project.duration.ar && <span className="rounded-full bg-paper px-2.5 py-1">{t(project.duration)}</span>}
         </div>
+        {project.demoUrl && (
+          <a
+            href={project.demoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="mt-4 flex items-center justify-center gap-2 rounded-full bg-teal px-4 py-2 text-xs font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-teal-deep"
+          >
+            <ExternalIcon className="h-3.5 w-3.5" />
+            {t(T.viewDemo)}
+          </a>
+        )}
       </div>
     </Link>
   );
