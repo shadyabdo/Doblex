@@ -65,14 +65,16 @@ export default function ProjectDetail() {
       );
     }
     return (
-      <button
-        onClick={() => setDemoOpen(true)}
+      <a
+        href={project.demoUrl}
+        target="_blank"
+        rel="noopener noreferrer"
         className="flex w-full items-center justify-center gap-2.5 rounded-full py-3.5 text-sm font-bold text-white shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:opacity-90"
         style={style}
       >
         <ExternalIcon className="h-4 w-4" />
         {project.category === "graphic" ? t(T.viewDesigns) : t(T.viewDemo)}
-      </button>
+      </a>
     );
   };
 
@@ -115,8 +117,8 @@ export default function ProjectDetail() {
               {t(cat.name)} · {project.year}
             </span>
 
-            <h1 className="font-display mt-4 text-4xl leading-[1.08] font-black text-ink md:text-6xl">{t(project.title)}</h1>
-            <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted">{t(project.tagline)}</p>
+            <h1 className="font-display mt-3 text-2xl leading-[1.1] font-black text-ink sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl">{t(project.title)}</h1>
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted sm:mt-4 sm:text-base md:text-lg">{t(project.tagline)}</p>
           </Reveal>
         </div>
       </section>
@@ -127,15 +129,15 @@ export default function ProjectDetail() {
           {/* Overview */}
           <section>
             <Reveal>
-              <h2 className="font-display mb-5 flex items-center gap-3 text-2xl font-extrabold text-ink">
-                <span className="h-6 w-1.5 rounded-full" style={{ background: cat.color }} />
+              <h2 className="font-display mb-4 flex items-center gap-2 text-xl font-extrabold text-ink sm:mb-5 sm:gap-3 sm:text-2xl">
+                <span className="h-5 w-1.5 rounded-full sm:h-6" style={{ background: cat.color }} />
                 {t(T.overview)}
               </h2>
             </Reveal>
-            <div className="space-y-5">
+            <div className="space-y-4 sm:space-y-5">
               {body.map((para, i) => (
                 <Reveal key={i} delay={Math.min(i * 60, 240)}>
-                  <p className="leading-[2] text-ink-soft md:text-lg">{para}</p>
+                  <p className="text-sm leading-[1.9] text-ink-soft sm:text-base md:text-lg">{para}</p>
                 </Reveal>
               ))}
             </div>
@@ -145,14 +147,14 @@ export default function ProjectDetail() {
           {project.videoUrl && (
             <section id="film" className="scroll-mt-28">
               <Reveal>
-                <h2 className="font-display mb-5 flex items-center gap-3 text-2xl font-extrabold text-ink">
-                  <span className="h-6 w-1.5 rounded-full" style={{ background: cat.color }} />
+                <h2 className="font-display mb-4 flex items-center gap-2 text-xl font-extrabold text-ink sm:mb-5 sm:gap-3 sm:text-2xl">
+                  <span className="h-5 w-1.5 rounded-full sm:h-6" style={{ background: cat.color }} />
                   {t(T.filmTitle)}
                 </h2>
               </Reveal>
               <Reveal delay={100}>
                 <VideoPlayer src={project.videoUrl} poster={project.image} title={t(project.title)} />
-                <p className="mt-4 text-sm text-muted">{t(T.filmNote)}</p>
+                <p className="mt-3 text-xs text-muted sm:mt-4 sm:text-sm">{t(T.filmNote)}</p>
               </Reveal>
             </section>
           )}
@@ -161,19 +163,19 @@ export default function ProjectDetail() {
           {project.results && project.results.length > 0 && (
             <section>
               <Reveal>
-                <h2 className="font-display mb-5 flex items-center gap-3 text-2xl font-extrabold text-ink">
-                  <span className="h-6 w-1.5 rounded-full" style={{ background: cat.color }} />
+                <h2 className="font-display mb-4 flex items-center gap-2 text-xl font-extrabold text-ink sm:mb-5 sm:gap-3 sm:text-2xl">
+                  <span className="h-5 w-1.5 rounded-full sm:h-6" style={{ background: cat.color }} />
                   {t(T.resultsTitle)}
                 </h2>
               </Reveal>
-              <div className="grid gap-5 sm:grid-cols-3">
+              <div className="grid gap-3 sm:gap-5 sm:grid-cols-3">
                 {project.results.map((r, i) => (
                   <Reveal key={i} delay={i * 90}>
-                    <div className="rounded-xl border border-line bg-surface p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-                      <p className="font-display text-4xl font-black" style={{ color: cat.color }}>
+                    <div className="rounded-xl border border-line bg-surface p-4 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg sm:p-5 md:p-6">
+                      <p className="font-display text-3xl font-black sm:text-4xl" style={{ color: cat.color }}>
                         <CountUp value={r.value} decimals={r.decimals ?? 0} suffix={r.suffix} />
                       </p>
-                      <p className="mt-2 text-sm font-semibold text-muted">{t(r.label)}</p>
+                      <p className="mt-1.5 text-xs font-semibold text-muted sm:mt-2 sm:text-sm">{t(r.label)}</p>
                     </div>
                   </Reveal>
                 ))}
@@ -184,15 +186,15 @@ export default function ProjectDetail() {
           {/* Gallery */}
           <section>
             <Reveal>
-              <div className="mb-5 flex items-end justify-between gap-4">
-                <h2 className="font-display flex items-center gap-3 text-2xl font-extrabold text-ink">
-                  <span className="h-6 w-1.5 rounded-full" style={{ background: cat.color }} />
+              <div className="mb-4 flex items-end justify-between gap-3 sm:mb-5 sm:gap-4">
+                <h2 className="font-display flex items-center gap-2 text-xl font-extrabold text-ink sm:gap-3 sm:text-2xl">
+                  <span className="h-5 w-1.5 rounded-full sm:h-6" style={{ background: cat.color }} />
                   {t(T.galleryTitle)}
                 </h2>
-                <p className="text-xs font-semibold text-muted">{t(T.galleryHint)}</p>
+                <p className="text-[10px] font-semibold text-muted sm:text-xs">{t(T.galleryHint)}</p>
               </div>
             </Reveal>
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
               {g.map((item, i) => (
                 <Reveal key={i} delay={(i % 2) * 90} className={i === 0 ? "sm:col-span-2" : ""}>
                   <button
@@ -206,7 +208,7 @@ export default function ProjectDetail() {
                       className={`img-zoom w-full object-cover ${i === 0 ? "aspect-[16/8]" : "aspect-[16/10]"}`}
                     />
                     <span className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                    <span className="absolute bottom-3 start-3 translate-y-2 rounded-full bg-paper/90 px-3 py-1.5 text-xs font-bold text-ink opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                    <span className="absolute bottom-2 start-2 translate-y-2 rounded-full bg-paper/90 px-2 py-1 text-[10px] font-bold text-ink opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 sm:bottom-3 sm:start-3 sm:px-3 sm:py-1.5 sm:text-xs">
                       {t(item.caption)}
                     </span>
                   </button>
@@ -225,18 +227,7 @@ export default function ProjectDetail() {
                   <img src={project.image} alt={t(project.title)} className="img-zoom h-full w-full object-cover" />
                 </div>
                 <div className="p-6">
-                  {actionButton()}
-                  {project.demoUrl && (
-                    <a
-                      href={project.demoUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="mt-3 flex items-center justify-center gap-2 rounded-full border border-line py-3 text-sm font-bold text-ink-soft transition-all duration-200 hover:border-teal hover:text-teal"
-                    >
-                      <ExternalIcon className="h-4 w-4" />
-                      {t(T.openExternal)}
-                    </a>
-                  )}
+                  {project.demoUrl && actionButton()}
                 </div>
               </div>
             </Reveal>

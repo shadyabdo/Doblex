@@ -61,14 +61,14 @@ export default function Category() {
               {cat.num} — {t(T.department)}
             </span>
 
-            <h1 className="font-display mt-5 text-4xl leading-[1.1] font-black text-ink md:text-6xl">{t(cat.name)}</h1>
+            <h1 className="font-display mt-4 text-3xl leading-[1.1] font-black text-ink sm:text-4xl md:text-5xl lg:text-6xl">{t(cat.name)}</h1>
             {cat.latin && (
-              <p className="mt-2 text-lg font-bold tracking-wide text-muted" dir="ltr">
+              <p className="mt-1.5 text-base font-bold tracking-wide text-muted sm:mt-2 sm:text-lg" dir="ltr">
                 {cat.latin}
               </p>
             )}
 
-            <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted">{t(cat.blurb)}</p>
+            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted sm:mt-5 sm:text-base md:text-lg">{t(cat.blurb)}</p>
 
             <div className="mt-8 flex flex-wrap items-center gap-3 text-xs font-extrabold">
               <ViewBadge viewKey={`work_${cat.id}`} label={t(T.pageViewsLabel)} />
@@ -118,13 +118,13 @@ export default function Category() {
       })()}
 
       {/* ---------- Projects ---------- */}
-      <section className="container-x py-16 md:py-20">
+      <section className="container-x py-10 sm:py-12 md:py-16 lg:py-20">
         {projects.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-line bg-surface px-6 py-16 text-center text-lg font-bold text-muted">
+          <p className="rounded-xl border border-dashed border-line bg-surface px-4 py-12 text-center text-base font-bold text-muted sm:px-6 sm:py-16 sm:text-lg">
             {t(T.workEmpty)}
           </p>
         ) : (
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-5 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
             {projects.map((p, i) => (
               <Reveal key={p.id} delay={(i % 3) * 110}>
                 <ProjectCard project={p} />
@@ -137,30 +137,30 @@ export default function Category() {
       {/* ---------- Other departments ---------- */}
       {others.length > 0 && (
         <section className="border-t border-line bg-surface/70">
-          <div className="container-x py-14">
-            <p className="mb-6 text-xs font-bold tracking-[0.22em] text-muted uppercase">{t(T.otherCats)}</p>
-            <div className="grid gap-4 sm:grid-cols-3">
+          <div className="container-x py-10 sm:py-12 md:py-14">
+            <p className="mb-4 text-xs font-bold tracking-[0.22em] text-muted uppercase sm:mb-6">{t(T.otherCats)}</p>
+            <div className="grid gap-3 sm:gap-4 sm:grid-cols-3">
               {others.map((c, i) => (
                 <Reveal key={c.id} delay={i * 90}>
                   <Link
                     to={`/work/${c.id}`}
-                    className="group flex items-center justify-between gap-4 rounded-xl border border-line bg-surface p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                    className="group flex items-center justify-between gap-3 rounded-xl border border-line bg-surface p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg sm:gap-4 sm:p-5"
                     style={{ ["--hov" as string]: c.color }}
                   >
-                    <span className="flex min-w-0 items-center gap-3.5">
-                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-sm font-black" style={{ background: c.tint, color: c.color }}>
+                    <span className="flex min-w-0 items-center gap-2.5 sm:gap-3.5">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-xs font-black sm:h-11 sm:w-11 sm:text-sm" style={{ background: c.tint, color: c.color }}>
                         {c.num}
                       </span>
                       <span className="min-w-0">
-                        <span className="font-display block truncate font-extrabold text-ink transition-colors group-hover:text-[var(--hov)]">
+                        <span className="font-display block truncate text-sm font-extrabold text-ink transition-colors group-hover:text-[var(--hov)] sm:text-base">
                           {t(c.name)}
                         </span>
-                        <span className="block text-xs font-bold text-muted">
+                        <span className="block text-[10px] font-bold text-muted sm:text-xs">
                           {projectsByCategory(c.id).length} {t(T.depsProjects)}
                         </span>
                       </span>
                     </span>
-                    <ArrowIcon className="rtl-flip h-4 w-4 shrink-0 text-muted transition-all duration-300 group-hover:translate-x-1 group-hover:text-[var(--hov)]" />
+                    <ArrowIcon className="rtl-flip h-3.5 w-3.5 shrink-0 text-muted transition-all duration-300 group-hover:translate-x-1 group-hover:text-[var(--hov)] sm:h-4 sm:w-4" />
                   </Link>
                 </Reveal>
               ))}

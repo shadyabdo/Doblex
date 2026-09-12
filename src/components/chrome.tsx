@@ -282,10 +282,10 @@ export function Footer() {
               <Spark className="h-4 w-4 text-flame" />
               {t(T.navStart)}
             </p>
-            <h2 className="font-display max-w-3xl text-4xl leading-[1.15] font-extrabold md:text-6xl">
+            <h2 className="font-display max-w-3xl text-2xl leading-[1.15] font-extrabold sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl">
               {t(T.ctaTitle)}
             </h2>
-            <p className="mt-5 max-w-xl text-lg leading-relaxed text-paper/75">{t(T.ctaSub)}</p>
+            <p className="mt-4 max-w-xl text-sm leading-relaxed text-paper/75 sm:mt-5 sm:text-base md:text-lg">{t(T.ctaSub)}</p>
           </Reveal>
           <Reveal delay={120}>
             <div className="mt-9 flex flex-wrap items-center gap-4">
@@ -321,20 +321,20 @@ export function Footer() {
 
       {/* الجسم */}
       <div className="bg-ink text-paper">
-        <div className="container-x grid gap-12 py-16 md:grid-cols-12">
+        <div className="container-x grid gap-10 py-12 sm:gap-12 sm:py-16 md:grid-cols-12">
           <div className="md:col-span-5">
             <Link to="/" className="flex items-center gap-3">
-              <span className="block h-12 w-12 overflow-hidden rounded-xl border border-paper/15">
+              <span className="block h-11 w-11 overflow-hidden rounded-xl border border-paper/15 sm:h-12 sm:w-12">
                 <img src={LOGO_URL} alt="Duplex" className="h-full w-full object-cover" />
               </span>
               <span className="leading-none">
-                <span className="font-display block text-2xl font-extrabold">{t(T.brand)}</span>
-                <span className="mt-1 block text-[10px] font-bold tracking-[0.3em] text-teal uppercase" dir="ltr">
+                <span className="font-display block text-xl font-extrabold sm:text-2xl">{t(T.brand)}</span>
+                <span className="mt-1 block text-[9px] font-bold tracking-[0.3em] text-teal uppercase sm:text-[10px]" dir="ltr">
                   DUPLEX® STUDIO
                 </span>
               </span>
             </Link>
-            <p className="mt-5 max-w-sm leading-relaxed text-paper/65">{t(T.footerAbout)}</p>
+            <p className="mt-4 max-w-sm text-sm leading-relaxed text-paper/65 sm:mt-5 sm:text-base">{t(T.footerAbout)}</p>
             <div className="mt-6 flex items-center gap-3">
               {SOCIALS.map((s) => {
                 const Ic = SOCIAL_ICONS[s.id];

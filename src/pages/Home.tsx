@@ -77,16 +77,16 @@ function CraftHero() {
               </p>
             </div>
 
-            <h1 className="font-display mt-7 text-[2.9rem] leading-[1.06] font-black sm:text-6xl xl:text-[5.2rem]">
+            <h1 className="font-display mt-5 text-3xl leading-[1.1] font-black sm:text-4xl md:text-5xl lg:text-6xl xl:text-[5.2rem]">
               <span className="mask-line" style={{ "--line-delay": "80ms" } as React.CSSProperties}>
                 <span>{t(T.heroS1)}</span>
               </span>
-              <span className="mask-line" style={{ "--line-delay": "230ms" } as React.CSSProperties}>
-                <span className="flex items-center gap-3">
+              <span className="mask-line mt-2" style={{ "--line-delay": "230ms" } as React.CSSProperties}>
+                <span className="flex items-center gap-2 sm:gap-3">
                   <span className="relative inline-block text-paper">
                     {t(T.heroS2)}
                     <svg
-                      className="absolute -bottom-2.5 start-0 h-3 w-full text-flame"
+                      className="absolute -bottom-1.5 start-0 h-2 w-full text-flame sm:-bottom-2 sm:h-2.5 md:-bottom-3 md:h-3"
                       viewBox="0 0 220 12"
                       preserveAspectRatio="none"
                       aria-hidden
@@ -100,24 +100,24 @@ function CraftHero() {
                       />
                     </svg>
                   </span>
-                  <Spark className="mb-2 inline h-8 w-8 shrink-0 text-flame sm:h-10 sm:w-10" />
+                  <Spark className="mb-1 inline h-6 w-6 shrink-0 text-flame sm:h-8 sm:w-8 md:h-9 md:w-9 lg:h-10 lg:w-10" />
                 </span>
               </span>
             </h1>
 
-            <p className="mt-8 max-w-xl text-lg leading-relaxed text-paper/80">{t(T.depsSub)}</p>
+            <p className="mt-6 max-w-xl text-base leading-relaxed text-paper/80 sm:text-lg">{t(T.depsSub)}</p>
 
-            <div className="mt-9 flex flex-wrap items-center gap-4">
+            <div className="mt-7 flex flex-wrap items-center gap-3 sm:gap-4">
               <button
                 onClick={() => scrollToId("work")}
-                className="group flex items-center gap-2.5 rounded-full bg-flame px-7 py-3.5 text-sm font-bold text-white shadow-[0_14px_40px_rgba(232,89,12,0.4)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-flame-deep"
+                className="group flex items-center gap-2 rounded-full bg-flame px-5 py-3 text-sm font-bold text-white shadow-[0_14px_40px_rgba(232,89,12,0.4)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-flame-deep sm:px-7 sm:py-3.5"
               >
                 {t(T.heroCta1)}
                 <ArrowIcon className="rtl-flip h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
               </button>
               <button
                 onClick={() => scrollToId("departments")}
-                className="rounded-full border-2 border-paper/35 px-7 py-3.5 text-sm font-bold text-paper transition-all duration-200 hover:border-paper hover:bg-paper/10"
+                className="rounded-full border-2 border-paper/35 px-5 py-3 text-sm font-bold text-paper transition-all duration-200 hover:border-paper hover:bg-paper/10 sm:px-7 sm:py-3.5"
               >
                 {t(T.heroCta2)}
               </button>
@@ -134,55 +134,55 @@ function CraftHero() {
             {current ? (
               <div
                 key={current.id}
-                className="pop-in relative overflow-hidden rounded-xl border border-paper/15 bg-ink/80 p-6 shadow-[0_40px_80px_rgba(0,0,0,0.45)] backdrop-blur-md md:p-7"
+                className="pop-in relative overflow-hidden rounded-xl border border-paper/15 bg-ink/80 p-4 shadow-[0_40px_80px_rgba(0,0,0,0.45)] backdrop-blur-md sm:p-5 md:p-6 lg:p-7"
               >
                 <span
                   className="absolute inset-x-0 top-0 h-1"
                   style={{ background: currentCat?.color ?? "#E8590C" }}
                   aria-hidden
                 />
-                <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center justify-between gap-2 sm:gap-3">
                   <span
-                    className="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[11px] font-extrabold"
+                    className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-extrabold sm:gap-2 sm:px-3.5 sm:py-1.5 sm:text-[11px]"
                     style={{
                       background: currentCat ? currentCat.tint : "#FDEADD",
                       color: currentCat?.color ?? "#E8590C",
                     }}
                   >
-                    <Spark className="h-3 w-3" />
+                    <Spark className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                     {t(T.heroFeatured)}
                   </span>
-                  <span className="text-[11px] font-black tracking-widest text-paper/45 tabular-nums" dir="ltr">
+                  <span className="text-[10px] font-black tracking-widest text-paper/45 tabular-nums sm:text-[11px]" dir="ltr">
                     {String(active + 1).padStart(2, "0")} / {String(showcase.length).padStart(2, "0")}
                   </span>
                 </div>
 
-                <h2 className="font-display mt-4 text-2xl leading-snug font-extrabold text-paper md:text-[1.7rem]">
+                <h2 className="font-display mt-3 text-xl leading-snug font-extrabold text-paper sm:mt-4 sm:text-2xl md:text-[1.7rem]">
                   {t(current.title)}
                 </h2>
-                <p className="mt-1.5 text-sm font-bold text-paper/60">
+                <p className="mt-1 text-xs font-bold text-paper/60 sm:mt-1.5 sm:text-sm">
                   {t(current.client)} · <span dir="ltr">{current.year}</span>
                   {currentCat ? ` · ${t(currentCat.name)}` : ""}
                 </p>
-                <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-paper/70">{t(current.tagline)}</p>
+                <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-paper/70 sm:mt-3 sm:text-sm">{t(current.tagline)}</p>
 
-                <div className="mt-6 flex items-center justify-between gap-4">
+                <div className="mt-4 flex items-center justify-between gap-3 sm:mt-6 sm:gap-4">
                   <Link
                     to={`/project/${current.slug}`}
-                    className="group inline-flex items-center gap-2 rounded-full bg-flame px-5 py-2.5 text-xs font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-flame-deep"
+                    className="group inline-flex items-center gap-1.5 rounded-full bg-flame px-4 py-2 text-xs font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-flame-deep sm:gap-2 sm:px-5 sm:py-2.5"
                   >
                     {t(T.heroViewCase)}
-                    <ArrowIcon className="rtl-flip h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />
+                    <ArrowIcon className="rtl-flip h-3 w-3 transition-transform duration-200 group-hover:translate-x-1 sm:h-3.5 sm:w-3.5" />
                   </Link>
 
                   {showcase.length > 1 && (
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1 sm:gap-1.5">
                       {showcase.map((p, i) => (
                         <button
                           key={p.id}
                           onClick={() => setActive(i)}
                           aria-label={t(p.title)}
-                          className={`h-10 w-14 shrink-0 overflow-hidden rounded-md border-2 transition-all duration-300 ${
+                          className={`h-8 w-11 shrink-0 overflow-hidden rounded-md border-2 transition-all duration-300 sm:h-10 sm:w-14 ${
                             i === active
                               ? "scale-105 border-flame opacity-100"
                               : "border-transparent opacity-45 hover:opacity-85"
@@ -196,9 +196,9 @@ function CraftHero() {
                 </div>
               </div>
             ) : (
-              <div className="rounded-xl border border-dashed border-paper/25 bg-ink/60 p-7 text-center backdrop-blur-sm">
-                <Spark className="mx-auto h-7 w-7 text-flame" />
-                <p className="mt-3 text-sm font-bold text-paper/75">{t(T.heroNoWork)}</p>
+              <div className="rounded-xl border border-dashed border-paper/25 bg-ink/60 p-5 text-center backdrop-blur-sm sm:p-7">
+                <Spark className="mx-auto h-6 w-6 text-flame sm:h-7 sm:w-7" />
+                <p className="mt-2 text-xs font-bold text-paper/75 sm:mt-3 sm:text-sm">{t(T.heroNoWork)}</p>
               </div>
             )}
           </div>
@@ -208,7 +208,7 @@ function CraftHero() {
       {/* ---------- شريط الأقسام ---------- */}
       {categories.length > 0 && (
         <div className="border-b border-line bg-surface">
-          <div className="container-x flex items-center gap-3 overflow-x-auto py-4">
+          <div className="container-x flex items-center gap-2 overflow-x-auto py-3 sm:gap-3 sm:py-4">
             <span className="hidden shrink-0 text-xs font-black tracking-[0.22em] text-muted uppercase md:block">
               {t(T.heroDeptsTitle)}
             </span>
@@ -218,7 +218,7 @@ function CraftHero() {
                 <Link
                   key={c.id}
                   to={`/work/${c.id}`}
-                  className="group flex shrink-0 items-center gap-3 rounded-full border border-line bg-paper px-5 py-2.5 transition-all duration-200 hover:-translate-y-0.5 hover:border-transparent hover:shadow-lg"
+                  className="group flex shrink-0 items-center gap-2 rounded-full border border-line bg-paper px-3 py-2 transition-all duration-200 hover:-translate-y-0.5 hover:border-transparent hover:shadow-lg sm:gap-3 sm:px-5 sm:py-2.5"
                   style={{ ["--hov" as string]: c.color, ["--tint" as string]: c.tint }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.background = c.tint;
@@ -227,14 +227,14 @@ function CraftHero() {
                     e.currentTarget.style.background = "";
                   }}
                 >
-                  <span className="h-2 w-2 rounded-full transition-transform duration-200 group-hover:scale-125" style={{ background: c.color }} />
-                  <span className="text-sm font-extrabold whitespace-nowrap text-ink transition-colors duration-200 group-hover:text-[var(--hov)]">
+                  <span className="h-1.5 w-1.5 rounded-full transition-transform duration-200 group-hover:scale-125 sm:h-2 sm:w-2" style={{ background: c.color }} />
+                  <span className="text-xs font-extrabold whitespace-nowrap text-ink transition-colors duration-200 group-hover:text-[var(--hov)] sm:text-sm">
                     {t(c.name)}
                   </span>
-                  <span className="text-[11px] font-black text-muted tabular-nums" dir="ltr">
+                  <span className="text-[10px] font-black text-muted tabular-nums sm:text-[11px]" dir="ltr">
                     {count}
                   </span>
-                  <ArrowIcon className="rtl-flip h-3.5 w-3.5 text-muted transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-[var(--hov)]" />
+                  <ArrowIcon className="rtl-flip h-3 w-3 text-muted transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-[var(--hov)] sm:h-3.5 sm:w-3.5" />
                 </Link>
               );
             })}
@@ -275,7 +275,7 @@ export default function Home() {
       <Marquee items={lang === "ar" ? MARQUEE.ar : MARQUEE.en} />
 
       {/* ============================ Departments ============================ */}
-      <section id="departments" className="container-x scroll-mt-24 py-20 md:py-28">
+      <section id="departments" className="container-x scroll-mt-24 py-12 sm:py-16 md:py-20 lg:py-28">
         <SectionHead kicker={t(T.depsKicker)} title={t(T.depsTitle)} sub={t(T.depsSub)} />
         <div className="border-t border-line">
           {categories.map((c, i) => {
@@ -310,7 +310,7 @@ export default function Home() {
       {/* ============================ Selected work ============================ */}
       {featured.length > 0 && (
         <section id="work" className="scroll-mt-24 border-y border-line bg-surface/70">
-          <div className="container-x py-20 md:py-28">
+          <div className="container-x py-12 sm:py-16 md:py-20 lg:py-28">
             <SectionHead
               kicker={t(T.workKicker)}
               title={t(T.workTitle)}
@@ -348,15 +348,15 @@ export default function Home() {
       {/* ============================ Stats ============================ */}
       <section className="relative overflow-hidden bg-teal-deep text-paper">
         <div className="blueprint-dark absolute inset-0" aria-hidden />
-        <div className="container-x relative py-16 md:py-20">
-          <p className="mb-10 text-center text-xs font-bold tracking-[0.24em] text-teal-tint/70 uppercase">{t(T.statsKicker)}</p>
-          <div className="grid grid-cols-2 gap-10 md:grid-cols-4">
+        <div className="container-x relative py-12 sm:py-16 md:py-20">
+          <p className="mb-8 text-center text-xs font-bold tracking-[0.24em] text-teal-tint/70 uppercase sm:mb-10">{t(T.statsKicker)}</p>
+          <div className="grid grid-cols-2 gap-6 sm:gap-8 md:grid-cols-4 md:gap-10">
             {STATS.map((v, i) => (
               <Reveal key={i} delay={i * 90} className="text-center">
-                <p className="font-display text-5xl font-black text-paper md:text-6xl">
+                <p className="font-display text-4xl font-black text-paper sm:text-5xl md:text-6xl">
                   <CountUp value={v} suffix={i === 0 ? "+" : ""} />
                 </p>
-                <p className="mt-2 text-sm font-semibold text-paper/65">{STATS_LABELS[lang][i]}</p>
+                <p className="mt-1.5 text-xs font-semibold text-paper/65 sm:mt-2 sm:text-sm">{STATS_LABELS[lang][i]}</p>
               </Reveal>
             ))}
           </div>
@@ -364,18 +364,18 @@ export default function Home() {
       </section>
 
       {/* ============================ Process ============================ */}
-      <section className="container-x py-20 md:py-28">
+      <section className="container-x py-12 sm:py-16 md:py-20 lg:py-28">
         <SectionHead kicker={t(T.processKicker)} title={t(T.processTitle)} />
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {PROCESS[lang].map((step, i) => (
             <Reveal key={i} delay={i * 100}>
-              <div className="group relative h-full rounded-xl border border-line bg-surface p-6 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_24px_50px_rgba(13,31,51,0.12)]">
-                <span className="font-display ghost-num text-5xl leading-none font-black transition-colors duration-300 group-hover:text-teal">
+              <div className="group relative h-full rounded-xl border border-line bg-surface p-4 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_24px_50px_rgba(13,31,51,0.12)] sm:p-5 md:p-6">
+                <span className="font-display ghost-num text-4xl leading-none font-black transition-colors duration-300 group-hover:text-teal sm:text-5xl">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <h3 className="font-display mt-4 text-lg font-extrabold text-ink">{step.t}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted">{step.d}</p>
-                <span className="absolute top-6 end-6 h-2 w-2 rounded-full bg-flame opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                <h3 className="font-display mt-3 text-base font-extrabold text-ink sm:mt-4 sm:text-lg">{step.t}</h3>
+                <p className="mt-1.5 text-xs leading-relaxed text-muted sm:mt-2 sm:text-sm">{step.d}</p>
+                <span className="absolute top-4 end-4 h-1.5 w-1.5 rounded-full bg-flame opacity-0 transition-opacity duration-300 group-hover:opacity-100 sm:top-6 sm:end-6 sm:h-2 sm:w-2" />
               </div>
             </Reveal>
           ))}
@@ -385,7 +385,7 @@ export default function Home() {
       {/* ============================ Blog ============================ */}
       {latestPosts.length > 0 && (
         <section className="border-t border-line bg-surface/70">
-          <div className="container-x py-20 md:py-28">
+          <div className="container-x py-12 sm:py-16 md:py-20 lg:py-28">
             <SectionHead
               kicker={t(T.blogKicker)}
               title={t(T.blogPageTitle)}

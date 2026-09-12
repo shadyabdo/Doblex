@@ -63,10 +63,10 @@ export default function BlogPost() {
             </span>
           </div>
 
-          <h1 className="font-display mt-5 max-w-4xl text-4xl leading-[1.15] font-black text-ink md:text-5xl">
+          <h1 className="font-display mt-4 max-w-4xl text-2xl leading-[1.15] font-black text-ink sm:text-3xl md:text-4xl lg:text-5xl">
             {t(post.title)}
           </h1>
-          <p className="mt-5 max-w-3xl text-lg leading-relaxed font-medium text-ink-soft">{t(post.excerpt)}</p>
+          <p className="mt-4 max-w-3xl text-sm leading-relaxed font-medium text-ink-soft sm:mt-5 sm:text-base md:text-lg">{t(post.excerpt)}</p>
         </Reveal>
 
         <Reveal delay={120}>
@@ -77,13 +77,13 @@ export default function BlogPost() {
       </section>
 
       {/* ---------- Body ---------- */}
-      <section className="container-x py-12 md:py-16">
-        <div className="mx-auto max-w-3xl space-y-6">
+      <section className="container-x py-10 sm:py-12 md:py-16">
+        <div className="mx-auto max-w-3xl space-y-5 sm:space-y-6">
           {body.map((para, i) => (
             <Reveal key={i} delay={Math.min(i * 60, 240)}>
               <p
-                className={`leading-[2] text-ink-soft md:text-lg ${
-                  i === 0 ? "border-s-4 ps-5 text-xl font-semibold text-ink md:text-2xl" : ""
+                className={`text-sm leading-[1.9] text-ink-soft sm:text-base md:text-lg ${
+                  i === 0 ? "border-s-4 ps-4 text-lg font-semibold text-ink sm:ps-5 sm:text-xl md:text-2xl" : ""
                 }`}
                 style={i === 0 ? { borderColor: cat?.color ?? "#0B7C74" } : undefined}
               >
@@ -107,9 +107,9 @@ export default function BlogPost() {
       {/* ---------- Related ---------- */}
       {related.length > 0 && (
         <section className="border-t border-line bg-surface/70">
-          <div className="container-x py-16">
-            <h2 className="font-display mb-8 text-2xl font-extrabold text-ink md:text-3xl">{t(T.relatedPosts)}</h2>
-            <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="container-x py-10 sm:py-12 md:py-16">
+            <h2 className="font-display mb-6 text-xl font-extrabold text-ink sm:mb-8 sm:text-2xl md:text-3xl">{t(T.relatedPosts)}</h2>
+            <div className="grid gap-5 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-7">
               {related.map((p, i) => (
                 <Reveal key={p.id} delay={i * 100}>
                   <BlogCard post={p} />
