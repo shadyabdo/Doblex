@@ -130,7 +130,7 @@ export function Navbar() {
                       active ? "text-flame" : ""
                     }`}
                   />
-                  <span className="hidden xl:inline">{l.label}</span>
+                  <span className="hidden md:inline md:max-w-[60px] lg:max-w-[80px] xl:max-w-none truncate">{l.label}</span>
                   <span
                     className="text-[8px] font-semibold tracking-wider tabular-nums sm:text-[9px]"
                     style={{ color: active ? l.color : undefined }}
