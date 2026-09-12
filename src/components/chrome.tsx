@@ -121,7 +121,7 @@ export function Navbar() {
                   key={l.to}
                   to={l.to}
                   title={l.label}
-                  className={`group flex items-center gap-1 rounded-full px-2 py-1.5 text-[10px] font-semibold whitespace-nowrap transition-all duration-200 sm:px-2.5 sm:py-2 sm:text-[11px] md:text-xs md:gap-1.5 xl:px-3 ${
+                  className={`group flex items-center gap-1 rounded-full px-2 py-1.5 text-[9px] font-medium whitespace-nowrap transition-all duration-200 sm:px-2.5 sm:py-2 sm:text-[10px] md:text-[11px] md:gap-1.5 xl:px-3 ${
                     active ? "bg-ink text-paper shadow-md" : "text-ink-soft hover:bg-surface hover:text-ink"
                   }`}
                 >
@@ -214,7 +214,7 @@ export function Navbar() {
                     {l.num}
                   </span>
                   <Ic className="h-5 w-5 text-paper/60 transition-colors group-hover:text-flame" />
-                  <span className="font-display text-2xl font-extrabold truncate max-w-[200px] sm:max-w-[250px] md:max-w-[300px]">{l.label}</span>
+                  <span className="font-display text-xl font-bold truncate max-w-[200px] sm:max-w-[250px] md:max-w-[300px]">{l.label}</span>
                   <ArrowIcon className="rtl-flip ms-auto h-5 w-5 text-paper/25 transition-all group-hover:translate-x-1 group-hover:text-flame" />
                 </Link>
               );
