@@ -6,16 +6,10 @@ import { useContent } from "../lib/content";
 import { CountUp, Reveal } from "../lib/ui";
 import {
   ArrowIcon,
-  BlogIcon,
   CloseIcon,
-  CodeIcon,
   CopyIcon,
-  FilmIcon,
-  HomeIcon,
   MailIcon,
-  MegaphoneIcon,
   MenuIcon,
-  PenIcon,
   PhoneIcon,
   PinIcon,
   SOCIAL_ICONS,
@@ -23,19 +17,7 @@ import {
   WhatsAppIcon,
 } from "./icons";
 
-interface IconProps {
-  className?: string;
-}
-
-/** أيقونات تُوزع على الأقسام بالتناوب لأن معرّفاتها ديناميكية من الداشبورد */
-const CATEGORY_ICONS: ((p: IconProps) => ReactElement)[] = [
-  CodeIcon,
-  PenIcon,
-  FilmIcon,
-  MegaphoneIcon,
-];
-
-/* ============================ Navbar ============================ */
+/* ============================ Navbar - Clean Minimal Design ============================ */
 export function Navbar() {
   const { lang, setLang, t } = useLang();
   const { categories } = useContent();
@@ -44,7 +26,7 @@ export function Navbar() {
   const location = useLocation();
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 14);
+    const onScroll = () => setScrolled(window.scrollY > 10);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -60,21 +42,15 @@ export function Navbar() {
   }, [open]);
 
   const links = [
-    { to: "/", num: "00", label: t(T.navHome), color: "#0B7C74", Icon: HomeIcon, end: true },
-    ...categories.map((c, i) => ({
+    { to: "/", label: t(T.navHome), end: true },
+    ...categories.map((c) => ({
       to: `/work/${c.id}`,
-      num: c.num,
       label: t(c.name),
-      color: c.color,
-      Icon: CATEGORY_ICONS[i % CATEGORY_ICONS.length],
       end: false,
     })),
     {
       to: "/blog",
-      num: String(categories.length + 1).padStart(2, "0"),
       label: t(T.navBlog),
-      color: "#E8590C",
-      Icon: BlogIcon,
       end: false,
     },
   ];
@@ -84,80 +60,72 @@ export function Navbar() {
 
   return (
     <>
-      {/* شريط عائم على شكل كبسولة */}
-      <header className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-3 pt-3 sm:px-5 sm:pt-4">
-        <div
-          className={`pointer-events-auto flex w-full max-w-6xl items-center justify-between gap-2 rounded-full border bg-paper/90 px-2 py-1.5 backdrop-blur-md transition-all duration-300 sm:px-3 sm:py-2 ${
-            scrolled
-              ? "border-line shadow-[0_18px_50px_rgba(13,31,51,0.16)]"
-              : "border-ink/10 shadow-[0_10px_34px_rgba(13,31,51,0.08)]"
-          }`}
-        >
-          <Link to="/" className="group flex shrink-0 items-center gap-2.5 ps-1">
-            <span className="relative block h-10 w-10 shrink-0">
+      {/* هيدر بسيط ونظيف */}
+      <header
+        className={`fixed inset-x-0 top-0 z-50 border-b bg-paper transition-all duration-300 ${
+          scrolled ? "shadow-md" : ""
+        }`}
+      >
+        <div className="container-x flex h-16 items-center justify-between gap-4 lg:h-20">
+          {/* اللوجو */}
+          <Link to="/" className="group flex shrink-0 items-center gap-3">
+            <span className="relative block h-10 w-10 shrink-0 lg:h-12 lg:w-12">
               <img
                 src={LOGO_URL}
                 alt="Duplex logo"
-                className="h-full w-full rounded-full border border-line object-cover shadow-sm transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-105"
+                className="h-full w-full rounded-xl border border-line object-cover shadow-sm transition-transform duration-300 group-hover:scale-105"
               />
-              <span className="absolute -bottom-0.5 -end-0.5 h-3 w-3 rounded-full border-2 border-paper bg-flame" />
             </span>
             <span className="hidden leading-none sm:block">
-              <span className="font-display block text-base font-extrabold text-ink">
+              <span className="font-display block text-lg font-extrabold text-ink lg:text-xl">
                 {t(T.brand)}
               </span>
-              <span className="mt-0.5 block text-[9px] font-black tracking-[0.32em] text-teal" dir="ltr">
-                DUPLEX®
+              <span className="mt-0.5 block text-[10px] font-bold tracking-[0.3em] text-teal lg:text-xs" dir="ltr">
+                DUPLEX® STUDIO
               </span>
             </span>
           </Link>
 
-          <nav className="hidden items-center gap-0.5 lg:flex xl:gap-1" aria-label="Main">
+          {/* روابط التنقل - نصية بسيطة */}
+          <nav className="hidden items-center gap-1 lg:flex" aria-label="Main">
             {links.map((l) => {
               const active = isActive(l.to, l.end);
-              const Ic = l.Icon;
               return (
                 <Link
                   key={l.to}
                   to={l.to}
-                  title={l.label}
-                  className={`group flex items-center gap-1 rounded-full px-2 py-1.5 text-[9px] font-medium whitespace-nowrap transition-all duration-200 sm:px-2.5 sm:py-2 sm:text-[10px] md:text-[11px] md:gap-1.5 xl:px-3 ${
-                    active ? "bg-ink text-paper shadow-md" : "text-ink-soft hover:bg-surface hover:text-ink"
+                  className={`relative rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-200 ${
+                    active
+                      ? "bg-teal text-white shadow-sm"
+                      : "text-ink-soft hover:bg-surface hover:text-ink"
                   }`}
                 >
-                  <Ic
-                    className={`h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:-translate-y-0.5 sm:h-4 sm:w-4 ${
-                      active ? "text-flame" : ""
-                    }`}
-                  />
-                  <span className="hidden lg:inline lg:max-w-[80px] xl:max-w-none truncate">{l.label}</span>
-                  <span
-                    className="text-[8px] font-semibold tracking-wider tabular-nums sm:text-[9px]"
-                    style={{ color: active ? l.color : undefined }}
-                  >
-                    {l.num}
-                  </span>
+                  {l.label}
+                  {active && (
+                    <span className="absolute inset-x-4 -bottom-0.5 h-0.5 rounded-full bg-flame" />
+                  )}
                 </Link>
               );
             })}
           </nav>
 
-          <div className="flex items-center gap-2">
-            {/* مبدّل اللغة بمؤشر منزلق */}
+          {/* الإجراءات */}
+          <div className="flex items-center gap-3">
+            {/* مبدّل اللغة */}
             <div
-              className="relative flex rounded-full border border-line bg-surface p-0.5 text-[11px] font-semibold sm:p-1 sm:text-xs"
+              className="relative flex rounded-lg border border-line bg-surface p-1 text-xs font-bold"
               role="group"
               aria-label="Language"
             >
               <span
-                className={`absolute top-0.5 bottom-0.5 w-[calc(50%-0.15rem)] rounded-full bg-teal shadow transition-all duration-300 ease-out sm:top-1 sm:bottom-1 sm:w-[calc(50%-0.25rem)] ${
-                  lang === "ar" ? "start-0.5 sm:start-1" : "start-[calc(50%+0.05rem)]"
+                className={`absolute top-1 bottom-1 w-[calc(50%-0.25rem)] rounded-md bg-teal shadow-sm transition-all duration-300 ${
+                  lang === "ar" ? "start-1" : "start-[calc(50%+0.125rem)]"
                 }`}
                 aria-hidden
               />
               <button
                 onClick={() => setLang("ar")}
-                className={`relative z-10 w-7 rounded-full py-1 transition-colors duration-300 sm:w-9 sm:py-1.5 ${
+                className={`relative z-10 w-8 rounded-md py-1.5 transition-colors duration-300 ${
                   lang === "ar" ? "text-white" : "text-muted hover:text-ink"
                 }`}
               >
@@ -165,7 +133,7 @@ export function Navbar() {
               </button>
               <button
                 onClick={() => setLang("en")}
-                className={`relative z-10 w-7 rounded-full py-1 transition-colors duration-300 sm:w-9 sm:py-1.5 ${
+                className={`relative z-10 w-8 rounded-md py-1.5 transition-colors duration-300 ${
                   lang === "en" ? "text-white" : "text-muted hover:text-ink"
                 }`}
               >
@@ -173,21 +141,23 @@ export function Navbar() {
               </button>
             </div>
 
+            {/* زر CTA */}
             <a
               href={`mailto:${CONTACT.email}`}
-              className="hidden items-center gap-1.5 rounded-full bg-flame px-3 py-2 text-[11px] font-semibold text-white shadow-[0_6px_20px_rgba(232,89,12,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-flame-deep md:flex md:px-4 md:py-2.5 md:text-xs"
+              className="hidden items-center gap-2 rounded-lg bg-flame px-5 py-2.5 text-sm font-bold text-white shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:bg-flame-deep hover:shadow-lg md:flex"
             >
-              <MailIcon className="h-3.5 w-3.5" />
-              {t(T.navStart)}
+              <MailIcon className="h-4 w-4" />
+              <span className="hidden lg:inline">{t(T.navStart)}</span>
             </a>
 
+            {/* زر القائمة للموبايل */}
             <button
               onClick={() => setOpen((v) => !v)}
-              className="rounded-full border border-line bg-surface p-2 text-ink transition-colors hover:border-teal hover:text-teal sm:p-2.5 lg:hidden"
+              className="rounded-lg border border-line bg-surface p-2.5 text-ink transition-colors hover:border-teal hover:text-teal lg:hidden"
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
             >
-              {open ? <CloseIcon className="h-4 w-4 sm:h-5 sm:w-5" /> : <MenuIcon className="h-4 w-4 sm:h-5 sm:w-5" />}
+              {open ? <CloseIcon /> : <MenuIcon />}
             </button>
           </div>
         </div>
@@ -199,7 +169,6 @@ export function Navbar() {
           <div className="blueprint-dark pointer-events-none absolute inset-0" aria-hidden />
           <nav className="container-x relative mt-28 flex flex-1 flex-col gap-1 overflow-y-auto pb-8" aria-label="Mobile">
             {links.map((l, i) => {
-              const Ic = l.Icon;
               const active = isActive(l.to, l.end);
               return (
                 <Link
@@ -210,10 +179,6 @@ export function Navbar() {
                   }`}
                   style={{ animationDelay: `${80 + i * 55}ms` }}
                 >
-                  <span className="text-xs font-black tracking-widest tabular-nums" style={{ color: l.color }}>
-                    {l.num}
-                  </span>
-                  <Ic className="h-5 w-5 text-paper/60 transition-colors group-hover:text-flame" />
                   <span className="font-display text-xl font-bold truncate max-w-[200px] sm:max-w-[250px] md:max-w-[300px]">{l.label}</span>
                   <ArrowIcon className="rtl-flip ms-auto h-5 w-5 text-paper/25 transition-all group-hover:translate-x-1 group-hover:text-flame" />
                 </Link>
