@@ -52,7 +52,25 @@ export default function ProjectDetail() {
 
   const actionButton = () => {
     const style = { background: cat.color };
-    if (project.category === "video") {
+    
+    // زر رابط المشروع - يظهر دائماً إذا كان demoUrl موجود
+    if (project.demoUrl) {
+      return (
+        <a
+          href={project.demoUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex w-full items-center justify-center gap-2.5 rounded-full py-3.5 text-sm font-bold text-white shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:opacity-90"
+          style={style}
+        >
+          <ExternalIcon className="h-4 w-4" />
+          {t(T.viewDemo)}
+        </a>
+      );
+    }
+    
+    // زر الفيديو - يظهر فقط إذا كان فيديو بدون demoUrl
+    if (project.category === "video" && project.videoUrl) {
       return (
         <button
           onClick={() => document.getElementById("film")?.scrollIntoView({ behavior: "smooth", block: "start" })}
@@ -64,18 +82,8 @@ export default function ProjectDetail() {
         </button>
       );
     }
-    return (
-      <a
-        href={project.demoUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex w-full items-center justify-center gap-2.5 rounded-full py-3.5 text-sm font-bold text-white shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:opacity-90"
-        style={style}
-      >
-        <ExternalIcon className="h-4 w-4" />
-        {project.category === "graphic" ? t(T.viewDesigns) : t(T.viewDemo)}
-      </a>
-    );
+    
+    return null;
   };
 
   const body = project.description[lang].length ? project.description[lang] : project.description.ar;
