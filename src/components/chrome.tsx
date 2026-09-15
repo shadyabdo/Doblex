@@ -66,10 +66,10 @@ export function Navbar() {
           scrolled ? "shadow-md" : ""
         }`}
       >
-        <div className="container-x flex h-16 items-center justify-between gap-4 lg:h-20">
+        <div className="container-x flex h-14 items-center justify-between gap-2 lg:h-16 lg:gap-3">
           {/* اللوجو */}
-          <Link to="/" className="group flex shrink-0 items-center gap-3">
-            <span className="relative block h-10 w-10 shrink-0 lg:h-12 lg:w-12">
+          <Link to="/" className="group flex shrink-0 items-center gap-2 lg:gap-3">
+            <span className="relative block h-9 w-9 shrink-0 lg:h-10 lg:w-10">
               <img
                 src={LOGO_URL}
                 alt="Duplex logo"
@@ -77,24 +77,24 @@ export function Navbar() {
               />
             </span>
             <span className="hidden leading-none sm:block">
-              <span className="font-display block text-lg font-extrabold text-ink lg:text-xl">
+              <span className="font-display block text-base font-extrabold text-ink lg:text-lg">
                 {t(T.brand)}
               </span>
-              <span className="mt-0.5 block text-[10px] font-bold tracking-[0.3em] text-teal lg:text-xs" dir="ltr">
+              <span className="mt-0.5 block text-[9px] font-bold tracking-[0.25em] text-teal lg:text-[10px]" dir="ltr">
                 DUPLEX® STUDIO
               </span>
             </span>
           </Link>
 
           {/* روابط التنقل - نصية بسيطة مع tooltip */}
-          <nav className="hidden items-center gap-1 lg:flex" aria-label="Main">
+          <nav className="hidden flex-1 items-center justify-center gap-0.5 lg:flex lg:gap-1" aria-label="Main">
             {links.map((l) => {
               const active = isActive(l.to, l.end);
               return (
                 <Link
                   key={l.to}
                   to={l.to}
-                  className={`group relative max-w-[120px] xl:max-w-[180px] rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-200 ${
+                  className={`group relative max-w-[100px] xl:max-w-[140px] rounded-md px-2.5 py-1.5 text-xs font-semibold transition-all duration-200 lg:px-3 lg:py-2 lg:text-sm ${
                     active
                       ? "bg-teal text-white shadow-sm"
                       : "text-ink-soft hover:bg-surface hover:text-ink"
@@ -102,7 +102,7 @@ export function Navbar() {
                 >
                   <span className="truncate block">{l.label}</span>
                   {active && (
-                    <span className="absolute inset-x-4 -bottom-0.5 h-0.5 rounded-full bg-flame" />
+                    <span className="absolute inset-x-3 -bottom-0.5 h-0.5 rounded-full bg-flame" />
                   )}
                   {/* Tooltip - يظهر تحت اللينك */}
                   <div className="pointer-events-none absolute top-full left-1/2 z-50 mt-2 -translate-x-1/2 opacity-0 transition-all duration-200 group-hover:opacity-100 group-hover:mt-3">
@@ -117,7 +117,7 @@ export function Navbar() {
           </nav>
 
           {/* الإجراءات */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 lg:gap-3">
             {/* مبدّل اللغة */}
             <div
               className="relative flex rounded-lg border border-line bg-surface p-1 text-xs font-bold"
