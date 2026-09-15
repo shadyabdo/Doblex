@@ -152,7 +152,7 @@ function normalizeCategory(raw: Record<string, unknown>, i: number): Category {
     blurb: toLText(raw.blurb ?? raw.description ?? raw.desc ?? raw.about),
     image: str(raw.image ?? raw.img ?? raw.cover ?? raw.photo) || FALLBACK_IMGS[i % FALLBACK_IMGS.length],
     color: str(raw.color) || pal.color,
-    tint: str(raw.tint) || pal.tint,
+    tint: str(raw.tint ?? raw.soft) || pal.tint,
   };
 }
 
@@ -277,10 +277,13 @@ function normalizeProject(raw: Record<string, unknown>, i: number, categories: C
   const demoLinks = normalizeDemoLinks(raw);
   const demoUrl = demoLinks.length > 0 ? demoLinks[0].url : undefined;
   
+  // نقرأ fieldId أو fieldLabel من البيانات الفعلية
+  const fieldRef = raw.fieldId ?? raw.fieldLabel ?? raw.category ?? raw.cat ?? raw.categoryId ?? raw.domain ?? raw.field;
+  
   return {
     id: str(raw.id ?? `p-${i}`),
     slug: str(raw.slug ?? raw.id ?? `project-${i}`),
-    category: resolveCategoryId(raw.category ?? raw.cat ?? raw.categoryId ?? raw.domain ?? raw.field, categories),
+    category: resolveCategoryId(fieldRef, categories),
     year: Number(raw.year) || new Date().getFullYear(),
     duration: toLText(raw.duration ?? raw.time ?? raw.timeline),
     client: toLText(raw.client ?? raw.customer ?? raw.brand),
