@@ -50,11 +50,32 @@ export default function ProjectDetail() {
 
   const openGallery = () => setLightboxIndex(0);
 
-  const actionButton = () => {
+  const actionButtons = () => {
     const style = { background: cat.color };
-    if (project.category === "video") {
-      return (
+    const buttons = [];
+    
+    // أزرار روابط المشروع - يظهر كل رابط كزر منفصل
+    if (project.demoLinks && project.demoLinks.length > 0) {
+      project.demoLinks.forEach((link, i) => {
+        buttons.push(
+          <a
+            key={i}
+            href={link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex w-full items-center justify-center gap-2.5 rounded-full py-3.5 text-sm font-bold text-white shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:opacity-90"
+            style={style}
+          >
+            <ExternalIcon className="h-4 w-4" />
+            {t(link.label)}
+          </a>
+        );
+      });
+    } else if (project.category === "video" && project.videoUrl) {
+      // زر الفيديو - يظهر فقط إذا كان فيديو بدون demoLinks
+      buttons.push(
         <button
+          key="video"
           onClick={() => document.getElementById("film")?.scrollIntoView({ behavior: "smooth", block: "start" })}
           className="flex w-full items-center justify-center gap-2.5 rounded-full py-3.5 text-sm font-bold text-white shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:opacity-90"
           style={style}
@@ -64,18 +85,8 @@ export default function ProjectDetail() {
         </button>
       );
     }
-    return (
-      <a
-        href={project.demoUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex w-full items-center justify-center gap-2.5 rounded-full py-3.5 text-sm font-bold text-white shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:opacity-90"
-        style={style}
-      >
-        <ExternalIcon className="h-4 w-4" />
-        {project.category === "graphic" ? t(T.viewDesigns) : t(T.viewDemo)}
-      </a>
-    );
+    
+    return buttons;
   };
 
   const body = project.description[lang].length ? project.description[lang] : project.description.ar;
@@ -226,8 +237,8 @@ export default function ProjectDetail() {
                 <div className="relative aspect-[16/10] overflow-hidden bg-paper">
                   <img src={project.image} alt={t(project.title)} className="img-zoom h-full w-full object-cover" />
                 </div>
-                <div className="p-6">
-                  {project.demoUrl && actionButton()}
+                <div className="space-y-3 p-6">
+                  {actionButtons()}
                 </div>
               </div>
             </Reveal>
