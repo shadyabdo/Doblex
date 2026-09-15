@@ -33,10 +33,10 @@ export function FloatingSocialButton() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="fixed bottom-6 start-6 z-40 flex flex-col-reverse items-center gap-3">
-      {/* أزرار السوشيال ميديا */}
+    <div className="fixed bottom-6 left-6 z-40 flex flex-col items-center gap-3">
+      {/* أزرار السوشيال ميديا - تظهر فوق الزر */}
       <div
-        className={`flex flex-col-reverse gap-3 transition-all duration-300 ${
+        className={`flex flex-col gap-3 transition-all duration-300 ${
           isOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
         }`}
       >
