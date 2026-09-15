@@ -24,6 +24,11 @@ export interface ResultStat {
   label: LText;
 }
 
+export interface DemoLink {
+  label: LText;
+  url: string;
+}
+
 export interface Project {
   id: string;
   slug: string;
@@ -38,6 +43,7 @@ export interface Project {
   image: string;
   gallery: GalleryItem[];
   demoUrl?: string;
+  demoLinks?: DemoLink[];
   videoUrl?: string;
   results?: ResultStat[];
   featured?: boolean;

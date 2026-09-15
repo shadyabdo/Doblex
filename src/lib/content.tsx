@@ -21,6 +21,7 @@ import {
 import { needsEn, translateTexts } from "./translator";
 import type {
   Category,
+  DemoLink,
   GalleryItem,
   LText,
   Project,
@@ -170,22 +171,58 @@ function resolveCategoryId(ref: unknown, categories: Category[]): string {
   return hit ? hit.id : categories[0].id;
 }
 
+function normalizeDemoLinks(raw: Record<string, unknown>): DemoLink[] {
+  const links: DemoLink[] = [];
+  
+  // قراءة مصفوفة الروابط من demoLinks أو links
+  const rawLinks = raw.demoLinks ?? raw.links ?? raw.projectLinks;
+  
+  if (Array.isArray(rawLinks)) {
+    rawLinks.forEach((link) => {
+      if (typeof link === 'string') {
+        // لو الرابط string فقط
+        links.push({ label: { ar: 'عرض المشروع', en: 'View Project' }, url: link });
+      } else if (typeof link === 'object' && link !== null) {
+        const linkObj = link as Record<string, unknown>;
+        const url = str(linkObj.url ?? linkObj.link ?? linkObj.href);
+        if (url) {
+          const label = toLText(linkObj.label ?? linkObj.title ?? linkObj.name);
+          links.push({ 
+            label: label.ar || label.en ? label : { ar: 'عرض المشروع', en: 'View Project' }, 
+            url 
+          });
+        }
+      }
+    });
+  }
+  
+  // لو مفيش مصفوفة، جرب تقرأ رابط واحد
+  if (links.length === 0) {
+    const singleUrl = str(
+      raw.demoUrl ?? 
+      raw.demo ?? 
+      raw.url ?? 
+      raw.link ?? 
+      raw.website ??
+      raw.demo_url ??
+      raw.projectUrl ??
+      raw.liveUrl
+    );
+    if (singleUrl) {
+      links.push({ label: { ar: 'عرض المشروع', en: 'View Project' }, url: singleUrl });
+    }
+  }
+  
+  return links;
+}
+
 function normalizeProject(raw: Record<string, unknown>, i: number, categories: Category[]): Project {
   const title = toLText(raw.title ?? raw.name);
   const image =
     str(raw.image ?? raw.cover ?? raw.thumb ?? raw.img) || FALLBACK_IMGS[i % FALLBACK_IMGS.length];
   
-  // قراءة رابط الديمو من جميع الحقول الممكنة
-  const demoUrlValue = str(
-    raw.demoUrl ?? 
-    raw.demo ?? 
-    raw.url ?? 
-    raw.link ?? 
-    raw.website ??
-    raw.demo_url ??
-    raw.projectUrl ??
-    raw.liveUrl
-  );
+  const demoLinks = normalizeDemoLinks(raw);
+  const demoUrl = demoLinks.length > 0 ? demoLinks[0].url : undefined;
   
   return {
     id: str(raw.id ?? `p-${i}`),
@@ -200,7 +237,8 @@ function normalizeProject(raw: Record<string, unknown>, i: number, categories: C
     services: toLTextList(raw.services ?? raw.tags ?? raw.scope),
     image,
     gallery: toGallery(raw.gallery ?? raw.images ?? raw.screenshots ?? raw.photos, image),
-    demoUrl: demoUrlValue || undefined,
+    demoUrl,
+    demoLinks: demoLinks.length > 0 ? demoLinks : undefined,
     videoUrl: str(raw.videoUrl ?? raw.video) || undefined,
     results: toResults(raw.results ?? raw.stats ?? raw.metrics),
     featured: Boolean(raw.featured),
