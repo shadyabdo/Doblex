@@ -86,7 +86,7 @@ export function Navbar() {
             </span>
           </Link>
 
-          {/* روابط التنقل - نصية بسيطة */}
+          {/* روابط التنقل - نصية بسيطة مع tooltip */}
           <nav className="hidden items-center gap-1 lg:flex" aria-label="Main">
             {links.map((l) => {
               const active = isActive(l.to, l.end);
@@ -94,16 +94,23 @@ export function Navbar() {
                 <Link
                   key={l.to}
                   to={l.to}
-                  className={`relative rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-200 ${
+                  className={`group relative max-w-[120px] xl:max-w-[180px] rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-200 ${
                     active
                       ? "bg-teal text-white shadow-sm"
                       : "text-ink-soft hover:bg-surface hover:text-ink"
                   }`}
                 >
-                  {l.label}
+                  <span className="truncate block">{l.label}</span>
                   {active && (
                     <span className="absolute inset-x-4 -bottom-0.5 h-0.5 rounded-full bg-flame" />
                   )}
+                  {/* Tooltip */}
+                  <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 opacity-0 transition-all duration-200 group-hover:opacity-100 group-hover:mb-3">
+                    <div className="whitespace-nowrap rounded-lg bg-ink px-3 py-2 text-xs font-semibold text-paper shadow-xl lg:px-4 lg:py-2.5 lg:text-sm">
+                      {l.label}
+                      <div className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-ink"></div>
+                    </div>
+                  </div>
                 </Link>
               );
             })}
