@@ -104,11 +104,11 @@ export function Navbar() {
                   {active && (
                     <span className="absolute inset-x-4 -bottom-0.5 h-0.5 rounded-full bg-flame" />
                   )}
-                  {/* Tooltip */}
-                  <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 opacity-0 transition-all duration-200 group-hover:opacity-100 group-hover:mb-3">
+                  {/* Tooltip - يظهر تحت اللينك */}
+                  <div className="pointer-events-none absolute top-full left-1/2 z-50 mt-2 -translate-x-1/2 opacity-0 transition-all duration-200 group-hover:opacity-100 group-hover:mt-3">
                     <div className="whitespace-nowrap rounded-lg bg-ink px-3 py-2 text-xs font-semibold text-paper shadow-xl lg:px-4 lg:py-2.5 lg:text-sm">
                       {l.label}
-                      <div className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-ink"></div>
+                      <div className="absolute left-1/2 bottom-full -translate-x-1/2 border-4 border-transparent border-b-ink"></div>
                     </div>
                   </div>
                 </Link>
