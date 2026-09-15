@@ -154,7 +154,7 @@ export function Navbar() {
               className="hidden items-center gap-1.5 rounded-lg bg-flame px-3 py-1.5 text-xs font-bold text-white shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:bg-flame-deep hover:shadow-lg md:flex lg:gap-2 lg:px-4 lg:py-2 lg:text-sm"
             >
               <MailIcon className="h-3.5 w-3.5 lg:h-4 lg:w-4" />
-              <span className="hidden lg:inline">{t(T.navStart)}</span>
+              <span>راسلنا</span>
             </a>
 
             {/* زر القائمة للموبايل */}
