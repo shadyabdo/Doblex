@@ -57,11 +57,6 @@ export function FloatingSocialButton() {
               aria-label={social.name}
             >
               <Icon className="h-6 w-6 text-white" />
-              {/* Tooltip - يظهر على يمين الزر */}
-              <div className="pointer-events-none absolute end-full me-3 whitespace-nowrap rounded-lg bg-ink px-3 py-2 text-xs font-semibold text-paper opacity-0 shadow-lg transition-opacity duration-200 group-hover:opacity-100">
-                {social.name}
-                <div className="absolute start-full top-1/2 -translate-y-1/2 border-4 border-transparent border-s-ink"></div>
-              </div>
             </a>
           );
         })}
