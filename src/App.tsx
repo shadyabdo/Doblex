@@ -12,6 +12,7 @@ import { ContentProvider, useContent } from "./lib/content";
 import { ViewsProvider } from "./lib/views";
 import { LOGO_URL } from "./data";
 import { Navbar, Footer } from "./components/chrome";
+import { FloatingSocialButton } from "./components/FloatingSocialButton";
 import { RefreshIcon } from "./components/icons";
 import Home from "./pages/Home";
 import Category from "./pages/Category";
@@ -142,6 +143,7 @@ export default function App() {
                   </main>
                   <Footer />
                   <SyncChip />
+                  <FloatingSocialButton />
                 </div>
               </ContentGate>
             </HashRouter>
