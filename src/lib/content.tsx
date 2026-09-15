@@ -159,16 +159,35 @@ function normalizeCategory(raw: Record<string, unknown>, i: number): Category {
 function resolveCategoryId(ref: unknown, categories: Category[]): string {
   if (categories.length === 0) return str(ref);
   const s = str(ref).trim().toLowerCase();
-  const byIndex = Number(ref);
+  
+  // لو الـ ref رقم، نستخدمه كـ index
+  const byIndex = Number(s);
   if (!Number.isNaN(byIndex) && categories[byIndex]) return categories[byIndex].id;
-  const hit = categories.find(
+  
+  // نبحث عن match دقيق
+  const exactMatch = categories.find(
     (c) =>
       c.id.toLowerCase() === s ||
       c.latin.toLowerCase() === s ||
       c.name.ar === str(ref) ||
       c.name.en.toLowerCase() === s
   );
-  return hit ? hit.id : categories[0].id;
+  
+  if (exactMatch) return exactMatch.id;
+  
+  // لو مفيش match دقيق، نبحث عن match جزئي (includes)
+  const partialMatch = categories.find(
+    (c) =>
+      c.id.toLowerCase().includes(s) ||
+      c.latin.toLowerCase().includes(s) ||
+      c.name.ar.includes(str(ref)) ||
+      c.name.en.toLowerCase().includes(s)
+  );
+  
+  if (partialMatch) return partialMatch.id;
+  
+  // لو لسه مفيش match، نرجع الـ ref نفسه كـ string (بدل أول category)
+  return str(ref);
 }
 
 function normalizeDemoLinks(raw: Record<string, unknown>): DemoLink[] {
