@@ -1,4 +1,16 @@
 import type { ReactElement } from "react";
+import { 
+  RiGithubFill, 
+  RiFigmaFill, 
+  RiDribbbleLine, 
+  RiCodepenLine, 
+  RiYoutubeFill, 
+  RiVimeoFill,
+  RiExternalLinkLine,
+  RiBehanceFill,
+  RiVercelFill,
+  RiNetflixFill
+} from "react-icons/ri";
 
 interface IconProps {
   className?: string;
@@ -230,11 +242,7 @@ export function InstagramIcon({ className = "h-4 w-4" }: IconProps) {
 }
 
 export function BehanceIcon({ className = "h-4 w-4" }: IconProps) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
-      <path d="M9.3 11.3c.9-.5 1.5-1.3 1.5-2.4 0-2-1.6-2.9-3.9-2.9H2.5v11.9h4.6c2.5 0 4.6-1.1 4.6-3.7 0-1.4-.7-2.4-2.4-2.9ZM5 8h1.7c1 0 1.8.3 1.8 1.4 0 1-.7 1.4-1.7 1.4H5V8Zm1.9 7.9H5v-3.2h2c1.2 0 2 .5 2 1.6 0 1.2-.9 1.6-2.1 1.6Zm11.9-7.6c-3 0-4.9 2-4.9 5s1.9 5 4.9 5c2.4 0 3.9-1.2 4.4-3h-2.3c-.3.6-.9 1-2 1-1.4 0-2.3-.8-2.4-2.2h6.8v-.7c0-3-1.6-5.1-4.5-5.1Zm-2.4 4c.2-1.2 1-1.9 2.3-1.9 1.4 0 2.1.7 2.2 1.9h-4.5Zm-.6-6.3h5.6v1.4h-5.6V6Z" />
-    </svg>
-  );
+  return <RiBehanceFill className={className} />;
 }
 
 export function LinkedInIcon({ className = "h-4 w-4" }: IconProps) {
@@ -253,69 +261,45 @@ export function XIcon({ className = "h-4 w-4" }: IconProps) {
   );
 }
 
+// أيقونات من react-icons (Remix Icons)
 export function GitHubIcon({ className = "h-4 w-4" }: IconProps) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
-      <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0 1 12 6.836c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.416 22 12c0-5.523-4.477-10-10-10Z" />
-    </svg>
-  );
+  return <RiGithubFill className={className} />;
 }
 
 export function FigmaIcon({ className = "h-4 w-4" }: IconProps) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
-      <path d="M15.857 8.959c-1.574 0-2.851 1.277-2.851 2.851s1.277 2.851 2.851 2.851 2.851-1.277 2.851-2.851-1.277-2.851-2.851-2.851Zm0 4.702a1.854 1.854 0 0 1-1.851-1.851 1.854 1.854 0 0 1 1.851-1.851 1.854 1.854 0 0 1 1.851 1.851 1.854 1.854 0 0 1-1.851 1.851ZM8.143 17.516c1.574 0 2.851-1.277 2.851-2.851v-2.851H8.143c-1.574 0-2.851 1.277-2.851 2.851s1.277 2.851 2.851 2.851Zm0-4.702h1.851v1.851a1.854 1.854 0 0 1-1.851 1.851 1.854 1.854 0 0 1-1.851-1.851 1.854 1.854 0 0 1 1.851-1.851ZM8.143 11.81h2.851V6.107H8.143c-1.574 0-2.851 1.277-2.851 2.851s1.277 2.851 2.851 2.851Zm0-4.702h1.851v3.702H8.143a1.854 1.854 0 0 1-1.851-1.851 1.854 1.854 0 0 1 1.851-1.851ZM15.857 6.107h-2.851v2.851h2.851c.76 0 1.456-.298 1.975-.783.52-.485.876-1.155.876-2.068 0-1.574-1.277-2.851-2.851-2.851s-2.851 1.277-2.851 2.851v2.851h2.851V6.107Zm-1.851-.951c0-1.022.829-1.851 1.851-1.851s1.851.829 1.851 1.851-.829 1.851-1.851 1.851h-1.851V5.156ZM13.006 17.516c1.574 0 2.851-1.277 2.851-2.851v-2.851h-2.851c-1.574 0-2.851 1.277-2.851 2.851s1.277 2.851 2.851 2.851Zm0-4.702h1.851v1.851a1.854 1.854 0 0 1-1.851 1.851 1.854 1.854 0 0 1-1.851-1.851 1.854 1.854 0 0 1 1.851-1.851Z" />
-    </svg>
-  );
+  return <RiFigmaFill className={className} />;
 }
 
 export function DribbbleIcon({ className = "h-4 w-4" }: IconProps) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
-      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2Zm6.605 4.61a8.502 8.502 0 0 1 1.93 5.314c-.281-.052-3.101-.629-5.943-.271-.065-.141-.12-.293-.184-.443a25.424 25.424 0 0 0-.564-1.236c3.145-1.28 4.577-3.124 4.761-3.362ZM12 3.475c2.17 0 4.154.813 5.662 2.148-.15.215-1.443 1.969-4.7 3.215l-1.03-1.9c-.158-.298-.324-.6-.501-.904A8.542 8.542 0 0 1 12 3.475Zm-2.65 1.081c.17.297.335.6.494.897l1.026 1.893c-3.312.948-6.188.92-6.46.914A8.522 8.522 0 0 1 9.35 4.556ZM3.475 12c0-.127.003-.254.008-.38.26.006 3.55.04 7.12-.968.2.378.388.764.563 1.155l-.24.074c-3.69 1.19-5.646 4.472-5.84 4.8A8.466 8.466 0 0 1 3.475 12Zm8.525 8.525a8.482 8.482 0 0 1-5.238-1.8c.152-.315 1.783-3.444 5.83-4.86.02-.006.04-.013.06-.02.98 2.54 1.38 4.68 1.484 5.29A8.454 8.454 0 0 1 12 20.525Zm4.088-.804c-.07-.417-.44-2.474-1.36-4.98 2.66-.425 4.99.268 5.27.356a8.514 8.514 0 0 1-3.91 4.624Z" />
-    </svg>
-  );
+  return <RiDribbbleLine className={className} />;
 }
 
 export function CodepenIcon({ className = "h-4 w-4" }: IconProps) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden>
-      <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2" />
-      <line x1="12" y1="22" x2="12" y2="15.5" />
-      <polyline points="22 8.5 12 15.5 2 8.5" />
-      <polyline points="2 15.5 12 8.5 22 15.5" />
-      <line x1="12" y1="2" x2="12" y2="8.5" />
-    </svg>
-  );
+  return <RiCodepenLine className={className} />;
 }
 
 export function VercelIcon({ className = "h-4 w-4" }: IconProps) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
-      <path d="M24 22.525H0l12-21 12 21z" />
-    </svg>
-  );
+  return <RiVercelFill className={className} />;
 }
 
 export function NetlifyIcon({ className = "h-4 w-4" }: IconProps) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
-      <path d="M16.62 11.13h.01v.01l-.01-.01Zm-.01 0h-.01v.01l.01-.01ZM11.33 6.17h-.01v.01l.01-.01Zm-.01 0h-.01v.01l.01-.01Zm5.3 4.96h-.01v.01l.01-.01Zm-.01 0h-.01v.01l.01-.01Zm-5.3 4.96h-.01v.01l.01-.01Zm-.01 0h-.01v.01l.01-.01Zm5.3-4.96h-.01v.01l.01-.01Zm-.01 0h-.01v.01l.01-.01ZM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2Zm4.62 14.62c-.16.16-.38.25-.61.25h-8.02c-.23 0-.45-.09-.61-.25l-1.25-1.25c-.16-.16-.25-.38-.25-.61V7.24c0-.23.09-.45.25-.61l1.25-1.25c.16-.16.38-.25.61-.25h8.02c.23 0 .45.09.61.25l1.25 1.25c.16.16.25.38.25.61v8.52c0 .23-.09.45-.25.61l-1.25 1.25Z" />
-    </svg>
-  );
+  return <RiNetflixFill className={className} />;
+}
+
+export function YouTubeIcon({ className = "h-4 w-4" }: IconProps) {
+  return <RiYoutubeFill className={className} />;
+}
+
+export function VimeoIcon({ className = "h-4 w-4" }: IconProps) {
+  return <RiVimeoFill className={className} />;
 }
 
 export function LinkIcon({ className = "h-4 w-4" }: IconProps) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden>
-      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-    </svg>
-  );
+  return <RiExternalLinkLine className={className} />;
 }
 
 /**
- * يحلل الرابط ويرجع الأيقونة المناسبة
+ * يحلل الرابط ويرجع الأيقونة المناسبة من Remix Icons
  */
 export function detectUrlIcon(url: string): (p: IconProps) => ReactElement {
   const lower = url.toLowerCase();
@@ -327,8 +311,8 @@ export function detectUrlIcon(url: string): (p: IconProps) => ReactElement {
   if (lower.includes('codepen.io')) return CodepenIcon;
   if (lower.includes('vercel.app') || lower.includes('vercel.com')) return VercelIcon;
   if (lower.includes('netlify.app') || lower.includes('netlify.com')) return NetlifyIcon;
-  if (lower.includes('youtube.com') || lower.includes('youtu.be')) return PlayIcon;
-  if (lower.includes('vimeo.com')) return PlayIcon;
+  if (lower.includes('youtube.com') || lower.includes('youtu.be')) return YouTubeIcon;
+  if (lower.includes('vimeo.com')) return VimeoIcon;
   
   // الافتراضي: أيقونة رابط عامة
   return LinkIcon;
