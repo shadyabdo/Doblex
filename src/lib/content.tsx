@@ -152,12 +152,46 @@ function normalizeCategory(raw: Record<string, unknown>, i: number): Category {
     blurb: toLText(raw.blurb ?? raw.description ?? raw.desc ?? raw.about),
     image: str(raw.image ?? raw.img ?? raw.cover ?? raw.photo) || FALLBACK_IMGS[i % FALLBACK_IMGS.length],
     color: str(raw.color) || pal.color,
-    tint: str(raw.tint) || pal.tint,
+    tint: str(raw.tint ?? raw.soft) || pal.tint,
   };
 }
 
 function resolveCategoryId(ref: unknown, categories: Category[]): string {
   if (categories.length === 0) return str(ref);
+  
+  // لو الـ ref object فيه ar/en (زي ما بتخزنه الداشبورد)
+  if (typeof ref === 'object' && ref !== null && !Array.isArray(ref)) {
+    const refObj = ref as Record<string, unknown>;
+    const refAr = str(refObj.ar ?? refObj.arabic ?? refObj.name_ar);
+    const refEn = str(refObj.en ?? refObj.english ?? refObj.name_en);
+    
+    // نبحث عن match بالاسم العربي
+    if (refAr) {
+      const match = categories.find(c => c.name.ar === refAr);
+      if (match) return match.id;
+    }
+    
+    // نبحث عن match بالاسم الإنجليزي
+    if (refEn) {
+      const match = categories.find(c => c.name.en.toLowerCase() === refEn.toLowerCase());
+      if (match) return match.id;
+    }
+    
+    // لو مفيش match دقيق، نبحث عن match جزئي
+    if (refAr) {
+      const match = categories.find(c => c.name.ar.includes(refAr) || refAr.includes(c.name.ar));
+      if (match) return match.id;
+    }
+    if (refEn) {
+      const match = categories.find(c => 
+        c.name.en.toLowerCase().includes(refEn.toLowerCase()) || 
+        refEn.toLowerCase().includes(c.name.en.toLowerCase())
+      );
+      if (match) return match.id;
+    }
+  }
+  
+  // لو الـ ref string
   const s = str(ref).trim().toLowerCase();
   
   // لو الـ ref رقم، نستخدمه كـ index
@@ -186,7 +220,7 @@ function resolveCategoryId(ref: unknown, categories: Category[]): string {
   
   if (partialMatch) return partialMatch.id;
   
-  // لو لسه مفيش match، نرجع الـ ref نفسه كـ string (بدل أول category)
+  // لو لسه مفيش match، نرجع الـ ref نفسه كـ string
   return str(ref);
 }
 
@@ -243,10 +277,13 @@ function normalizeProject(raw: Record<string, unknown>, i: number, categories: C
   const demoLinks = normalizeDemoLinks(raw);
   const demoUrl = demoLinks.length > 0 ? demoLinks[0].url : undefined;
   
+  // نقرأ fieldId أو fieldLabel من البيانات الفعلية
+  const fieldRef = raw.fieldId ?? raw.fieldLabel ?? raw.category ?? raw.cat ?? raw.categoryId ?? raw.domain ?? raw.field;
+  
   return {
     id: str(raw.id ?? `p-${i}`),
     slug: str(raw.slug ?? raw.id ?? `project-${i}`),
-    category: resolveCategoryId(raw.category ?? raw.cat ?? raw.categoryId ?? raw.domain ?? raw.field, categories),
+    category: resolveCategoryId(fieldRef, categories),
     year: Number(raw.year) || new Date().getFullYear(),
     duration: toLText(raw.duration ?? raw.time ?? raw.timeline),
     client: toLText(raw.client ?? raw.customer ?? raw.brand),
