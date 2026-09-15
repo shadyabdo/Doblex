@@ -5,7 +5,7 @@ import { useLang } from "../i18n";
 import { T, CONTACT } from "../data";
 import { useContent } from "../lib/content";
 import { CountUp, Reveal } from "../lib/ui";
-import { ArrowIcon, ExternalIcon, PlayIcon } from "../components/icons";
+import { ArrowIcon, ExternalIcon, PlayIcon, detectUrlIcon } from "../components/icons";
 import { Lightbox, DemoViewer, VideoPlayer, type DemoPage } from "../components/project";
 
 export default function ProjectDetail() {
@@ -54,9 +54,10 @@ export default function ProjectDetail() {
     const style = { background: cat.color };
     const buttons = [];
     
-    // أزرار روابط المشروع - يظهر كل رابط كزر منفصل
+    // أزرار روابط المشروع - يظهر كل رابط كزر منفصل مع الأيقونة المناسبة
     if (project.demoLinks && project.demoLinks.length > 0) {
       project.demoLinks.forEach((link, i) => {
+        const IconComponent = detectUrlIcon(link.url);
         buttons.push(
           <a
             key={i}
@@ -66,7 +67,7 @@ export default function ProjectDetail() {
             className="flex w-full items-center justify-center gap-2.5 rounded-full py-3.5 text-sm font-bold text-white shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:opacity-90"
             style={style}
           >
-            <ExternalIcon className="h-4 w-4" />
+            <IconComponent className="h-4 w-4" />
             {t(link.label)}
           </a>
         );

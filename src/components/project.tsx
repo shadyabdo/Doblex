@@ -15,6 +15,7 @@ import {
   PlayIcon,
   RefreshIcon,
   UserIcon,
+  detectUrlIcon,
 } from "./icons";
 
 /* ------------------------- تنسيق التاريخ ------------------------- */
@@ -81,19 +82,22 @@ export function ProjectCard({ project }: { project: Project }) {
         </div>
         {project.demoLinks && project.demoLinks.length > 0 && (
           <div className="mt-4 flex flex-wrap gap-2">
-            {project.demoLinks.map((link, i) => (
-              <a
-                key={i}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-1.5 rounded-full bg-teal px-3 py-1.5 text-[10px] font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-teal-deep sm:px-4 sm:py-2 sm:text-xs"
-              >
-                <ExternalIcon className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-                {t(link.label)}
-              </a>
-            ))}
+            {project.demoLinks.map((link, i) => {
+              const IconComponent = detectUrlIcon(link.url);
+              return (
+                <a
+                  key={i}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex items-center gap-1.5 rounded-full bg-teal px-3 py-1.5 text-[10px] font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-teal-deep sm:px-4 sm:py-2 sm:text-xs"
+                >
+                  <IconComponent className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                  {t(link.label)}
+                </a>
+              );
+            })}
           </div>
         )}
       </div>
