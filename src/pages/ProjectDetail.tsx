@@ -64,11 +64,18 @@ export default function ProjectDetail() {
             href={link.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex w-full items-center justify-center gap-2.5 rounded-full py-3.5 text-sm font-bold text-white shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:opacity-90"
+            className="group relative flex w-full items-center justify-center gap-2.5 overflow-hidden rounded-full py-3.5 text-sm font-bold text-white shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl lg:py-4 lg:text-base"
             style={style}
           >
-            <IconComponent className="h-4 w-4" />
-            {t(link.label)}
+            <IconComponent className="h-4 w-4 shrink-0 lg:h-5 lg:w-5" />
+            <span className="truncate max-w-[calc(100%-2rem)]">{t(link.label)}</span>
+            {/* Tooltip */}
+            <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:mb-3">
+              <div className="whitespace-nowrap rounded-lg bg-ink px-3 py-2 text-xs font-semibold text-paper shadow-xl lg:px-4 lg:py-2.5 lg:text-sm">
+                {link.url}
+                <div className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-ink"></div>
+              </div>
+            </div>
           </a>
         );
       });
@@ -78,10 +85,10 @@ export default function ProjectDetail() {
         <button
           key="video"
           onClick={() => document.getElementById("film")?.scrollIntoView({ behavior: "smooth", block: "start" })}
-          className="flex w-full items-center justify-center gap-2.5 rounded-full py-3.5 text-sm font-bold text-white shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:opacity-90"
+          className="flex w-full items-center justify-center gap-2.5 rounded-full py-3.5 text-sm font-bold text-white shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl lg:py-4 lg:text-base"
           style={style}
         >
-          <PlayIcon className="h-4 w-4" />
+          <PlayIcon className="h-4 w-4 lg:h-5 lg:w-5" />
           {t(T.watchFilm)}
         </button>
       );
