@@ -296,6 +296,9 @@ function slugify(text: string): string {
 function normalizeGoalsAchievements(v: unknown): LText[] {
   if (!v) return [];
   
+  // Debug: نشوف البيانات الفعلية
+  console.log('[Duplex] Goals/Achievements raw data:', v);
+  
   // لو كان array
   if (Array.isArray(v)) {
     return v.map((item) => {
