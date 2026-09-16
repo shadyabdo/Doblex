@@ -7,6 +7,7 @@ import { useContent } from "../lib/content";
 import { CountUp, Reveal } from "../lib/ui";
 import { ArrowIcon, ExternalIcon, PlayIcon, detectUrlIcon } from "../components/icons";
 import { Lightbox, DemoViewer, VideoPlayer, type DemoPage } from "../components/project";
+import { extractProjectKeywords, generateMetaDescription } from "../lib/seo";
 
 export default function ProjectDetail() {
   const { slug } = useParams();
@@ -99,15 +100,59 @@ export default function ProjectDetail() {
 
   const body = project.description[lang].length ? project.description[lang] : project.description.ar;
 
+  // Extract keywords automatically
+  const keywords = extractProjectKeywords(project);
+  const metaDescription = generateMetaDescription(body.join(" "), 160);
+  const projectUrl = `https://duplex.studio/#/project/${project.slug}`;
+
+  // Structured data for CreativeWork
+  const projectSchema = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    "name": t(project.title),
+    "description": t(project.tagline),
+    "image": project.image,
+    "url": projectUrl,
+    "dateCreated": String(project.year),
+    "creator": {
+      "@type": "Organization",
+      "name": "Duplex Studio"
+    },
+    "category": t(cat.name),
+    "keywords": keywords[lang].join(", ")
+  };
+
   return (
     <>
       <Helmet>
         <title>{`${t(project.title)} — ${t(T.brand)}`}</title>
-        <meta name="description" content={t(project.tagline)} />
+        <meta name="description" content={metaDescription || t(project.tagline)} />
+        <meta name="keywords" content={keywords[lang].join(", ")} />
+        <meta name="author" content="Duplex Studio" />
+        
+        {/* Open Graph */}
         <meta property="og:type" content="article" />
         <meta property="og:title" content={t(project.title)} />
-        <meta property="og:description" content={t(project.tagline)} />
+        <meta property="og:description" content={metaDescription || t(project.tagline)} />
         <meta property="og:image" content={project.image} />
+        <meta property="og:url" content={projectUrl} />
+        <meta property="article:published_time" content={new Date(project.year, 0, 1).toISOString()} />
+        <meta property="article:author" content="Duplex Studio" />
+        <meta property="article:section" content={t(cat.name)} />
+        
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={t(project.title)} />
+        <meta name="twitter:description" content={metaDescription || t(project.tagline)} />
+        <meta name="twitter:image" content={project.image} />
+        
+        {/* Canonical URL */}
+        <link rel="canonical" href={projectUrl} />
+        
+        {/* Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify(projectSchema)}
+        </script>
       </Helmet>
 
       {/* ================= Header ================= */}

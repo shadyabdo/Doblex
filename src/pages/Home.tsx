@@ -8,6 +8,7 @@ import { useTrackView } from "../lib/views";
 import { CountUp, Marquee, Reveal, SectionHead } from "../lib/ui";
 import { ArrowIcon, Spark } from "../components/icons";
 import { ProjectCard, BlogCard } from "../components/project";
+import { generateMetaDescription } from "../lib/seo";
 
 function scrollToId(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -254,6 +255,37 @@ export default function Home() {
 
   useTrackView("home");
 
+  // Generate keywords from categories and projects
+  const keywords = [
+    ...categories.map(c => lang === "ar" ? c.name.ar : c.name.en),
+    "استوديو تقني", "تطوير مواقع", "جرافيك ديزاين", "فيديو إديتينج", "ديجيتال ماركتينج",
+    "tech studio", "web development", "graphic design", "video editing", "digital marketing"
+  ].join(", ");
+
+  // Structured data for Organization
+  const orgSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Duplex Studio",
+    "alternateName": "دوبليكس",
+    "url": "https://duplex.studio",
+    "logo": "https://www.image2url.com/r2/default/images/1788096124951-89c2faca-7359-4beb-9d53-d81a0ffc007b.jfif",
+    "description": lang === "ar" 
+      ? "دوبليكس استوديو تقني متكامل: تطوير مواقع، جرافيك ديزاين، فيديو إديتينج، وديجيتال ماركتينج تحت سقف واحد."
+      : "Duplex is a full-stack tech studio: web development, graphic design, video editing and digital marketing under one roof.",
+    "foundingDate": "2026",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Cairo",
+      "addressCountry": "EG"
+    },
+    "sameAs": [
+      "https://facebook.com/duplexstudio",
+      "https://instagram.com/duplexstudio",
+      "https://linkedin.com/company/duplexstudio"
+    ]
+  };
+
   return (
     <>
       <Helmet>
@@ -268,6 +300,30 @@ export default function Home() {
               : "Duplex is a full-stack tech studio: web development, graphic design, video editing and digital marketing under one roof."
           }
         />
+        <meta name="keywords" content={keywords} />
+        <meta name="author" content="Duplex Studio" />
+        
+        {/* Open Graph */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={lang === "ar" ? "دوبليكس | استوديو تقني متكامل" : "Duplex | Full-stack Tech Studio"} />
+        <meta property="og:description" content={lang === "ar" ? "تطوير مواقع، جرافيك ديزاين، فيديو إديتينج، وديجيتال ماركتينج تحت سقف واحد." : "Web development, graphic design, video editing and digital marketing under one roof."} />
+        <meta property="og:image" content="https://www.image2url.com/r2/default/images/1788096124951-89c2faca-7359-4beb-9d53-d81a0ffc007b.jfif" />
+        <meta property="og:url" content="https://duplex.studio" />
+        <meta property="og:site_name" content="Duplex Studio" />
+        
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={lang === "ar" ? "دوبليكس | استوديو تقني متكامل" : "Duplex | Full-stack Tech Studio"} />
+        <meta name="twitter:description" content={lang === "ar" ? "تطوير مواقع، جرافيك ديزاين، فيديو إديتينج، وديجيتال ماركتينج تحت سقف واحد." : "Web development, graphic design, video editing and digital marketing under one roof."} />
+        <meta name="twitter:image" content="https://www.image2url.com/r2/default/images/1788096124951-89c2faca-7359-4beb-9d53-d81a0ffc007b.jfif" />
+        
+        {/* Canonical URL */}
+        <link rel="canonical" href="https://duplex.studio" />
+        
+        {/* Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify(orgSchema)}
+        </script>
       </Helmet>
 
       <CraftHero />
