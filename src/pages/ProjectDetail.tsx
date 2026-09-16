@@ -207,6 +207,25 @@ export default function ProjectDetail() {
             </div>
           </section>
 
+          {/* Implementation Details */}
+          {project.details && (project.details.ar.length > 0 || project.details.en.length > 0) && (
+            <section>
+              <Reveal>
+                <h2 className="font-display mb-4 flex items-center gap-2 text-xl font-extrabold text-ink sm:mb-5 sm:gap-3 sm:text-2xl">
+                  <span className="h-5 w-1.5 rounded-full sm:h-6" style={{ background: cat.color }} />
+                  {lang === "ar" ? "تفاصيل التنفيذ" : "Implementation Details"}
+                </h2>
+              </Reveal>
+              <div className="space-y-4 sm:space-y-5">
+                {(project.details[lang].length > 0 ? project.details[lang] : project.details.ar).map((para, i) => (
+                  <Reveal key={i} delay={Math.min(i * 60, 240)}>
+                    <p className="text-sm leading-[1.9] text-ink-soft sm:text-base md:text-lg">{para}</p>
+                  </Reveal>
+                ))}
+              </div>
+            </section>
+          )}
+
           {/* Goals */}
           {project.goals && project.goals.length > 0 && (
             <section>
