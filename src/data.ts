@@ -46,6 +46,8 @@ export interface Project {
   demoLinks?: DemoLink[];
   videoUrl?: string;
   results?: ResultStat[];
+  goals?: LText[];
+  achievements?: LText[];
   featured?: boolean;
 }
 

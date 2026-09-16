@@ -5,7 +5,7 @@ import { useLang } from "../i18n";
 import { T, CONTACT } from "../data";
 import { useContent } from "../lib/content";
 import { CountUp, Reveal } from "../lib/ui";
-import { ArrowIcon, ExternalIcon, PlayIcon, detectUrlIcon } from "../components/icons";
+import { ArrowIcon, ExternalIcon, PlayIcon, detectUrlIcon, TargetIcon, TrophyIcon } from "../components/icons";
 import { Lightbox, DemoViewer, VideoPlayer, type DemoPage } from "../components/project";
 import { extractProjectKeywords, generateMetaDescription } from "../lib/seo";
 
@@ -206,6 +206,60 @@ export default function ProjectDetail() {
               ))}
             </div>
           </section>
+
+          {/* Goals */}
+          {project.goals && project.goals.length > 0 && (
+            <section>
+              <Reveal>
+                <h2 className="font-display mb-4 flex items-center gap-2 text-xl font-extrabold text-ink sm:mb-5 sm:gap-3 sm:text-2xl">
+                  <TargetIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+                  <span style={{ color: cat.color }}>{lang === "ar" ? "الأهداف" : "Goals"}</span>
+                </h2>
+              </Reveal>
+              <div className="space-y-3">
+                {project.goals.map((goal, i) => (
+                  <Reveal key={i} delay={i * 80}>
+                    <div className="flex items-start gap-3 rounded-xl border border-line bg-surface p-4 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md sm:p-5">
+                      <span
+                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold sm:h-9 sm:w-9 sm:text-sm"
+                        style={{ background: cat.tint, color: cat.color }}
+                      >
+                        {i + 1}
+                      </span>
+                      <p className="text-sm leading-relaxed text-ink-soft sm:text-base">{t(goal)}</p>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Achievements */}
+          {project.achievements && project.achievements.length > 0 && (
+            <section>
+              <Reveal>
+                <h2 className="font-display mb-4 flex items-center gap-2 text-xl font-extrabold text-ink sm:mb-5 sm:gap-3 sm:text-2xl">
+                  <TrophyIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+                  <span style={{ color: cat.color }}>{lang === "ar" ? "الإنجازات" : "Achievements"}</span>
+                </h2>
+              </Reveal>
+              <div className="space-y-3">
+                {project.achievements.map((achievement, i) => (
+                  <Reveal key={i} delay={i * 80}>
+                    <div className="flex items-start gap-3 rounded-xl border border-line bg-surface p-4 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md sm:p-5">
+                      <span
+                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold sm:h-9 sm:w-9 sm:text-sm"
+                        style={{ background: cat.tint, color: cat.color }}
+                      >
+                        ✓
+                      </span>
+                      <p className="text-sm leading-relaxed text-ink-soft sm:text-base">{t(achievement)}</p>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
+            </section>
+          )}
 
           {/* Video */}
           {project.videoUrl && (

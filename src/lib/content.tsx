@@ -310,6 +310,8 @@ function normalizeProject(raw: Record<string, unknown>, i: number, categories: C
     demoLinks: demoLinks.length > 0 ? demoLinks : undefined,
     videoUrl: str(raw.videoUrl ?? raw.video) || undefined,
     results: toResults(raw.results ?? raw.stats ?? raw.metrics),
+    goals: toLTextList(raw.goals ?? raw.objectives ?? raw.targets),
+    achievements: toLTextList(raw.achievements ?? raw.milestones ?? raw.accomplishments),
     featured: Boolean(raw.featured),
   };
 }

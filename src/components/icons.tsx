@@ -9,7 +9,9 @@ import {
   RiExternalLinkLine,
   RiBehanceFill,
   RiVercelFill,
-  RiNetflixFill
+  RiNetflixFill,
+  RiTargetLine,
+  RiTrophyLine
 } from "react-icons/ri";
 
 interface IconProps {
@@ -296,6 +298,14 @@ export function VimeoIcon({ className = "h-4 w-4" }: IconProps) {
 
 export function LinkIcon({ className = "h-4 w-4" }: IconProps) {
   return <RiExternalLinkLine className={className} />;
+}
+
+export function TargetIcon({ className = "h-4 w-4" }: IconProps) {
+  return <RiTargetLine className={className} />;
+}
+
+export function TrophyIcon({ className = "h-4 w-4" }: IconProps) {
+  return <RiTrophyLine className={className} />;
 }
 
 /**
