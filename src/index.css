@@ -366,7 +366,7 @@ button:hover .img-zoom {
   --yarl__color_control_active: #e8590c !important;
   --yarl__color_control_inactive: rgba(243, 246, 248, 0.5) !important;
   --yarl__color_button: #ffffff !important;
-  --yarl__background_button: rgba(13, 31, 51, 0.8) !important;
+  --yarl__background_button: transparent !important;
   --yarl__background_button_active: #e8590c !important;
 }
 
@@ -383,32 +383,34 @@ button:hover .img-zoom {
 }
 
 .yarl__button {
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  transition: color 0.2s ease-in-out !important;
+  padding: 0.5rem !important;
 }
 
 .yarl__button:hover {
-  transform: scale(1.1) !important;
+  color: #e8590c !important;
 }
 
 .yarl__close_button {
-  background: rgba(13, 31, 51, 0.8) !important;
-  backdrop-filter: blur(10px) !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
   border-radius: 50% !important;
 }
 
 .yarl__close_button:hover {
-  background: #e8590c !important;
+  color: #e8590c !important;
 }
 
 .yarl__navigation_prev,
 .yarl__navigation_next {
-  background: rgba(13, 31, 51, 0.8) !important;
-  backdrop-filter: blur(10px) !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  padding: 0.5rem !important;
 }
 
 .yarl__navigation_prev:hover,
 .yarl__navigation_next:hover {
-  background: #e8590c !important;
+  color: #e8590c !important;
 }
 
 .yarl__slide_description {
@@ -435,4 +437,12 @@ button:hover .img-zoom {
 [dir="rtl"] .yarl__navigation_next {
   left: 0 !important;
   right: auto !important;
+}
+
+/* Hide navigation arrows on small and medium screens */
+@media (max-width: 1023px) {
+  .yarl__navigation_prev,
+  .yarl__navigation_next {
+    display: none !important;
+  }
 }
