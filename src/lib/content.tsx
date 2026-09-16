@@ -302,7 +302,8 @@ function normalizeProject(raw: Record<string, unknown>, i: number, categories: C
     client: toLText(raw.client ?? raw.customer ?? raw.brand),
     title,
     tagline: toLText(raw.tagline ?? raw.subtitle ?? raw.summary ?? raw.excerpt ?? raw.short),
-    description: toParagraphs(raw.description ?? raw.desc ?? raw.details ?? raw.content ?? raw.about),
+    description: toParagraphs(raw.description ?? raw.desc ?? raw.content ?? raw.about),
+    details: toParagraphs(raw.details ?? raw.executionDetails ?? raw.implementationDetails),
     services: toLTextList(raw.services ?? raw.tags ?? raw.scope),
     image,
     gallery: toGallery(raw.gallery ?? raw.images ?? raw.screenshots ?? raw.photos, image),
@@ -310,6 +311,8 @@ function normalizeProject(raw: Record<string, unknown>, i: number, categories: C
     demoLinks: demoLinks.length > 0 ? demoLinks : undefined,
     videoUrl: str(raw.videoUrl ?? raw.video) || undefined,
     results: toResults(raw.results ?? raw.stats ?? raw.metrics),
+    goals: toLTextList(raw.goals ?? raw.objectives ?? raw.targets),
+    achievements: toLTextList(raw.achievements ?? raw.milestones ?? raw.accomplishments),
     featured: Boolean(raw.featured),
   };
 }
