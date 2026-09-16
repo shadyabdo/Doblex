@@ -269,6 +269,16 @@ function normalizeDemoLinks(raw: Record<string, unknown>): DemoLink[] {
   return links;
 }
 
+// دالة تحول الاسم لـ URL-friendly slug
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '') // تشيل الرموز الخاصة
+    .replace(/[\s_-]+/g, '-') // تحول المسافات والشرطات لـ -
+    .replace(/^-+|-+$/g, ''); // تشيل الشرطات من البداية والنهاية
+}
+
 function normalizeProject(raw: Record<string, unknown>, i: number, categories: Category[]): Project {
   const title = toLText(raw.title ?? raw.name);
   const image =
@@ -280,9 +290,12 @@ function normalizeProject(raw: Record<string, unknown>, i: number, categories: C
   // نقرأ fieldId أو fieldLabel من البيانات الفعلية
   const fieldRef = raw.fieldId ?? raw.fieldLabel ?? raw.category ?? raw.cat ?? raw.categoryId ?? raw.domain ?? raw.field;
   
+  // نعمل slug من اسم المشروع لو مفيش slug موجود
+  const slug = str(raw.slug) || slugify(title.ar || title.en || `project-${i}`);
+  
   return {
     id: str(raw.id ?? `p-${i}`),
-    slug: str(raw.slug ?? raw.id ?? `project-${i}`),
+    slug,
     category: resolveCategoryId(fieldRef, categories),
     year: Number(raw.year) || new Date().getFullYear(),
     duration: toLText(raw.duration ?? raw.time ?? raw.timeline),
