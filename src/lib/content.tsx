@@ -292,6 +292,40 @@ function slugify(text: string): string {
     .replace(/^-+|-+$/g, ''); // تشيل الشرطات من البداية والنهاية
 }
 
+// دالة خاصة لقراءة goals و achievements من Firestore
+function normalizeGoalsAchievements(v: unknown): LText[] {
+  if (!v) return [];
+  
+  // لو كان array
+  if (Array.isArray(v)) {
+    return v.map((item) => {
+      // لو العنصر string
+      if (typeof item === 'string') {
+        return { ar: item, en: item };
+      }
+      // لو العنصر object
+      if (typeof item === 'object' && item !== null) {
+        const obj = item as Record<string, unknown>;
+        // نجرب نقرأ من حقول مختلفة
+        const text = str(obj.text ?? obj.value ?? obj.content ?? obj.title ?? obj.name ?? obj.description);
+        const ar = str(obj.ar ?? obj.arabic ?? obj.name_ar);
+        const en = str(obj.en ?? obj.english ?? obj.name_en);
+        
+        if (ar || en) return { ar: ar || text, en: en || text };
+        if (text) return { ar: text, en: text };
+      }
+      return { ar: str(item), en: str(item) };
+    }).filter((x) => x.ar || x.en);
+  }
+  
+  // لو كان string واحد
+  if (typeof v === 'string') {
+    return [{ ar: v, en: v }];
+  }
+  
+  return [];
+}
+
 function normalizeProject(raw: Record<string, unknown>, i: number, categories: Category[]): Project {
   const title = toLText(raw.title ?? raw.name);
   const image =
@@ -324,8 +358,8 @@ function normalizeProject(raw: Record<string, unknown>, i: number, categories: C
     demoLinks: demoLinks.length > 0 ? demoLinks : undefined,
     videoUrl: str(raw.videoUrl ?? raw.video) || undefined,
     results: toResults(raw.results ?? raw.stats ?? raw.metrics),
-    goals: toLTextList(raw.goals ?? raw.objectives ?? raw.targets),
-    achievements: toLTextList(raw.achievements ?? raw.milestones ?? raw.accomplishments),
+    goals: normalizeGoalsAchievements(raw.goals ?? raw.objectives ?? raw.targets),
+    achievements: normalizeGoalsAchievements(raw.achievements ?? raw.milestones ?? raw.accomplishments),
     featured: Boolean(raw.featured),
   };
 }
