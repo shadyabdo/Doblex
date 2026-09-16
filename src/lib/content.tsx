@@ -96,7 +96,20 @@ function toParagraphs(v: unknown): { ar: string[]; en: string[] } {
 
 function toLTextList(v: unknown): LText[] {
   if (!Array.isArray(v)) return [];
-  return v.map((x) => toLText(x)).filter((x) => x.ar || x.en);
+  return v.map((x) => {
+    // لو العنصر string
+    if (typeof x === 'string') {
+      return { ar: x, en: x };
+    }
+    // لو العنصر object فيه ar/en
+    if (typeof x === 'object' && x !== null) {
+      const obj = x as Record<string, unknown>;
+      const ar = str(obj.ar ?? obj.arabic ?? obj.name_ar ?? obj.text_ar);
+      const en = str(obj.en ?? obj.english ?? obj.name_en ?? obj.text_en);
+      if (ar || en) return { ar: ar || en, en: en || ar };
+    }
+    return { ar: str(x), en: str(x) };
+  }).filter((x) => x.ar || x.en);
 }
 
 function toGallery(v: unknown, fallback: string): GalleryItem[] {
