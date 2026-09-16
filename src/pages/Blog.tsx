@@ -27,6 +27,40 @@ export default function Blog() {
 
   const activeName = activeCat ? getBlogCategory(activeCat) : null;
 
+  // Generate keywords from posts
+  const keywords = [
+    ...posts.slice(0, 10).map(p => t(p.title)),
+    "مدونة", "مقالات", "تطوير مواقع", "جرافيك ديزاين", "فيديو إديتينج", "ديجيتال ماركتينج",
+    "blog", "articles", "web development", "graphic design", "video editing", "digital marketing"
+  ].join(", ");
+
+  const blogUrl = "https://duplex.studio/#/blog";
+
+  // Structured data for Blog
+  const blogSchema = {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "name": lang === "ar" ? "مدونة دوبليكس" : "Duplex Blog",
+    "description": lang === "ar" 
+      ? "مقالات ورؤى من فريق دوبليكس حول تطوير المواقع، التصميم، الفيديو، والتسويق الرقمي."
+      : "Articles and insights from the Duplex team on web development, design, video, and digital marketing.",
+    "url": blogUrl,
+    "publisher": {
+      "@type": "Organization",
+      "name": "Duplex Studio"
+    },
+    "blogPost": posts.slice(0, 10).map(p => ({
+      "@type": "BlogPosting",
+      "headline": t(p.title),
+      "url": `https://duplex.studio/#/blog/${p.slug}`,
+      "datePublished": p.date,
+      "author": {
+        "@type": "Organization",
+        "name": "Duplex Studio"
+      }
+    }))
+  };
+
   return (
     <>
       <Helmet>
@@ -39,6 +73,36 @@ export default function Blog() {
               : "Articles from the Duplex team on web development, design, video and digital marketing."
           }
         />
+        <meta name="keywords" content={keywords} />
+        <meta name="author" content="Duplex Studio" />
+        
+        {/* Open Graph */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={lang === "ar" ? "مدونة دوبليكس — مقالات ورؤى" : "Duplex Blog — Articles & Insights"} />
+        <meta property="og:description" content={
+          lang === "ar"
+            ? "مقالات فريق دوبليكس حول تطوير المواقع، التصميم، الفيديو، والتسويق الرقمي."
+            : "Articles from the Duplex team on web development, design, video and digital marketing."
+        } />
+        <meta property="og:url" content={blogUrl} />
+        <meta property="og:site_name" content="Duplex Studio" />
+        
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content={lang === "ar" ? "مدونة دوبليكس — مقالات ورؤى" : "Duplex Blog — Articles & Insights"} />
+        <meta name="twitter:description" content={
+          lang === "ar"
+            ? "مقالات فريق دوبليكس حول تطوير المواقع، التصميم، الفيديو، والتسويق الرقمي."
+            : "Articles from the Duplex team on web development, design, video and digital marketing."
+        } />
+        
+        {/* Canonical URL */}
+        <link rel="canonical" href={blogUrl} />
+        
+        {/* Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify(blogSchema)}
+        </script>
       </Helmet>
 
       {/* ---------- Header ---------- */}

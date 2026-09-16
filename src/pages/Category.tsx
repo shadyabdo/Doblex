@@ -27,11 +27,62 @@ export default function Category() {
     : "—";
   const others = categories.filter((c) => c.id !== cat.id);
 
+  // Generate keywords from category and projects
+  const keywords = [
+    t(cat.name),
+    ...projects.slice(0, 5).map(p => t(p.title)),
+    "استوديو تقني", "تطوير مواقع", "جرافيك ديزاين", "فيديو إديتينج", "ديجيتال ماركتينج",
+    "tech studio", "web development", "graphic design", "video editing", "digital marketing"
+  ].join(", ");
+
+  const categoryUrl = `https://duplex.studio/#/work/${cat.id}`;
+
+  // Structured data for CollectionPage
+  const categorySchema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": t(cat.name),
+    "description": t(cat.blurb),
+    "url": categoryUrl,
+    "numberOfItems": projects.length,
+    "mainEntity": {
+      "@type": "ItemList",
+      "itemListElement": projects.map((p, i) => ({
+        "@type": "ListItem",
+        "position": i + 1,
+        "name": t(p.title),
+        "url": `https://duplex.studio/#/project/${p.slug}`
+      }))
+    }
+  };
+
   return (
     <>
       <Helmet>
         <title>{`${t(cat.name)} — ${t(T.brand)}`}</title>
         <meta name="description" content={t(cat.blurb)} />
+        <meta name="keywords" content={keywords} />
+        <meta name="author" content="Duplex Studio" />
+        
+        {/* Open Graph */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={`${t(cat.name)} — دوبليكس`} />
+        <meta property="og:description" content={t(cat.blurb)} />
+        <meta property="og:url" content={categoryUrl} />
+        <meta property="og:site_name" content="Duplex Studio" />
+        
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content={`${t(cat.name)} — دوبليكس`} />
+        <meta name="twitter:description" content={t(cat.blurb)} />
+        
+        {/* Canonical URL */}
+        <link rel="canonical" href={categoryUrl} />
+        
+        {/* Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify(categorySchema)}
+        </script>
       </Helmet>
 
       {/* ---------- Header ---------- */}

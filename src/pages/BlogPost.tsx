@@ -6,6 +6,7 @@ import { useContent } from "../lib/content";
 import { Reveal } from "../lib/ui";
 import { ArrowIcon, CalendarIcon, ClockIcon, UserIcon } from "../components/icons";
 import { BlogCard, formatDate } from "../components/project";
+import { extractPostKeywords, generateMetaDescription } from "../lib/seo";
 
 export default function BlogPost() {
   const { slug } = useParams();
@@ -19,16 +20,68 @@ export default function BlogPost() {
   const body = post.body[lang].length ? post.body[lang] : post.body.ar;
   const related = posts.filter((p) => p.categoryId === post.categoryId && p.id !== post.id).slice(0, 3);
 
+  // Extract keywords automatically
+  const keywords = extractPostKeywords(post);
+  const metaDescription = generateMetaDescription(body.join(" "), 160);
+  const postUrl = `https://duplex.studio/#/blog/${post.slug}`;
+
+  // Structured data for BlogPosting
+  const blogSchema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": t(post.title),
+    "description": metaDescription || t(post.excerpt),
+    "image": post.image,
+    "url": postUrl,
+    "datePublished": post.date,
+    "dateModified": post.date,
+    "author": {
+      "@type": "Organization",
+      "name": "Duplex Studio"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Duplex Studio",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://www.image2url.com/r2/default/images/1788096124951-89c2faca-7359-4beb-9d53-d81a0ffc007b.jfif"
+      }
+    },
+    "keywords": keywords[lang].join(", "),
+    "articleBody": body.join(" ")
+  };
+
   return (
     <>
       <Helmet>
-        <title>{t(post.title)}</title>
-        <meta name="description" content={t(post.excerpt)} />
+        <title>{`${t(post.title)} — ${t(T.navBlog)}`}</title>
+        <meta name="description" content={metaDescription || t(post.excerpt)} />
+        <meta name="keywords" content={keywords[lang].join(", ")} />
+        <meta name="author" content="Duplex Studio" />
+        
+        {/* Open Graph */}
         <meta property="og:type" content="article" />
         <meta property="og:title" content={t(post.title)} />
-        <meta property="og:description" content={t(post.excerpt)} />
+        <meta property="og:description" content={metaDescription || t(post.excerpt)} />
         <meta property="og:image" content={post.image} />
-        <meta property="article:author" content={t(AUTHOR)} />
+        <meta property="og:url" content={postUrl} />
+        <meta property="article:published_time" content={new Date(post.date).toISOString()} />
+        <meta property="article:author" content="Duplex Studio" />
+        {cat && <meta property="article:section" content={t(cat.name)} />}
+        
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={t(post.title)} />
+        <meta name="twitter:description" content={metaDescription || t(post.excerpt)} />
+        <meta name="twitter:image" content={post.image} />
+        
+        {/* Canonical URL */}
+        <link rel="canonical" href={postUrl} />
+        
+        {/* Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify(blogSchema)}
+        </script>
       </Helmet>
 
       {/* ---------- Header ---------- */}
