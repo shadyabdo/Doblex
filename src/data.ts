@@ -39,6 +39,7 @@ export interface Project {
   title: LText;
   tagline: LText;
   description: { ar: string[]; en: string[] };
+  details?: { ar: string[]; en: string[] };
   services: LText[];
   image: string;
   gallery: GalleryItem[];
