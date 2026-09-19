@@ -22,8 +22,12 @@ export default function BlogPost() {
   const body = post.body[lang].length ? post.body[lang] : post.body.ar;
   const related = posts.filter((p) => p.categoryId === post.categoryId && p.id !== post.id).slice(0, 3);
 
-  // Parse content into blocks
+  // Parse content into blocks - بس النصوص العادية والأسطر المميزة
   const contentBlocks = parseContent(body);
+  
+  // FAQs و Comparisons من Firestore
+  const faqs = post.faqs || [];
+  const comparisons = post.comparisons || [];
 
   // Extract keywords automatically
   const keywords = extractPostKeywords(post);
@@ -218,6 +222,47 @@ export default function BlogPost() {
               </Reveal>
             );
           })}
+          
+          {/* FAQs من Firestore */}
+          {faqs.length > 0 && (
+            <Reveal delay={200}>
+              <div className="mt-8 sm:mt-10">
+                <h2 className="font-display mb-5 flex items-center gap-2 text-xl font-extrabold text-ink sm:mb-6 sm:text-2xl">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="h-5 w-5 sm:h-6 sm:w-6"
+                    style={{ color: cat?.color ?? "#0B7C74" }}
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" />
+                  </svg>
+                  {lang === "ar" ? "أسئلة شائعة" : "FAQ"}
+                </h2>
+                <FAQAccordion items={faqs} color={cat?.color ?? "#0B7C74"} />
+              </div>
+            </Reveal>
+          )}
+          
+          {/* Comparisons من Firestore */}
+          {comparisons.length > 0 && (
+            <div className="mt-8 space-y-6 sm:mt-10">
+              {comparisons.map((comp, i) => (
+                <Reveal key={i} delay={200 + i * 100}>
+                  <ComparisonTable 
+                    title={comp.title} 
+                    items={comp.items} 
+                    color={cat?.color ?? "#0B7C74"} 
+                  />
+                </Reveal>
+              ))}
+            </div>
+          )}
         </div>
 
         {post.tags.length > 0 && (

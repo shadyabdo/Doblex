@@ -10,6 +10,7 @@ export type ContentBlock =
 
 /**
  * يحلل المحتوى ويستخرج الأنماط المختلفة
+ * ملاحظة: FAQs و Comparisons بتيجي من Firestore مباشرة، مش من الـ parser
  */
 export function parseContent(paragraphs: string[]): ContentBlock[] {
   const blocks: ContentBlock[] = [];
@@ -29,34 +30,7 @@ export function parseContent(paragraphs: string[]): ContentBlock[] {
       }
     }
 
-    // 2. FAQ (سؤال ينتهي بـ ؟ أو ? والإجابة في السطر التالي)
-    // نتحقق إن السؤال قصير نسبياً (مش فقرة طويلة بتنتهي بعلامة استفهام)
-    const isQuestion = (trimmed.endsWith("؟") || trimmed.endsWith("?")) && 
-                       trimmed.length < 150 && // السؤال قصير
-                       i + 1 < paragraphs.length;
-    
-    if (isQuestion) {
-      const nextPara = paragraphs[i + 1];
-      const answer = nextPara.trim();
-      
-      // نتأكد إن الإجابة مش سؤال تاني
-      const isAnswerQuestion = answer.endsWith("؟") || answer.endsWith("?");
-      
-      // نتأكد إن الإجابة مش قصيرة جداً (يعني مش مجرد كلمة)
-      const isAnswerValid = answer.length > 10 && !isAnswerQuestion;
-      
-      if (isAnswerValid) {
-        blocks.push({
-          type: "faq",
-          question: trimmed,
-          answer: answer,
-        });
-        i += 2;
-        continue;
-      }
-    }
-
-    // 3. Highlight line (يبدأ بـ -)
+    // 2. Highlight line (يبدأ بـ -)
     if (trimmed.startsWith("-") || trimmed.startsWith("—") || trimmed.startsWith("–")) {
       const content = trimmed.substring(1).trim();
       if (content.length > 0) {
@@ -66,14 +40,14 @@ export function parseContent(paragraphs: string[]): ContentBlock[] {
       }
     }
 
-    // 4. عنوان فرعي (يبدأ برقم ونقطة مثل "1." أو "2.")
+    // 3. عنوان فرعي (يبدأ برقم ونقطة مثل "1." أو "2.")
     if (/^\d+\./.test(trimmed)) {
       blocks.push({ type: "highlight", content: trimmed });
       i++;
       continue;
     }
 
-    // 5. نص عادي - الافتراضي
+    // 4. نص عادي - الافتراضي
     blocks.push({ type: "text", content: para });
     i++;
   }
