@@ -174,7 +174,7 @@ export default function BlogPost() {
                       background: `linear-gradient(135deg, ${cat?.tint ?? "#E1F0EE"} 0%, ${cat?.color ?? "#0B7C74"}15 100%)`,
                     }}
                   >
-                    <div className="relative z-10">
+                    <div className="relative z-10 text-center">
                       <p
                         className="font-display text-xl leading-[1.6] font-bold text-ink sm:text-2xl md:text-3xl"
                         style={{ color: cat?.color ?? "#0B7C74" }}
