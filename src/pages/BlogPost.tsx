@@ -7,6 +7,7 @@ import { Reveal } from "../lib/ui";
 import { ArrowIcon, CalendarIcon, ClockIcon, UserIcon } from "../components/icons";
 import { BlogCard, formatDate } from "../components/project";
 import { extractPostKeywords, generateMetaDescription } from "../lib/seo";
+import { FAQAccordion, extractFAQs } from "../components/FAQAccordion";
 
 export default function BlogPost() {
   const { slug } = useParams();
@@ -20,10 +21,26 @@ export default function BlogPost() {
   const body = post.body[lang].length ? post.body[lang] : post.body.ar;
   const related = posts.filter((p) => p.categoryId === post.categoryId && p.id !== post.id).slice(0, 3);
 
+  // Extract FAQs from content
+  const { content: regularContent, faqs } = extractFAQs(body);
+
   // Extract keywords automatically
   const keywords = extractPostKeywords(post);
   const metaDescription = generateMetaDescription(body.join(" "), 160);
   const postUrl = `https://duplex.studio/#/blog/${post.slug}`;
+
+  // نعالج التاريخ بشكل آمن
+  let safeDate = post.date;
+  try {
+    const dateObj = new Date(post.date);
+    if (isNaN(dateObj.getTime())) {
+      safeDate = new Date().toISOString();
+    } else {
+      safeDate = dateObj.toISOString();
+    }
+  } catch {
+    safeDate = new Date().toISOString();
+  }
 
   // Structured data for BlogPosting
   const blogSchema = {
@@ -33,8 +50,8 @@ export default function BlogPost() {
     "description": metaDescription || t(post.excerpt),
     "image": post.image,
     "url": postUrl,
-    "datePublished": post.date,
-    "dateModified": post.date,
+    "datePublished": safeDate,
+    "dateModified": safeDate,
     "author": {
       "@type": "Organization",
       "name": "Duplex Studio"
@@ -65,7 +82,7 @@ export default function BlogPost() {
         <meta property="og:description" content={metaDescription || t(post.excerpt)} />
         <meta property="og:image" content={post.image} />
         <meta property="og:url" content={postUrl} />
-        <meta property="article:published_time" content={new Date(post.date).toISOString()} />
+        <meta property="article:published_time" content={safeDate} />
         <meta property="article:author" content="Duplex Studio" />
         {cat && <meta property="article:section" content={t(cat.name)} />}
         
@@ -132,7 +149,7 @@ export default function BlogPost() {
       {/* ---------- Body ---------- */}
       <section className="container-x py-10 sm:py-12 md:py-16">
         <div className="mx-auto max-w-3xl space-y-5 sm:space-y-6">
-          {body.map((para, i) => (
+          {regularContent.map((para, i) => (
             <Reveal key={i} delay={Math.min(i * 60, 240)}>
               <p
                 className={`text-sm leading-[1.9] text-ink-soft sm:text-base md:text-lg ${
@@ -144,6 +161,32 @@ export default function BlogPost() {
               </p>
             </Reveal>
           ))}
+          
+          {/* FAQ Accordion Section */}
+          {faqs.length > 0 && (
+            <Reveal delay={200}>
+              <div className="mt-8 sm:mt-10">
+                <h2 className="font-display mb-5 flex items-center gap-2 text-xl font-extrabold text-ink sm:mb-6 sm:text-2xl">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="h-5 w-5 sm:h-6 sm:w-6"
+                    style={{ color: cat?.color ?? "#0B7C74" }}
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" />
+                  </svg>
+                  {lang === "ar" ? "أسئلة شائعة" : "FAQ"}
+                </h2>
+                <FAQAccordion items={faqs} color={cat?.color ?? "#0B7C74"} />
+              </div>
+            </Reveal>
+          )}
         </div>
 
         {post.tags.length > 0 && (
