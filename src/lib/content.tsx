@@ -450,18 +450,38 @@ function normalizeBlogCategory(raw: Record<string, unknown>, i: number): BlogCat
   };
 }
 
-function deriveBlogCategories(posts: BlogPost[]): BlogCategory[] {
+function deriveBlogCategories(posts: BlogPost[], categories: Category[] = []): BlogCategory[] {
   const seen = new Map<string, BlogCategory>();
+  
   posts.forEach((p) => {
     if (!p.categoryId || seen.has(p.categoryId)) return;
-    const pal = PALETTE[seen.size % PALETTE.length];
-    seen.set(p.categoryId, {
-      id: p.categoryId,
-      name: { ar: p.categoryId, en: p.categoryId },
-      color: pal.color,
-      tint: pal.tint,
-    });
+    
+    // نبحث عن المجال المطابق في categories
+    const matchingCategory = categories.find(c => 
+      c.name.ar === p.categoryId || 
+      c.name.en === p.categoryId ||
+      c.id === p.categoryId
+    );
+    
+    if (matchingCategory) {
+      seen.set(p.categoryId, {
+        id: matchingCategory.id,
+        name: matchingCategory.name,
+        color: matchingCategory.color,
+        tint: matchingCategory.tint,
+      });
+    } else {
+      // لو مفيش مجال مطابق، نعمل واحد جديد
+      const pal = PALETTE[seen.size % PALETTE.length];
+      seen.set(p.categoryId, {
+        id: p.categoryId,
+        name: { ar: p.categoryId, en: p.categoryId },
+        color: pal.color,
+        tint: pal.tint,
+      });
+    }
   });
+  
   return [...seen.values()];
 }
 
@@ -519,7 +539,17 @@ const guessCategories = (v: unknown) =>
 const guessProjects = (v: unknown) =>
   isObjArr(v) && v.some((x) => x.demoUrl != null || x.demo != null || x.gallery != null || x.client != null || x.services != null);
 const guessPosts = (v: unknown) =>
-  isObjArr(v) && v.some((x) => x.date != null || x.body != null || x.content != null || x.publishedAt != null || x.excerpt != null);
+  isObjArr(v) && v.some((x) => 
+    x.date != null || 
+    x.body != null || 
+    x.content != null || 
+    x.publishedAt != null || 
+    x.excerpt != null ||
+    x.title != null ||
+    x.cover != null ||
+    x.readMins != null ||
+    x.fieldLabel != null
+  );
 
 export function normalizeContent(raw: Record<string, unknown>): {
   categories: Category[];
@@ -566,7 +596,7 @@ export function normalizeContent(raw: Record<string, unknown>): {
   const posts = (postsArr ?? []).map((x, i) => normalizePost(x as Record<string, unknown>, i));
   const blogCategories = blogCatsArr
     ? blogCatsArr.map((x, i) => normalizeBlogCategory(x as Record<string, unknown>, i))
-    : deriveBlogCategories(posts);
+    : deriveBlogCategories(posts, categories);
   
   return { categories, projects, posts, blogCategories };
 }
