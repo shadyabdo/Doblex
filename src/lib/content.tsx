@@ -296,9 +296,6 @@ function slugify(text: string): string {
 function normalizeGoalsAchievements(v: unknown): LText[] {
   if (!v) return [];
   
-  // Debug: نشوف البيانات الفعلية
-  console.log('[Duplex] Goals/Achievements raw data:', v);
-  
   // لو كان array
   if (Array.isArray(v)) {
     return v.map((item) => {
@@ -371,6 +368,39 @@ function normalizeProject(raw: Record<string, unknown>, i: number, categories: C
 function normalizePost(raw: Record<string, unknown>, i: number): BlogPost {
   const title = toLText(raw.title ?? raw.name);
   const body = toParagraphs(raw.body ?? raw.content ?? raw.text ?? raw.description);
+  
+  // نعالج التاريخ بشكل آمن
+  let dateStr = "";
+  const rawDate = raw.date ?? raw.publishedAt ?? raw.createdAt;
+  
+  // لو التاريخ رقم (timestamp من Firestore)
+  if (typeof rawDate === 'number') {
+    try {
+      dateStr = new Date(rawDate).toISOString().slice(0, 10);
+    } catch {
+      dateStr = "";
+    }
+  } else {
+    dateStr = str(rawDate);
+  }
+  
+  // نتأكد إن التاريخ صالح
+  if (dateStr) {
+    try {
+      const testDate = new Date(dateStr);
+      if (isNaN(testDate.getTime())) {
+        dateStr = "";
+      }
+    } catch {
+      dateStr = "";
+    }
+  }
+  
+  // لو لسه مفيش تاريخ صالح، نستخدم تاريخ اليوم
+  if (!dateStr) {
+    dateStr = new Date().toISOString().slice(0, 10);
+  }
+  
   return {
     id: str(raw.id ?? `b-${i}`),
     slug: str(raw.slug ?? raw.id ?? `post-${i}`),
@@ -379,7 +409,7 @@ function normalizePost(raw: Record<string, unknown>, i: number): BlogPost {
     body,
     categoryId: str(raw.categoryId ?? raw.category ?? raw.cat ?? raw.tag ?? ""),
     image: str(raw.image ?? raw.cover ?? raw.thumb) || FALLBACK_IMGS[i % FALLBACK_IMGS.length],
-    date: str(raw.date ?? raw.publishedAt ?? raw.createdAt) || new Date().toISOString().slice(0, 10),
+    date: dateStr,
     readMinutes:
       Number(raw.readMinutes ?? raw.readTime ?? raw.minutes) ||
       Math.max(2, Math.round(body.ar.join(" ").split(/\s+/).length / 180)),
@@ -492,19 +522,13 @@ export function normalizeContent(raw: Record<string, unknown>): {
 
   const categories = (catsArr ?? []).map((x, i) => normalizeCategory(x as Record<string, unknown>, i));
   const projects = (projectsArr ?? []).map((x, i) => normalizeProject(x as Record<string, unknown>, i, categories));
-  
-  // Debug: نشوف بيانات المقالات
-  console.log('[Duplex] Raw posts data:', postsArr);
-  console.log('[Duplex] All arrays found:', arrays.map(a => a.key));
-  
   const posts = (postsArr ?? []).map((x, i) => normalizePost(x as Record<string, unknown>, i));
   const blogCategories = blogCatsArr
     ? blogCatsArr.map((x, i) => normalizeBlogCategory(x as Record<string, unknown>, i))
     : deriveBlogCategories(posts);
   
-  console.log('[Duplex] Normalized posts:', posts);
-  
-  return { categories, projects, posts, blogCategories };}
+  return { categories, projects, posts, blogCategories };
+}
 
 /* ------------------------------------------------------------------ */
 /*  الترجمة التلقائية عربي → إنجليزي للمحتوى القادم من الداشبورد          */

@@ -22,6 +22,10 @@ import {
 export function formatDate(iso: string, lang: "ar" | "en"): string {
   try {
     const d = new Date(iso);
+    // نتأكد إن التاريخ صالح
+    if (isNaN(d.getTime())) {
+      return iso;
+    }
     return new Intl.DateTimeFormat(lang === "ar" ? "ar-EG" : "en-GB", {
       day: "numeric",
       month: "long",

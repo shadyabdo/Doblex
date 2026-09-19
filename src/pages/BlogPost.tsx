@@ -29,6 +29,19 @@ export default function BlogPost() {
   const metaDescription = generateMetaDescription(body.join(" "), 160);
   const postUrl = `https://duplex.studio/#/blog/${post.slug}`;
 
+  // نعالج التاريخ بشكل آمن
+  let safeDate = post.date;
+  try {
+    const dateObj = new Date(post.date);
+    if (isNaN(dateObj.getTime())) {
+      safeDate = new Date().toISOString();
+    } else {
+      safeDate = dateObj.toISOString();
+    }
+  } catch {
+    safeDate = new Date().toISOString();
+  }
+
   // Structured data for BlogPosting
   const blogSchema = {
     "@context": "https://schema.org",
@@ -37,8 +50,8 @@ export default function BlogPost() {
     "description": metaDescription || t(post.excerpt),
     "image": post.image,
     "url": postUrl,
-    "datePublished": post.date,
-    "dateModified": post.date,
+    "datePublished": safeDate,
+    "dateModified": safeDate,
     "author": {
       "@type": "Organization",
       "name": "Duplex Studio"
@@ -69,7 +82,7 @@ export default function BlogPost() {
         <meta property="og:description" content={metaDescription || t(post.excerpt)} />
         <meta property="og:image" content={post.image} />
         <meta property="og:url" content={postUrl} />
-        <meta property="article:published_time" content={new Date(post.date).toISOString()} />
+        <meta property="article:published_time" content={safeDate} />
         <meta property="article:author" content="Duplex Studio" />
         {cat && <meta property="article:section" content={t(cat.name)} />}
         
