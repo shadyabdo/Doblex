@@ -76,8 +76,39 @@ function toLText(v: unknown): LText {
 
 function toParagraphs(v: unknown): { ar: string[]; en: string[] } {
   const split = (s: string) => {
-    // نقسم على كل سطر جديد - كل سطر يبقى فقرة منفصلة
-    const paragraphs = s.split(/\n+/).map((x) => x.trim()).filter(Boolean);
+    // نقسم على السطور الفاضية الأول
+    const lines = s.split(/\n+/).map((x) => x.trim()).filter(Boolean);
+    
+    // نجمع السطور في فقرات بناءً على علامات الترقيم
+    const paragraphs: string[] = [];
+    let currentParagraph = "";
+    
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      
+      // لو السطر الحالي فاضي، نبدأ فقرة جديدة
+      if (currentParagraph === "") {
+        currentParagraph = line;
+      } else {
+        // نتحقق لو السطر السابق انتهى بعلامة ترقيم
+        const endsWithPunctuation = /[.!?؟:]$/.test(currentParagraph);
+        
+        if (endsWithPunctuation) {
+          // نضيف الفقرة الحالية ونبدأ فقرة جديدة
+          paragraphs.push(currentParagraph);
+          currentParagraph = line;
+        } else {
+          // نضيف السطر للفقرة الحالية
+          currentParagraph += " " + line;
+        }
+      }
+    }
+    
+    // نضيف الفقرة الأخيرة
+    if (currentParagraph) {
+      paragraphs.push(currentParagraph);
+    }
+    
     return paragraphs;
   };
   
