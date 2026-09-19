@@ -19,40 +19,20 @@ export function parseContent(paragraphs: string[]): ContentBlock[] {
     const para = paragraphs[i];
     const trimmed = para.trim();
 
-    // 1. جدول Markdown (يبدأ بـ |)
+    // 1. جدول Markdown (يبدأ بـ |) - لازم يكون على الأقل 3 أسطر
     if (trimmed.startsWith("|") && trimmed.endsWith("|")) {
       const tableBlock = parseMarkdownTable(paragraphs, i);
-      if (tableBlock) {
+      if (tableBlock && tableBlock.table.rows.length >= 1) {
         blocks.push(tableBlock.table);
         i = tableBlock.nextIndex;
         continue;
       }
     }
 
-    // 2. جدول بسيط (أسطر فيها - أو : تفصل بين عمودين)
-    if (trimmed.includes(" - ") || trimmed.includes(" : ")) {
-      const tableBlock = parseSimpleTable(paragraphs, i);
-      if (tableBlock) {
-        blocks.push(tableBlock.table);
-        i = tableBlock.nextIndex;
-        continue;
-      }
-    }
-
-    // 3. مقارنة (قبل/بعد أو X vs Y)
-    if (isComparison(trimmed)) {
-      const comparisonBlock = parseComparison(paragraphs, i);
-      if (comparisonBlock) {
-        blocks.push(comparisonBlock.comparison);
-        i = comparisonBlock.nextIndex;
-        continue;
-      }
-    }
-
-    // 4. FAQ (سؤال ينتهي بـ ؟ أو ? والإجابة في السطر التالي)
+    // 2. FAQ (سؤال ينتهي بـ ؟ أو ? والإجابة في السطر التالي)
     if ((trimmed.endsWith("؟") || trimmed.endsWith("?")) && i + 1 < paragraphs.length) {
       const answer = paragraphs[i + 1].trim();
-      if (!answer.endsWith("؟") && !answer.endsWith("?")) {
+      if (!answer.endsWith("؟") && !answer.endsWith("?") && answer.length > 0) {
         blocks.push({
           type: "faq",
           question: trimmed,
@@ -63,15 +43,17 @@ export function parseContent(paragraphs: string[]): ContentBlock[] {
       }
     }
 
-    // 5. Highlight line (يبدأ بـ -)
+    // 3. Highlight line (يبدأ بـ -)
     if (trimmed.startsWith("-") || trimmed.startsWith("—") || trimmed.startsWith("–")) {
       const content = trimmed.substring(1).trim();
-      blocks.push({ type: "highlight", content });
-      i++;
-      continue;
+      if (content.length > 0) {
+        blocks.push({ type: "highlight", content });
+        i++;
+        continue;
+      }
     }
 
-    // 6. نص عادي
+    // 4. نص عادي - الافتراضي
     blocks.push({ type: "text", content: para });
     i++;
   }
