@@ -7,7 +7,8 @@ import { Reveal } from "../lib/ui";
 import { ArrowIcon, CalendarIcon, ClockIcon, UserIcon } from "../components/icons";
 import { BlogCard, formatDate } from "../components/project";
 import { extractPostKeywords, generateMetaDescription } from "../lib/seo";
-import { FAQAccordion, extractFAQs, isHighlightLine, removeHighlightMarker } from "../components/FAQAccordion";
+import { FAQAccordion } from "../components/FAQAccordion";
+import { parseContent, DataTable, ComparisonTable, type ContentBlock } from "../components/ContentParser";
 
 export default function BlogPost() {
   const { slug } = useParams();
@@ -21,8 +22,8 @@ export default function BlogPost() {
   const body = post.body[lang].length ? post.body[lang] : post.body.ar;
   const related = posts.filter((p) => p.categoryId === post.categoryId && p.id !== post.id).slice(0, 3);
 
-  // Extract FAQs from content
-  const { content: regularContent, faqs } = extractFAQs(body);
+  // Parse content into blocks
+  const contentBlocks = parseContent(body);
 
   // Extract keywords automatically
   const keywords = extractPostKeywords(post);
@@ -149,14 +150,23 @@ export default function BlogPost() {
       {/* ---------- Body ---------- */}
       <section className="container-x py-10 sm:py-12 md:py-16">
         <div className="mx-auto max-w-3xl space-y-5 sm:space-y-6">
-          {regularContent.map((para, i) => {
-            const isHighlight = isHighlightLine(para);
-            const highlightText = isHighlight ? removeHighlightMarker(para) : para;
+          {contentBlocks.map((block, i) => {
+            const delay = Math.min(i * 60, 240);
             
             return (
-              <Reveal key={i} delay={Math.min(i * 60, 240)}>
-                {isHighlight ? (
-                  // Highlighted line with background
+              <Reveal key={i} delay={delay}>
+                {block.type === "text" && (
+                  <p
+                    className={`text-sm leading-[1.9] text-ink-soft sm:text-base md:text-lg ${
+                      i === 0 ? "border-s-4 ps-4 text-lg font-semibold text-ink sm:ps-5 sm:text-xl md:text-2xl" : ""
+                    }`}
+                    style={i === 0 ? { borderColor: cat?.color ?? "#0B7C74" } : undefined}
+                  >
+                    {block.content}
+                  </p>
+                )}
+                
+                {block.type === "highlight" && (
                   <div
                     className="relative overflow-hidden rounded-2xl border-2 p-5 sm:p-6 md:p-8"
                     style={{
@@ -169,10 +179,9 @@ export default function BlogPost() {
                         className="font-display text-xl leading-[1.6] font-bold text-ink sm:text-2xl md:text-3xl"
                         style={{ color: cat?.color ?? "#0B7C74" }}
                       >
-                        {highlightText}
+                        {block.content}
                       </p>
                     </div>
-                    {/* Decorative elements */}
                     <div
                       className="absolute -end-8 -top-8 h-32 w-32 rounded-full opacity-10"
                       style={{ background: cat?.color ?? "#0B7C74" }}
@@ -182,46 +191,33 @@ export default function BlogPost() {
                       style={{ background: cat?.color ?? "#0B7C74" }}
                     />
                   </div>
-                ) : (
-                  // Regular paragraph
-                  <p
-                    className={`text-sm leading-[1.9] text-ink-soft sm:text-base md:text-lg ${
-                      i === 0 ? "border-s-4 ps-4 text-lg font-semibold text-ink sm:ps-5 sm:text-xl md:text-2xl" : ""
-                    }`}
-                    style={i === 0 ? { borderColor: cat?.color ?? "#0B7C74" } : undefined}
-                  >
-                    {para}
-                  </p>
+                )}
+                
+                {block.type === "faq" && (
+                  <FAQAccordion 
+                    items={[{ question: block.question, answer: block.answer }]} 
+                    color={cat?.color ?? "#0B7C74"} 
+                  />
+                )}
+                
+                {block.type === "table" && (
+                  <DataTable 
+                    headers={block.headers} 
+                    rows={block.rows} 
+                    color={cat?.color ?? "#0B7C74"} 
+                  />
+                )}
+                
+                {block.type === "comparison" && (
+                  <ComparisonTable 
+                    title={block.title} 
+                    items={block.items} 
+                    color={cat?.color ?? "#0B7C74"} 
+                  />
                 )}
               </Reveal>
             );
           })}
-          
-          {/* FAQ Accordion Section */}
-          {faqs.length > 0 && (
-            <Reveal delay={200}>
-              <div className="mt-8 sm:mt-10">
-                <h2 className="font-display mb-5 flex items-center gap-2 text-xl font-extrabold text-ink sm:mb-6 sm:text-2xl">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="h-5 w-5 sm:h-6 sm:w-6"
-                    style={{ color: cat?.color ?? "#0B7C74" }}
-                  >
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-                    <line x1="12" y1="17" x2="12.01" y2="17" />
-                  </svg>
-                  {lang === "ar" ? "أسئلة شائعة" : "FAQ"}
-                </h2>
-                <FAQAccordion items={faqs} color={cat?.color ?? "#0B7C74"} />
-              </div>
-            </Reveal>
-          )}
         </div>
 
         {post.tags.length > 0 && (
