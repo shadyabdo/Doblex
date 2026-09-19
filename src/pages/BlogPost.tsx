@@ -197,6 +197,23 @@ export default function BlogPost() {
                   </div>
                 )}
                 
+                {block.type === "callout" && (
+                  <div
+                    className="relative border-r-4 p-4 sm:p-5 md:p-6"
+                    style={{
+                      borderColor: cat?.color ?? "#0B7C74",
+                      backgroundColor: cat?.tint ?? "#E1F0EE",
+                    }}
+                  >
+                    <p
+                      className="text-base leading-[1.8] font-semibold text-ink sm:text-lg"
+                      style={{ color: cat?.color ?? "#0B7C74" }}
+                    >
+                      {block.content}
+                    </p>
+                  </div>
+                )}
+                
                 {block.type === "faq" && (
                   <FAQAccordion 
                     items={[{ question: block.question, answer: block.answer }]} 
