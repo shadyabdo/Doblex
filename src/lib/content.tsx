@@ -73,8 +73,12 @@ function toLText(v: unknown): LText {
 
 function toParagraphs(v: unknown): { ar: string[]; en: string[] } {
   const split = (s: string) => {
+    console.log('[Duplex] Raw content string:', s);
+    
     // نقسم على السطور الفاضية الأول
     const lines = s.split(/\n+/).map((x) => x.trim()).filter(Boolean);
+    
+    console.log('[Duplex] Lines after split:', lines);
     
     // لو في سطر انتهى بنقطة أو علامة استفهام، السطر اللي بعده يعتبر فقرة جديدة
     const paragraphs: string[] = [];
@@ -104,6 +108,8 @@ function toParagraphs(v: unknown): { ar: string[]; en: string[] } {
       paragraphs.push(currentPara);
     }
     
+    console.log('[Duplex] Final paragraphs:', paragraphs);
+    
     return paragraphs;
   };
   
@@ -113,13 +119,21 @@ function toParagraphs(v: unknown): { ar: string[]; en: string[] } {
     return { ar: p, en: p };
   }
   if (Array.isArray(v)) {
-    const p = v.map((x) => str(x)).filter(Boolean);
+    // لو array، نجمع كل العناصر في string واحد وبعدين نقسمها
+    const combined = v.map((x) => str(x)).filter(Boolean).join("\n");
+    const p = split(combined);
     return { ar: p, en: p };
   }
   if (typeof v === "object") {
     const o = v as Record<string, unknown>;
-    const norm = (x: unknown) =>
-      Array.isArray(x) ? x.map((y) => str(y)).filter(Boolean) : split(str(x));
+    const norm = (x: unknown) => {
+      if (Array.isArray(x)) {
+        // لو array، نجمع كل العناصر في string واحد وبعدين نقسمها
+        const combined = x.map((y) => str(y)).filter(Boolean).join("\n");
+        return split(combined);
+      }
+      return split(str(x));
+    };
     const ar = norm(o.ar ?? o.arabic);
     const en = norm(o.en ?? o.english);
     return { ar: ar.length ? ar : en, en: en.length ? en : ar };
