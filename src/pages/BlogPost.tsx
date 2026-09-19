@@ -1,5 +1,6 @@
 import { Link, Navigate, useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
+import { useEffect, useState } from "react";
 import { useLang } from "../i18n";
 import { AUTHOR, T } from "../data";
 import { useContent } from "../lib/content";
@@ -9,6 +10,7 @@ import { BlogCard, formatDate } from "../components/project";
 import { extractPostKeywords, generateMetaDescription } from "../lib/seo";
 import { FAQAccordion } from "../components/FAQAccordion";
 import { parseContent, DataTable, ComparisonTable, type ContentBlock } from "../components/ContentParser";
+import { translateTexts } from "../lib/translator";
 
 export default function BlogPost() {
   const { slug } = useParams();
@@ -19,7 +21,62 @@ export default function BlogPost() {
   if (!post) return <Navigate to="/blog" replace />;
 
   const cat = getBlogCategory(post.categoryId);
-  const body = post.body[lang].length ? post.body[lang] : post.body.ar;
+  
+  // ترجمة تلقائية للمحتوى
+  const [translatedBody, setTranslatedBody] = useState<string[]>([]);
+  const [translatedFaqs, setTranslatedFaqs] = useState<Array<{question: string, answer: string}>>([]);
+  
+  useEffect(() => {
+    const translateContent = async () => {
+      if (lang === "ar") {
+        setTranslatedBody(post.body.ar);
+        setTranslatedFaqs(post.faqs || []);
+        return;
+      }
+      
+      // لو المحتوى الإنجليزي موجود بالفعل
+      if (post.body.en.length > 0) {
+        setTranslatedBody(post.body.en);
+        setTranslatedFaqs(post.faqs || []);
+        return;
+      }
+      
+      // ترجمة تلقائية من العربي للإنجليزي
+      try {
+        const arabicTexts = post.body.ar;
+        const translationMap = await translateTexts(arabicTexts);
+        
+        // نحول الـ map لـ array بنفس الترتيب
+        const translated = arabicTexts.map(text => translationMap[text] || text);
+        setTranslatedBody(translated);
+        
+        // ترجمة FAQs لو موجودة
+        if (post.faqs && post.faqs.length > 0) {
+          const questions = post.faqs.map(f => f.question);
+          const answers = post.faqs.map(f => f.answer);
+          const questionsMap = await translateTexts(questions);
+          const answersMap = await translateTexts(answers);
+          
+          setTranslatedFaqs(
+            post.faqs.map((faq) => ({
+              question: questionsMap[faq.question] || faq.question,
+              answer: answersMap[faq.answer] || faq.answer
+            }))
+          );
+        }
+      } catch (error) {
+        console.error("Translation error:", error);
+        setTranslatedBody(post.body.ar);
+        setTranslatedFaqs(post.faqs || []);
+      }
+    };
+    
+    translateContent();
+  }, [lang, post]);
+  
+  const body = translatedBody.length > 0 ? translatedBody : post.body.ar;
+  const faqItems = translatedFaqs.length > 0 ? translatedFaqs : (post.faqs || []);
+  
   const related = posts.filter((p) => p.categoryId === post.categoryId && p.id !== post.id).slice(0, 3);
 
   // Parse content into blocks - بس النصوص العادية والأسطر المميزة
@@ -241,7 +298,7 @@ export default function BlogPost() {
           })}
           
           {/* FAQs من Firestore */}
-          {faqs.length > 0 && (
+          {faqItems.length > 0 && (
             <Reveal delay={200}>
               <div className="mt-8 sm:mt-10">
                 <h2 className="font-display mb-5 flex items-center gap-2 text-xl font-extrabold text-ink sm:mb-6 sm:text-2xl">
@@ -261,7 +318,7 @@ export default function BlogPost() {
                   </svg>
                   {lang === "ar" ? "أسئلة شائعة" : "FAQ"}
                 </h2>
-                <FAQAccordion items={faqs} color={cat?.color ?? "#0B7C74"} />
+                <FAQAccordion items={faqItems} color={cat?.color ?? "#0B7C74"} />
               </div>
             </Reveal>
           )}
