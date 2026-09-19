@@ -418,9 +418,21 @@ function normalizePost(raw: Record<string, unknown>, i: number): BlogPost {
   // body ممكن يكون string واحد أو array
   let body: { ar: string[]; en: string[] };
   const rawBody = raw.body ?? raw.content ?? raw.text ?? raw.description;
+  
+  console.log('[Duplex] Raw body data:', rawBody);
+  console.log('[Duplex] Raw body type:', typeof rawBody);
+  
   if (typeof rawBody === 'string') {
     // لو string واحد، نقسمه لفقرات
     const paragraphs = rawBody.split('\n\n').filter(p => p.trim());
+    console.log('[Duplex] Paragraphs from string:', paragraphs);
+    body = { ar: paragraphs, en: paragraphs };
+  } else if (Array.isArray(rawBody)) {
+    // لو array، نجمع كل العناصر في string واحد وبعدين نقسمهم
+    const combined = rawBody.join('\n\n');
+    const paragraphs = combined.split('\n\n').filter(p => p.trim());
+    console.log('[Duplex] Combined from array:', combined);
+    console.log('[Duplex] Paragraphs from array:', paragraphs);
     body = { ar: paragraphs, en: paragraphs };
   } else {
     body = toParagraphs(rawBody);
