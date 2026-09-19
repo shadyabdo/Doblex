@@ -70,6 +70,22 @@ export interface BlogCategory {
   tint: string;
 }
 
+export interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+export interface ComparisonItem {
+  label: string;
+  left: string;
+  right: string;
+}
+
+export interface Comparison {
+  title: string;
+  items: ComparisonItem[];
+}
+
 export interface BlogPost {
   id: string;
   slug: string;
@@ -81,6 +97,8 @@ export interface BlogPost {
   date: string;
   readMinutes: number;
   tags: string[];
+  faqs?: FAQItem[];
+  comparisons?: Comparison[];
 }
 
 /* ------------------------------ ثوابت ------------------------------ */

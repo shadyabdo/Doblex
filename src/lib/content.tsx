@@ -28,6 +28,9 @@ import type {
   ResultStat,
   BlogCategory,
   BlogPost,
+  FAQItem,
+  Comparison,
+  ComparisonItem,
 } from "../data";
 
 /* ------------------------------------------------------------------ */
@@ -384,20 +387,14 @@ function normalizePost(raw: Record<string, unknown>, i: number): BlogPost {
   let body: { ar: string[]; en: string[] };
   const rawBody = raw.body ?? raw.content ?? raw.text ?? raw.description;
   
-  console.log('[Duplex] Raw body data:', rawBody);
-  console.log('[Duplex] Raw body type:', typeof rawBody);
-  
   if (typeof rawBody === 'string') {
     // لو string واحد، نقسمه لفقرات
     const paragraphs = rawBody.split('\n\n').filter(p => p.trim());
-    console.log('[Duplex] Paragraphs from string:', paragraphs);
     body = { ar: paragraphs, en: paragraphs };
   } else if (Array.isArray(rawBody)) {
     // لو array، نجمع كل العناصر في string واحد وبعدين نقسمهم
     const combined = rawBody.join('\n\n');
     const paragraphs = combined.split('\n\n').filter(p => p.trim());
-    console.log('[Duplex] Combined from array:', combined);
-    console.log('[Duplex] Paragraphs from array:', paragraphs);
     body = { ar: paragraphs, en: paragraphs };
   } else {
     body = toParagraphs(rawBody);
@@ -448,6 +445,51 @@ function normalizePost(raw: Record<string, unknown>, i: number): BlogPost {
     ? raw.tags.map((x) => str(x)).filter(Boolean)
     : keywords;
   
+  // FAQs من Firestore
+  const faqs: FAQItem[] = [];
+  if (Array.isArray(raw.faqs)) {
+    raw.faqs.forEach((faq) => {
+      if (typeof faq === 'object' && faq !== null) {
+        const f = faq as Record<string, unknown>;
+        const question = str(f.question ?? f.q);
+        const answer = str(f.answer ?? f.a);
+        if (question && answer) {
+          faqs.push({ question, answer });
+        }
+      }
+    });
+  }
+
+  // Comparisons من Firestore
+  const comparisons: Comparison[] = [];
+  if (Array.isArray(raw.comparisons)) {
+    raw.comparisons.forEach((comp) => {
+      if (typeof comp === 'object' && comp !== null) {
+        const c = comp as Record<string, unknown>;
+        const title = str(c.title);
+        const items: ComparisonItem[] = [];
+        
+        if (Array.isArray(c.items)) {
+          c.items.forEach((item) => {
+            if (typeof item === 'object' && item !== null) {
+              const it = item as Record<string, unknown>;
+              const label = str(it.label ?? it.name);
+              const left = str(it.left ?? it.before ?? it.old);
+              const right = str(it.right ?? it.after ?? it.new);
+              if (label && left && right) {
+                items.push({ label, left, right });
+              }
+            }
+          });
+        }
+        
+        if (title && items.length > 0) {
+          comparisons.push({ title, items });
+        }
+      }
+    });
+  }
+
   return {
     id: str(raw.id ?? `b-${i}`),
     slug: str(raw.slug ?? raw.id ?? `post-${i}`),
@@ -461,6 +503,8 @@ function normalizePost(raw: Record<string, unknown>, i: number): BlogPost {
       Number(raw.readMinutes ?? raw.readMins ?? raw.readTime ?? raw.minutes) ||
       Math.max(2, Math.round(body.ar.join(" ").split(/\s+/).length / 180)),
     tags,
+    faqs: faqs.length > 0 ? faqs : undefined,
+    comparisons: comparisons.length > 0 ? comparisons : undefined,
   };
 }
 
