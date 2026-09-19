@@ -19,7 +19,7 @@ export function parseContent(paragraphs: string[]): ContentBlock[] {
     const para = paragraphs[i];
     const trimmed = para.trim();
 
-    // 1. جدول Markdown (يبدأ بـ |) - لازم يكون على الأقل 3 أسطر
+    // 1. جدول Markdown (يبدأ بـ |)
     if (trimmed.startsWith("|") && trimmed.endsWith("|")) {
       const tableBlock = parseMarkdownTable(paragraphs, i);
       if (tableBlock && tableBlock.table.rows.length >= 1) {
@@ -66,7 +66,14 @@ export function parseContent(paragraphs: string[]): ContentBlock[] {
       }
     }
 
-    // 4. نص عادي - الافتراضي
+    // 4. عنوان فرعي (يبدأ برقم ونقطة مثل "1." أو "2.")
+    if (/^\d+\./.test(trimmed)) {
+      blocks.push({ type: "highlight", content: trimmed });
+      i++;
+      continue;
+    }
+
+    // 5. نص عادي - الافتراضي
     blocks.push({ type: "text", content: para });
     i++;
   }

@@ -73,43 +73,8 @@ function toLText(v: unknown): LText {
 
 function toParagraphs(v: unknown): { ar: string[]; en: string[] } {
   const split = (s: string) => {
-    console.log('[Duplex] Raw content string:', s);
-    
-    // نقسم على السطور الفاضية الأول
-    const lines = s.split(/\n+/).map((x) => x.trim()).filter(Boolean);
-    
-    console.log('[Duplex] Lines after split:', lines);
-    
-    // لو في سطر انتهى بنقطة أو علامة استفهام، السطر اللي بعده يعتبر فقرة جديدة
-    const paragraphs: string[] = [];
-    let currentPara = "";
-    
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-      
-      if (currentPara === "") {
-        currentPara = line;
-      } else {
-        // لو السطر السابق انتهى بنقطة أو علامة استفهام، نبدأ فقرة جديدة
-        const prevEndsWithPunctuation = /[.!?؟]$/.test(currentPara);
-        
-        if (prevEndsWithPunctuation) {
-          paragraphs.push(currentPara);
-          currentPara = line;
-        } else {
-          // نضيف السطر للفقرة الحالية
-          currentPara += " " + line;
-        }
-      }
-    }
-    
-    // نضيف الفقرة الأخيرة
-    if (currentPara) {
-      paragraphs.push(currentPara);
-    }
-    
-    console.log('[Duplex] Final paragraphs:', paragraphs);
-    
+    // نقسم على كل سطر جديد - كل سطر يبقى فقرة منفصلة
+    const paragraphs = s.split(/\n+/).map((x) => x.trim()).filter(Boolean);
     return paragraphs;
   };
   
