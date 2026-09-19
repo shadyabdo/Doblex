@@ -4,6 +4,7 @@ import { useLang } from "../i18n";
 export type ContentBlock =
   | { type: "text"; content: string }
   | { type: "highlight"; content: string }
+  | { type: "callout"; content: string }
   | { type: "faq"; question: string; answer: string }
   | { type: "table"; headers: string[]; rows: string[][] }
   | { type: "comparison"; title: string; items: { label: string; left: string; right: string }[] };
@@ -47,7 +48,15 @@ export function parseContent(paragraphs: string[]): ContentBlock[] {
       continue;
     }
 
-    // 4. نص عادي - الافتراضي
+    // 4. Callout (نص بين [ ])
+    const calloutMatch = trimmed.match(/^\[(.+)\]$/);
+    if (calloutMatch) {
+      blocks.push({ type: "callout", content: calloutMatch[1] });
+      i++;
+      continue;
+    }
+
+    // 5. نص عادي - الافتراضي
     blocks.push({ type: "text", content: para });
     i++;
   }
