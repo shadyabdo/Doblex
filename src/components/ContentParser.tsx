@@ -30,9 +30,22 @@ export function parseContent(paragraphs: string[]): ContentBlock[] {
     }
 
     // 2. FAQ (سؤال ينتهي بـ ؟ أو ? والإجابة في السطر التالي)
-    if ((trimmed.endsWith("؟") || trimmed.endsWith("?")) && i + 1 < paragraphs.length) {
-      const answer = paragraphs[i + 1].trim();
-      if (!answer.endsWith("؟") && !answer.endsWith("?") && answer.length > 0) {
+    // نتحقق إن السؤال قصير نسبياً (مش فقرة طويلة بتنتهي بعلامة استفهام)
+    const isQuestion = (trimmed.endsWith("؟") || trimmed.endsWith("?")) && 
+                       trimmed.length < 150 && // السؤال قصير
+                       i + 1 < paragraphs.length;
+    
+    if (isQuestion) {
+      const nextPara = paragraphs[i + 1];
+      const answer = nextPara.trim();
+      
+      // نتأكد إن الإجابة مش سؤال تاني
+      const isAnswerQuestion = answer.endsWith("؟") || answer.endsWith("?");
+      
+      // نتأكد إن الإجابة مش قصيرة جداً (يعني مش مجرد كلمة)
+      const isAnswerValid = answer.length > 10 && !isAnswerQuestion;
+      
+      if (isAnswerValid) {
         blocks.push({
           type: "faq",
           question: trimmed,
