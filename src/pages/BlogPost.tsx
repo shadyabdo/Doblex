@@ -7,7 +7,7 @@ import { Reveal } from "../lib/ui";
 import { ArrowIcon, CalendarIcon, ClockIcon, UserIcon } from "../components/icons";
 import { BlogCard, formatDate } from "../components/project";
 import { extractPostKeywords, generateMetaDescription } from "../lib/seo";
-import { FAQAccordion, extractFAQs } from "../components/FAQAccordion";
+import { FAQAccordion, extractFAQs, isHighlightLine, removeHighlightMarker } from "../components/FAQAccordion";
 
 export default function BlogPost() {
   const { slug } = useParams();
@@ -149,18 +149,53 @@ export default function BlogPost() {
       {/* ---------- Body ---------- */}
       <section className="container-x py-10 sm:py-12 md:py-16">
         <div className="mx-auto max-w-3xl space-y-5 sm:space-y-6">
-          {regularContent.map((para, i) => (
-            <Reveal key={i} delay={Math.min(i * 60, 240)}>
-              <p
-                className={`text-sm leading-[1.9] text-ink-soft sm:text-base md:text-lg ${
-                  i === 0 ? "border-s-4 ps-4 text-lg font-semibold text-ink sm:ps-5 sm:text-xl md:text-2xl" : ""
-                }`}
-                style={i === 0 ? { borderColor: cat?.color ?? "#0B7C74" } : undefined}
-              >
-                {para}
-              </p>
-            </Reveal>
-          ))}
+          {regularContent.map((para, i) => {
+            const isHighlight = isHighlightLine(para);
+            const highlightText = isHighlight ? removeHighlightMarker(para) : para;
+            
+            return (
+              <Reveal key={i} delay={Math.min(i * 60, 240)}>
+                {isHighlight ? (
+                  // Highlighted line with background
+                  <div
+                    className="relative overflow-hidden rounded-2xl border-2 p-5 sm:p-6 md:p-8"
+                    style={{
+                      borderColor: cat?.color ?? "#0B7C74",
+                      background: `linear-gradient(135deg, ${cat?.tint ?? "#E1F0EE"} 0%, ${cat?.color ?? "#0B7C74"}15 100%)`,
+                    }}
+                  >
+                    <div className="relative z-10">
+                      <p
+                        className="font-display text-xl leading-[1.6] font-bold text-ink sm:text-2xl md:text-3xl"
+                        style={{ color: cat?.color ?? "#0B7C74" }}
+                      >
+                        {highlightText}
+                      </p>
+                    </div>
+                    {/* Decorative elements */}
+                    <div
+                      className="absolute -end-8 -top-8 h-32 w-32 rounded-full opacity-10"
+                      style={{ background: cat?.color ?? "#0B7C74" }}
+                    />
+                    <div
+                      className="absolute -bottom-6 -start-6 h-24 w-24 rounded-full opacity-10"
+                      style={{ background: cat?.color ?? "#0B7C74" }}
+                    />
+                  </div>
+                ) : (
+                  // Regular paragraph
+                  <p
+                    className={`text-sm leading-[1.9] text-ink-soft sm:text-base md:text-lg ${
+                      i === 0 ? "border-s-4 ps-4 text-lg font-semibold text-ink sm:ps-5 sm:text-xl md:text-2xl" : ""
+                    }`}
+                    style={i === 0 ? { borderColor: cat?.color ?? "#0B7C74" } : undefined}
+                  >
+                    {para}
+                  </p>
+                )}
+              </Reveal>
+            );
+          })}
           
           {/* FAQ Accordion Section */}
           {faqs.length > 0 && (

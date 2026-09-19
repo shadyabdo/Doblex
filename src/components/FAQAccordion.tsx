@@ -112,3 +112,22 @@ export function extractFAQs(paragraphs: string[]): { content: string[]; faqs: FA
   
   return { content, faqs };
 }
+
+/**
+ * يتعرف على الأسطر اللي بتبدأ بـ "-" ويعملها highlight
+ */
+export function isHighlightLine(text: string): boolean {
+  const trimmed = text.trim();
+  return trimmed.startsWith("-") || trimmed.startsWith("—") || trimmed.startsWith("–");
+}
+
+/**
+ * يشيل الـ "-" من بداية السطر
+ */
+export function removeHighlightMarker(text: string): string {
+  const trimmed = text.trim();
+  if (trimmed.startsWith("-")) return trimmed.substring(1).trim();
+  if (trimmed.startsWith("—")) return trimmed.substring(1).trim();
+  if (trimmed.startsWith("–")) return trimmed.substring(1).trim();
+  return trimmed;
+}
