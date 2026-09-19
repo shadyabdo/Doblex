@@ -367,7 +367,17 @@ function normalizeProject(raw: Record<string, unknown>, i: number, categories: C
 /* ------------------------------- المقالات ------------------------------- */
 function normalizePost(raw: Record<string, unknown>, i: number): BlogPost {
   const title = toLText(raw.title ?? raw.name);
-  const body = toParagraphs(raw.body ?? raw.content ?? raw.text ?? raw.description);
+  
+  // body ممكن يكون string واحد أو array
+  let body: { ar: string[]; en: string[] };
+  const rawBody = raw.body ?? raw.content ?? raw.text ?? raw.description;
+  if (typeof rawBody === 'string') {
+    // لو string واحد، نقسمه لفقرات
+    const paragraphs = rawBody.split('\n\n').filter(p => p.trim());
+    body = { ar: paragraphs, en: paragraphs };
+  } else {
+    body = toParagraphs(rawBody);
+  }
   
   // نعالج التاريخ بشكل آمن
   let dateStr = "";
@@ -401,19 +411,32 @@ function normalizePost(raw: Record<string, unknown>, i: number): BlogPost {
     dateStr = new Date().toISOString().slice(0, 10);
   }
   
+  // categoryId من fieldLabel أو fieldId
+  const categoryId = str(raw.fieldLabel ?? raw.categoryId ?? raw.category ?? raw.cat ?? raw.tag ?? "");
+  
+  // keywords من Firestore
+  const keywords = Array.isArray(raw.keywords) 
+    ? raw.keywords.map((x) => str(x)).filter(Boolean)
+    : [];
+  
+  // tags من Firestore أو keywords
+  const tags = Array.isArray(raw.tags) 
+    ? raw.tags.map((x) => str(x)).filter(Boolean)
+    : keywords;
+  
   return {
     id: str(raw.id ?? `b-${i}`),
     slug: str(raw.slug ?? raw.id ?? `post-${i}`),
     title,
     excerpt: toLText(raw.excerpt ?? raw.summary ?? raw.short ?? raw.tagline),
     body,
-    categoryId: str(raw.categoryId ?? raw.category ?? raw.cat ?? raw.tag ?? ""),
+    categoryId,
     image: str(raw.image ?? raw.cover ?? raw.thumb) || FALLBACK_IMGS[i % FALLBACK_IMGS.length],
     date: dateStr,
     readMinutes:
-      Number(raw.readMinutes ?? raw.readTime ?? raw.minutes) ||
+      Number(raw.readMinutes ?? raw.readMins ?? raw.readTime ?? raw.minutes) ||
       Math.max(2, Math.round(body.ar.join(" ").split(/\s+/).length / 180)),
-    tags: Array.isArray(raw.tags) ? raw.tags.map((x) => str(x)).filter(Boolean) : [],
+    tags,
   };
 }
 
@@ -451,6 +474,16 @@ const KEY_SETS = {
   posts: ["posts", "articles", "blog", "blogs", "مقالات", "المقالات", "مدونة", "المدونة"],
   blogCategories: ["blogcategories", "postcategories", "articlecategories", "تصنيفات", "التصنيفات"],
 };
+
+// دالة لاستخراج اسم الـ array من البيانات الفعلية
+function findArrayKey(data: Record<string, unknown>, possibleKeys: string[]): string | null {
+  for (const key of possibleKeys) {
+    if (Array.isArray(data[key]) && (data[key] as unknown[]).length > 0) {
+      return key;
+    }
+  }
+  return null;
+}
 
 const normKey = (k: string) => k.trim().toLowerCase().replace(/[\s_-]/g, "");
 
@@ -501,6 +534,14 @@ export function normalizeContent(raw: Record<string, unknown>): {
   let projectsArr = pickByKey(arrays, KEY_SETS.projects);
   let postsArr = pickByKey(arrays, KEY_SETS.posts);
   const blogCatsArr = pickByKey(arrays, KEY_SETS.blogCategories);
+
+  // لو مفيش posts، نبحث عن articles
+  if (!postsArr) {
+    const articlesKey = findArrayKey(data, ["articles", "posts", "blog", "blogs"]);
+    if (articlesKey && Array.isArray(data[articlesKey])) {
+      postsArr = data[articlesKey] as unknown[];
+    }
+  }
 
   const taken = new Set<unknown[]>(
     [catsArr, projectsArr, postsArr, blogCatsArr].filter((x): x is unknown[] => !!x)
