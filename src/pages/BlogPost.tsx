@@ -199,7 +199,7 @@ export default function BlogPost() {
                 
                 {block.type === "callout" && (
                   <div
-                    className="relative border-r-4 p-4 sm:p-5 md:p-6"
+                    className="relative border-r-4 border-l-4 p-4 sm:p-5 md:p-6"
                     style={{
                       borderColor: cat?.color ?? "#0B7C74",
                       backgroundColor: cat?.tint ?? "#E1F0EE",
