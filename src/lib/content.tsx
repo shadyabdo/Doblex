@@ -296,6 +296,9 @@ function slugify(text: string): string {
 function normalizeGoalsAchievements(v: unknown): LText[] {
   if (!v) return [];
   
+  // Debug: نشوف البيانات الفعلية
+  console.log('[Duplex] Goals/Achievements raw data:', v);
+  
   // لو كان array
   if (Array.isArray(v)) {
     return v.map((item) => {
@@ -489,13 +492,19 @@ export function normalizeContent(raw: Record<string, unknown>): {
 
   const categories = (catsArr ?? []).map((x, i) => normalizeCategory(x as Record<string, unknown>, i));
   const projects = (projectsArr ?? []).map((x, i) => normalizeProject(x as Record<string, unknown>, i, categories));
+  
+  // Debug: نشوف بيانات المقالات
+  console.log('[Duplex] Raw posts data:', postsArr);
+  console.log('[Duplex] All arrays found:', arrays.map(a => a.key));
+  
   const posts = (postsArr ?? []).map((x, i) => normalizePost(x as Record<string, unknown>, i));
   const blogCategories = blogCatsArr
     ? blogCatsArr.map((x, i) => normalizeBlogCategory(x as Record<string, unknown>, i))
     : deriveBlogCategories(posts);
-
-  return { categories, projects, posts, blogCategories };
-}
+  
+  console.log('[Duplex] Normalized posts:', posts);
+  
+  return { categories, projects, posts, blogCategories };}
 
 /* ------------------------------------------------------------------ */
 /*  الترجمة التلقائية عربي → إنجليزي للمحتوى القادم من الداشبورد          */
